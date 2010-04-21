@@ -1,6 +1,6 @@
 
 Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008 - Hello
+# Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Henge.Data", "data\Henge.Data.csproj", "{2B345116-71E3-4C8E-BBC1-9354791C7451}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Henge.Web", "web\Henge.Web.csproj", "{B69FF268-6760-44A2-9814-7B837D581F10}"

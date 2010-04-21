@@ -1,0 +1,151 @@
+div#map
+{
+	position: relative;
+	border: 1px solid #000;	
+	overflow: hidden;
+}
+
+div#canvas
+{
+	position: absolute;
+	top: 0;
+	left: 0;
+	overflow: visible;
+}
+
+div.tile
+{
+	position: absolute;
+	border: 1px solid #000000;
+	/*background-image: url('/images/mountains.png');*/
+}
+
+
+
+
+/* Nexus War tiles - Temporary for testing: */
+.street { background-color: #898989; }
+.alley { background-color: #464646; }
+.water { background-color: #00BFF3; }
+.river { background-color: #0071BC; }
+.bridge { background-color: #959595; }
+.office { background-color: #855FA8; }
+.restaurant { background-color: #A0410A; }
+.bar { background-color: #790000; }
+.nightclub { background-color: #ED135A; }
+.mall { background-color: #FCFCFC; }
+.supermarket { background-color: #FBAF5C; }
+.hardware { background-color: #FBAF00; }
+.police { background-color: #1A1364; }
+.hospital { background-color: #ED1B23; }
+.fire { background-color: #F26521; }
+.airport { background-color: #909090; }
+.church { background-color: #FBAF5C; }
+.cityhall { background-color: #FFF468; }
+.power { background-color: #DDDDDD; }
+.zoo { background-color: #A0410A; }
+.prison { background-color: #999999; }
+.military { background-color: #ACD373; }
+.museum { background-color: #00A650; }
+.park { background-color: #007236; }
+.stadium { background-color: #4A0048; }
+.house { background-color: #C69C6D; }
+.apartment { background-color: #8C6238; }
+.slum { background-color: #603811; }
+.mansion { background-color: #A67C51; }
+.gas { background-color: #A863A8; }
+.frozenhighway { background-color: #D0D0D0; }
+.autoshowroom { background-color: #D658D8; }
+.school { background-color: #C7B299; }
+.university { background-color: #726257; }
+.junkyard { background-color: #352E2C; }
+.empty { background-color: #726257; }
+.grassland { background-color: #38B549; }
+.wasteland { background-color: #252525; }
+.warehouse { background-color: #07004B; }
+.sea { background-color: #0054A6; }
+.ruins { background-color: #303030; }
+.forest { background-color: #005825; }
+.factory { background-color: #31004A; }
+.runway { background-color: #808080; }
+.observatory { background-color: #C2C2C2; }
+.gunstore { background-color: #7B0045; }
+.cornerstore { background-color: #7B6645; }
+.pharmacy { background-color: #ED1B99; }
+.library { background-color: #82CA9C; }
+.lava { background-color: #F26521; }
+.cemetary { background-color: #3BB878; }
+.golfcourse { background-color: #177B2F; }
+.void { background-color: #000000; }
+.frozen { background-color: #FFFFFF; }
+.firepits { background-color: #C26521; }
+.sewer { background-color: #386011; }
+.solidearth { background-color: #000000; }
+.goldenpalace { background-color: #FFF200; }
+.frozenriver { background-color: #EBEBEB; }
+.field { background-color: #82CA9C; }
+.orchard { background-color: #348C40; }
+.chain { background-color: #464646; }
+.rock { background-color: #EFB880; }
+.oilrig { background-color: #777777; }
+.ironfortress { background-color: #464646;}
+.darkcathedral { background-color: #535353;}
+.ironkeep { background-color: #555555;}
+.ebonytower { background-color: #222222; }
+.damnedlibrary { background-color: #444444; }
+.irongarrison { background-color: #626262; }
+.blackprison { background-color: #333333; }
+.charredland { background-color: #534640; }
+.boneland { background-color: #EBEBEB; }
+.bloodwaste { background-color: #CC0000; }
+.ironwastes { background-color: #C6A0A0; }
+
+
+.cottage { background-color: #F1C99B; }
+.tavern { background-color: #8C6238; }
+.inn { background-color: #9D68A0; }
+.smithy { background-color: #8781BD; }
+.mill { background-color: #94561A; }
+.euphoriaasylum { background-color: #FCBABA; }
+.vaultofenlightenment { background-color: #BEF3B7; }
+.panopticon { background-color: #D1C6C6; }
+.clockworktower { background-color: #572E1A; }
+.amphitheatre { background-color: #C2C2C2; }
+
+.jungle { background-color: #08331A; }
+.woodenbridge { background-color: #94561A; }
+.burntland { background-color: #534640; }
+.ossuarypit { background-color: #EBEBEB; }
+.necrotictower { background-color: #464646;}
+.synagogue { background-color: #FBAF5C; }
+.mosque { background-color: #FBAF5C; }
+.shrine { background-color: #FBAF5C; }
+.bank { background-color: #8F7CA0; }
+.lushfield { background-color: #84E8A8; }
+.lushorchard { background-color: #1EA831; }
+.drygrassland { background-color: #CDDA41; }
+.gravel { background-color: #BB8B51; }
+.desert { background-color: #F0F47D; }
+
+.stonehut { background-color: #DFBA90; }
+.ziggurat { background-color: #7D4800; }
+.hallofreconstruction { background-color: #D49D9D; }
+.stygianfoundry { background-color: #250237; }
+.darksanitarium { background-color: #252525; }
+.soulorchard { background-color: #AC4141; }
+.slavepens { background-color: #753F0B; }
+.slaughterhouse { background-color: #790025; }
+.circus { background-color: #D49C64; }
+.darkharem { background-color: #007C34; }
+.eggfield { background-color: #1E864F; }
+.stygianruins { background-color: #303030; }
+
+
+.bn { border-top: 4px dashed #FFFFFF; }
+.be { border-right: 4px dashed #FFFFFF; }
+.bw { border-left: 4px dashed #FFFFFF; }
+.bs { border-bottom: 4px dashed #FFFFFF; }
+
+.frozen .be, .mall .be, .boneland .be { border-right: 4px dashed #333333; }
+.frozen .bw, .mall .bw, .boneland .bw { border-left: 4px dashed #333333; }
+.frozen .bs, .mall .bs, .boneland .bs { border-bottom: 4px dashed #333333; }

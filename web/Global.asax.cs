@@ -11,6 +11,7 @@ namespace Henge.Web
 	public class HengeApp: System.Web.HttpApplication
 	{
 		public static Henge.Data.DataProvider dataprovider;
+		
 		public static void RegisterRoutes (RouteCollection routes)
 		{
 			routes.IgnoreRoute ("{resource}.axd/{*pathInfo}");

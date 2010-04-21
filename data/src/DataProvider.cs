@@ -145,7 +145,7 @@ namespace Henge.Data
 		{
 			ISession session = this.GetSession();
 			
-			if ((session != null)&&(entity!=null))
+			if ((session != null) && (entity!=null))
 			{
 				session.SaveOrUpdate(entity);
 				session.Flush();
@@ -155,6 +155,7 @@ namespace Henge.Data
 			return false;
 		}
 		
+
 		public bool UpdateAndRefresh(Entity entity)
 		{
 			ISession session = this.GetSession();
