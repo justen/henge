@@ -1,0 +1,32 @@
+
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Henge.Data", "data\Henge.Data.csproj", "{2B345116-71E3-4C8E-BBC1-9354791C7451}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Henge.Web", "web\Henge.Web.csproj", "{B69FF268-6760-44A2-9814-7B837D581F10}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Henge.Engine", "engine\Henge.Engine.csproj", "{A6AA6A68-FC8D-45D5-BD25-F6B194EF15D9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2B345116-71E3-4C8E-BBC1-9354791C7451}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B345116-71E3-4C8E-BBC1-9354791C7451}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B345116-71E3-4C8E-BBC1-9354791C7451}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B345116-71E3-4C8E-BBC1-9354791C7451}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6AA6A68-FC8D-45D5-BD25-F6B194EF15D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6AA6A68-FC8D-45D5-BD25-F6B194EF15D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6AA6A68-FC8D-45D5-BD25-F6B194EF15D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6AA6A68-FC8D-45D5-BD25-F6B194EF15D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B69FF268-6760-44A2-9814-7B837D581F10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B69FF268-6760-44A2-9814-7B837D581F10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B69FF268-6760-44A2-9814-7B837D581F10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B69FF268-6760-44A2-9814-7B837D581F10}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = web\Henge.Web.csproj
+	EndGlobalSection
+EndGlobal

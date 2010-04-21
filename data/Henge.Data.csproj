@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2B345116-71E3-4C8E-BBC1-9354791C7451}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Henge.Data</RootNamespace>
+    <AssemblyName>HengeData</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="NHibernate, Version=2.1.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\references\NHibernate.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="FluentNHibernate, Version=1.0.0.593, Culture=neutral, PublicKeyToken=8aa435e3cb308880">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\references\FluentNHibernate.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="src\AssemblyInfo.cs" />
+    <Compile Include="src\DataProvider.cs" />
+    <Compile Include="src\Entities\Account.cs" />
+    <Compile Include="src\Entities\Actor.cs" />
+    <Compile Include="src\Entities\Appearance.cs" />
+    <Compile Include="src\Entities\Attribute.cs" />
+    <Compile Include="src\Entities\AttributeModifier.cs" />
+    <Compile Include="src\Entities\Avatar.cs" />
+    <Compile Include="src\Entities\Edifice.cs" />
+    <Compile Include="src\Entities\Entity.cs" />
+    <Compile Include="src\Entities\EntityType.cs" />
+    <Compile Include="src\Entities\HengeEntity.cs" />
+    <Compile Include="src\Entities\Item.cs" />
+    <Compile Include="src\Entities\Location.cs" />
+    <Compile Include="src\Entities\LogEntry.cs" />
+    <Compile Include="src\Entities\Map.cs" />
+    <Compile Include="src\Entities\MapEntity.cs" />
+    <Compile Include="src\Entities\Modifier.cs" />
+    <Compile Include="src\Entities\Npc.cs" />
+    <Compile Include="src\Entities\Parameter.cs" />
+    <Compile Include="src\Entities\PhysicalEntity.cs" />
+    <Compile Include="src\Entities\Prerequisite.cs" />
+    <Compile Include="src\Entities\Region.cs" />
+    <Compile Include="src\Entities\Role.cs" />
+    <Compile Include="src\Entities\RuleDefinition.cs" />
+    <Compile Include="src\Entities\Ruleset.cs" />
+    <Compile Include="src\Entities\Skill.cs" />
+    <Compile Include="src\Entities\Statistic.cs" />
+    <Compile Include="src\Entities\User.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>
