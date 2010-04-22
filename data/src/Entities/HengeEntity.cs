@@ -18,6 +18,8 @@ namespace Henge.Data.Entities
 		//The generic, you-can-always-see-this appearance of the entity
 		public virtual Appearance BaseAppearance {get; set;}
 		
+		public virtual String Name { get; set; }
+		
 	    public virtual IList<Statistic> Stats			{get; set;}
 	}
 }

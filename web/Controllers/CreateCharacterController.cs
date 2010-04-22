@@ -21,16 +21,15 @@ namespace Henge.Web.Controllers
 		[AcceptVerbs(HttpVerbs.Post)]
 		public ActionResult Create(string name)
 		{
-			if (this.db.CreateCriteria<Avatar>().CreateAlias("BaseAppearance", "A").Add(Restrictions.Eq("A.Name", name)).UniqueResult<Avatar>()==null)
+			if (this.db.CreateCriteria<Avatar>().CreateAlias("BaseAppearance", "A").Add(Restrictions.Eq("A.Name", name)).UniqueResult<Avatar>() == null)
 			{
-				Appearance appearance = new Appearance {Name = name};
-				Location location = this.db.Get<Location>((long)5);
-				Avatar avatar = new Avatar {BaseAppearance = appearance, User  = this.currentUser,  Location = location};
-				this.db.UpdateAndRefresh(appearance);
-				this.db.UpdateAndRefresh(avatar);
-				this.db.Flush();
+				Appearance appearance	= (Appearance)this.db.UpdateAndRefresh(new Appearance {Name = name});
+				Location location		= this.db.Get<Location>((long)5);
+				Avatar avatar			= (Avatar)this.db.UpdateAndRefresh(new Avatar {Name = name, BaseAppearance = appearance, User  = this.currentUser,  Location = location});
+
 				location.Inhabitants.Add(avatar);
 				this.db.Flush();
+				
 				return RedirectToAction("Account", "User");
 			}
 			else

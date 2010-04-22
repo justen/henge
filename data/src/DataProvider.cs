@@ -156,7 +156,7 @@ namespace Henge.Data
 		}
 		
 
-		public bool UpdateAndRefresh(Entity entity)
+		public Entity UpdateAndRefresh(Entity entity)
 		{
 			ISession session = this.GetSession();
 			
@@ -165,9 +165,11 @@ namespace Henge.Data
 				session.SaveOrUpdate(entity);
 				session.Flush();
 				session.Refresh(entity);
-				return true;
+				
+				return entity;
 			}
-			return false;			
+			
+			return null;			
 		}
 		
 
