@@ -156,7 +156,7 @@ namespace Henge.Data
 		}
 		
 
-		public Entity UpdateAndRefresh(Entity entity)
+		public T UpdateAndRefresh<T>(T entity) where T: Entity
 		{
 			ISession session = this.GetSession();
 			
