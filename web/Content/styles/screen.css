@@ -212,7 +212,12 @@ table form
 	width: auto;
 }
 
-
+div#map
+{
+	width: 45%;
+	margin: 10px;
+	float: left;
+}
 /*---------------- Sidebar ----------------*/
 ul.sidebar
 {

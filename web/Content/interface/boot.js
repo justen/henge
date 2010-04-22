@@ -43,5 +43,5 @@ window.addEvent('resize', resize);
 
 /*-------------------------------------- Constants ------------------------------------------*/
 //var TILE_SIZES		= [400, 200, 100, 50];
-var TILE_SIZE = 128;
+var TILE_SIZE = 96;
 var MAP_RANGE = 10;
