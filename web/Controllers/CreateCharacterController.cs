@@ -24,8 +24,9 @@ namespace Henge.Web.Controllers
 			if (this.db.CreateCriteria<Avatar>().CreateAlias("BaseAppearance", "A").Add(Restrictions.Eq("A.Name", name)).UniqueResult<Avatar>() == null)
 			{
 				Location location		= this.db.Get<Location>((long)5);
-				Avatar avatar			= this.db.UpdateAndRefresh(new Avatar {Name = name, User  = this.currentUser,  Location = location});
-				avatar.BaseAppearance = this.db.UpdateAndRefresh(new Appearance {Name = name});
+				Appearance appearance	= this.db.UpdateAndRefresh<Appearance>(new Appearance { Name = name });
+				Avatar avatar			= this.db.UpdateAndRefresh<Avatar>(new Avatar {Name = name, BaseAppearance = appearance, User  = this.currentUser,  Location = location});
+				//avatar.BaseAppearance = this.db.UpdateAndRefresh(new Appearance {Name = name});
 				location.Inhabitants.Add(avatar);
 				this.db.Flush();	
 				return RedirectToAction("Account", "User");

@@ -160,11 +160,13 @@ namespace Henge.Data
 		{
 			ISession session = this.GetSession();
 			
-			if ((session != null)&&(entity!=null))
+			if (session != null && entity != null)
 			{
-				session.SaveOrUpdate(entity);
-				session.Flush();
-				session.Refresh(entity);
+				ITransaction tx = session.BeginTransaction();
+					session.SaveOrUpdate(entity);
+					session.Flush();
+					session.Refresh(entity);
+				tx.Commit();
 				
 				return entity;
 			}
@@ -175,54 +177,45 @@ namespace Henge.Data
 
 		public T Get<T>(object id) where T: Entity
 		{
-			/*T result = default(T);
-			
-			//if (result is Entity)
-			//{
-				ISession session = this.GetSession();
-				
-				if (session != null) result = session.Get<T>(id);
-			//}
-			
-			return result;*/
 			ISession session = this.GetSession();
-			return (session!= null) ? session.Get<T>(id) : default(T);
+			
+			return (session != null) ? session.Get<T>(id) : default(T);
 		}
+		
 		
 		public void Refresh (Entity entity)
 		{
 			ISession session = this.GetSession();
-			if ((session!=null)&&(entity!=null))
-			{
-				session.Refresh(entity);
-			}
 			
+			if (session != null && entity != null) session.Refresh(entity);
 		}
+		
 		
 		public void Delete (Entity entity)
 		{
 			ISession session = this.GetSession();
-			if ((session!=null)&&(entity!=null))
+			
+			if (session != null && entity != null)
 			{
 				session.Delete(entity);
 				session.Flush();
 			}
 		}
 		
+		
 		public ICriteria CreateCriteria<T>() where T : Entity
 		{
 			ICriteria result = null;
+			ISession session = this.GetSession();
 			
-	//		if (typeof(T) is Entity)
-	//		{
-				ISession session = this.GetSession();
-				if (session!=null) 
-				{
-					result = session.CreateCriteria<T>();
-				}
-	//		}
+			if (session != null) 
+			{
+				result = session.CreateCriteria<T>();
+			}
+			
 			return result;
 		}
+		
 		
 		public void Flush()
 		{
