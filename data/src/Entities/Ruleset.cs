@@ -6,7 +6,7 @@ namespace Henge.Data.Entities
 {
 
 
-	public class Ruleset : Entity
+	public abstract class Ruleset : Entity
 	{
 		public virtual IList<AttributeModifier> modifiers 		{get; set;}
 		public virtual IList<RuleDefinition> ProtagonistRules	{get; set;}

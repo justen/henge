@@ -37,12 +37,12 @@ namespace Henge.Data
 			{
 				AutoPersistenceModel map = AutoMap
 					.AssemblyOf<Henge.Data.Entities.Entity>()
-					.IgnoreBase<HengeEntity>()
-					.IgnoreBase<PhysicalEntity>()
-					.IgnoreBase<MapEntity>()
-					.IgnoreBase<Actor>()
-					.IgnoreBase<Ruleset>()
-					.IgnoreBase<Entity>()
+					//.IgnoreBase<HengeEntity>()
+					//.IgnoreBase<PhysicalEntity>()
+					//.IgnoreBase<MapEntity>()
+					//.IgnoreBase<Actor>()
+					//.IgnoreBase<Ruleset>()
+					//.IgnoreBase<Entity>()
 					.Where(t => t.Namespace.EndsWith("Entities"))
 					.Conventions.Setup(c => c.Add<HengeForeignKeyConvention>());
 					//.Override<Role>(k => k.HasManyToMany<Meta>(x => x.Meta).LazyLoad().Table("RoleMeta"));

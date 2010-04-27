@@ -6,7 +6,7 @@ namespace Henge.Engine.Ruleset.Core
 {
 
 
-	public class BasicRunInterference : BasicRun, IInterferenceRule
+	public class BasicRunInterference : BasicRun//, IInterferenceRule
 	{
 
 		public BasicRunInterference ()

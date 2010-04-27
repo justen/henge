@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Henge.Data.Entities
 {
-	public class HengeEntity : Entity
+	public abstract class HengeEntity : Entity
 	{
 	    public virtual EntityType Type					{get; set;}
 	    // this appearance is in addition to the Type appearance

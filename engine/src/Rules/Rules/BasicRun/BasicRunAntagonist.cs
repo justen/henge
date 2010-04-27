@@ -57,13 +57,13 @@ namespace Henge.Engine.Ruleset.Core
 			//find whatever attributes in an actor which determine how fast it can move
 			//apply and interaction data that could affect it
 			//and then return the speed
-			if (actor.HasStat("speed"))
+			if (true)//actor.HasStat("speed"))
 			{
 				double boost = 0;
 				double slow = 0;
 				if (interaction.Transaction.ContainsKey("boostSpeed")) boost = (double)interaction.Transaction["boostSpeed"];
 				if (interaction.Transaction.ContainsKey("reduceSpeed")) slow = (double)interaction.Transaction["reduceSpeed"];
-				return actor.GetStat("speed") + boost - slow;
+				return -1;//actor.GetStat("speed") + boost - slow;
 			}
 			else return -1;
 		}
