@@ -41,9 +41,15 @@
     <Compile Include="src\AssemblyInfo.cs" />
     <Compile Include="src\Interaction.cs" />
     <Compile Include="src\Interactor.cs" />
+    <Compile Include="src\Rules\Rules\BasicRun\BasicRunAntagonist.cs" />
+    <Compile Include="src\Rules\Rules\BasicRun\BasicRunProtagonist.cs" />
+    <Compile Include="src\Rules\Rules\BasicRun\BasicRunInterference.cs" />
+    <Compile Include="src\Rules\Rules\BasicRun\BasicRun.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />
+    <Folder Include="src\Rules\Rules\" />
+    <Folder Include="src\Rules\Rules\BasicRun\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

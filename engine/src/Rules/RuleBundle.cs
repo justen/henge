@@ -8,14 +8,15 @@ namespace Henge.Engine.Ruleset
 
 	public class RuleBundle
 	{
-		//dictionary of role->rule 
-		private Dictionary <string, IRule> Rules;
-
+		private IAntagonistRule antagonist;
+		private IProtagonistRule protagonist;
+		private IInterferenceRule interference;
+		
 		public IAntagonistRule Antagonist
 		{
 			get
 			{
-				return this.Rules.ContainsKey("antagonist")?(IAntagonistRule)Rules["antagonist"]:null;
+				return this.antagonist;
 			}
 		}
 		
@@ -23,7 +24,7 @@ namespace Henge.Engine.Ruleset
 		{
 			get
 			{
-				return this.Rules.ContainsKey("protagonist")?(IProtagonistRule)Rules["protagonist"]:null;
+				return this.protagonist;
 			}
 		}
 		
@@ -32,13 +33,15 @@ namespace Henge.Engine.Ruleset
 		{
 			get
 			{
-				return this.Rules.ContainsKey("interference")?(IInterferenceRule)Rules["interference"]:null;
+				return this.interference;
 			}
 		}
 		
-		public RuleBundle (Dictionary<string, IRule> Rules)
+		public RuleBundle (IProtagonistRule protagonist, IAntagonistRule antagonist, IInterferenceRule interference)
 		{
-			this.Rules = Rules;
+			this.protagonist = protagonist;
+			this.antagonist = antagonist;
+			this.interference = interference;
 		}
 	
 	}
