@@ -7,6 +7,9 @@ namespace Henge.Engine.Ruleset
 {
 	public interface IProtagonistRule : IRule
 	{
-		Interaction BeginInteraction(Actor Protagonist, IList<HengeEntity> Antagonists);
+		Interaction BeginInteraction(Actor protagonist, IList<HengeEntity> interferers, IList<HengeEntity> antagonists);
+		Interaction BeginInteraction(Actor protagonist, IList<HengeEntity> interferers, HengeEntity antagonists);
+		Interaction BeginInteraction(Actor protagonist, IList<HengeEntity> antagonists);
+		Interaction BeginInteraction(Actor protagonist, HengeEntity antagonists);
 	}
 }

@@ -15,33 +15,36 @@ namespace Henge.Engine.Ruleset.Core
 			
 		}
 		
-		public  Interaction ConcludeInteraction(Actor protagonist, IList<HengeEntity> antagonists, Interaction interaction)
+		public  Interaction ConcludeInteraction(Interaction interaction)
 		{
 			//structure of this rule is
 			/*
 			 *  IF (ConditionsMet(protagonist, antagonists, interaction))
 			 *  THEN ApplyChanges (protagonist, antagonists, interaction)
 			 */
-			if (interaction.Concluded) return interaction;
-			if (antagonists.Count == 1)
+			if (interaction.Antagonists.Count==1)
 			{
-				if ((antagonists[0] is Location) && (protagonist.Location.Map == ((Location)antagonists[0]).Map))
+				if (!interaction.Concluded)
 				{
-					if ( this.CalculateDistance(protagonist.Location, (Location)antagonists[0]) < this.CheckSpeed(protagonist, interaction))
+					if ((interaction.Antagonist is Location) && (interaction.Protagonist.Location.Map == ((Location)interaction.Antagonist).Map))
 					{
-						List<string> failures = this.TestInteraction(interaction, protagonist);
-						if (failures.Count==0)
+						if ( this.CalculateDistance(interaction.Protagonist.Location, (Location)interaction.Antagonist) < this.CheckSpeed(interaction.Protagonist, interaction))
 						{
-							this.ApplyInteraction(interaction, protagonist, (Location)antagonists[0]);
-							interaction.Succeeded("Moved");	
+							List<string> failures = this.TestInteraction(interaction, interaction.Protagonist);
+							if (failures.Count==0)
+							{
+								this.ApplyInteraction(interaction, interaction.Protagonist, (Location)interaction.Antagonist);
+								interaction.Succeeded("Moved");	
+							}
+							else interaction.Failed(failures);	
 						}
-						else interaction.Failed(failures);	
+						else interaction.Illegal("Out of range");
 					}
-					else interaction.Illegal("Out of range");
+					else interaction.Illegal("Invalid destination");
 				}
-				else interaction.Illegal("Invalid destination");
 			}
-			return null;	
+			else interaction.Illegal("Multiple targets");
+			return interaction;	
 		}
 		
 		private double CalculateDistance(Location source, Location destination)

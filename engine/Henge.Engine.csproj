@@ -45,6 +45,7 @@
     <Compile Include="src\Rules\Rules\BasicRun\BasicRunProtagonist.cs" />
     <Compile Include="src\Rules\Rules\BasicRun\BasicRunInterference.cs" />
     <Compile Include="src\Rules\Rules\BasicRun\BasicRun.cs" />
+    <Compile Include="src\Rules\Rulebook.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />

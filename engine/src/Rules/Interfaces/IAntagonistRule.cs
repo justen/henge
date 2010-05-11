@@ -7,6 +7,6 @@ namespace Henge.Engine.Ruleset
 {
 	public interface IAntagonistRule : IRule
 	{
-		Interaction ConcludeInteraction(Actor protagonist, IList<HengeEntity> antagonists, Interaction interaction);
+		Interaction ConcludeInteraction(Interaction interaction);
 	}
 }

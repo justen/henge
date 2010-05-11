@@ -67,8 +67,6 @@
     <Compile Include="src\Entities\Prerequisite.cs" />
     <Compile Include="src\Entities\Region.cs" />
     <Compile Include="src\Entities\Role.cs" />
-    <Compile Include="src\Entities\RuleDefinition.cs" />
-    <Compile Include="src\Entities\Ruleset.cs" />
     <Compile Include="src\Entities\Skill.cs" />
     <Compile Include="src\Entities\Statistic.cs" />
     <Compile Include="src\Entities\User.cs" />

@@ -9,5 +9,6 @@ namespace Henge.Data.Entities
 	    public virtual IList<Item> Inventory {get; set;}
 		//"learned" skills - i.e., not common to everything of this type
 		public virtual IList<Skill> Skills 		{get; set;}
+		
 	}
 }

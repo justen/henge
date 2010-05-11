@@ -1,5 +1,6 @@
 
 using System;
+using Henge.Data.Entities;
 
 namespace Henge.Engine.Ruleset
 {
@@ -9,5 +10,6 @@ namespace Henge.Engine.Ruleset
 	{
 		string Name 		{get;}
 		string Ruletype		{get;}
+		int Priority (HengeEntity actor, string interaction)
 	}
 }

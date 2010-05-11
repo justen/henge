@@ -21,5 +21,20 @@ namespace Henge.Data.Entities
 		public virtual String Name { get; set; }
 		
 	    public virtual IList<Statistic> Stats			{get; set;}
+		
+		public virtual Statistic Statistic(string name)
+		{
+			Statistic result = null;
+			foreach (Statistic stat in this.Stats)
+			{
+				if (stat.Attribute.Name == name)
+				{
+					result = stat;
+					break;
+				}
+			}
+			return result;	
+		}
+		
 	}
 }

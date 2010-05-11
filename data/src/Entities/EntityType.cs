@@ -25,11 +25,5 @@ namespace Henge.Data.Entities
 		// many2many
 		public virtual IList<Skill> Skills {get; set;}
 		
-		// many2many
-		public virtual IList<RuleDefinition> ProtagonistRules	{get; set;}
-		// many2many
-		public virtual IList<RuleDefinition> AntagonistRules	{get; set;}
-		// many2many
-		public virtual IList<RuleDefinition> InterferenceRules	{get; set;}
 	}
 }

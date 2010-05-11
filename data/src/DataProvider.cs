@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using System.Collections.Generic;
 
 using NHibernate;
 using NHibernate.Cfg;
@@ -37,12 +38,6 @@ namespace Henge.Data
 			{
 				AutoPersistenceModel map = AutoMap
 					.AssemblyOf<Henge.Data.Entities.Entity>()
-					//.IgnoreBase<HengeEntity>()
-					//.IgnoreBase<PhysicalEntity>()
-					//.IgnoreBase<MapEntity>()
-					//.IgnoreBase<Actor>()
-					//.IgnoreBase<Ruleset>()
-					//.IgnoreBase<Entity>()
 					.Where(t => t.Namespace.EndsWith("Entities"))
 					.Conventions.Setup(c => c.Add<HengeForeignKeyConvention>());
 					//.Override<Role>(k => k.HasManyToMany<Meta>(x => x.Meta).LazyLoad().Table("RoleMeta"));
@@ -174,6 +169,13 @@ namespace Henge.Data
 			return null;			
 		}
 		
+		public ITransaction Transaction
+		{
+			get
+			{
+				return this.GetSession().BeginTransaction();
+			}
+		}		
 
 		public T Get<T>(object id) where T: Entity
 		{
@@ -227,6 +229,7 @@ namespace Henge.Data
 		{
 			return (this.sessionFactory == null) ? null : this.sessionFactory.GetCurrentSession();
 		}
+		
 	}
 
 }

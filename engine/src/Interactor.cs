@@ -38,10 +38,7 @@ namespace Henge.Engine
 		
 		public void Interact(Actor protagonist, HengeEntity antagonist, string Interaction)
 		{
-			//if ((protagonist.HasProtagonistRule(Interaction))&&(antagonist.HasAntagonistRule(Interaction)))
-			//{
-			//	this.Ruleset[protagonist.ProtagonistRule(Interaction)].
-			//}
+	
 		}
 		
 		public void Interact(Actor protagonist, IList<HengeEntity> antagonists, string Interaction)
