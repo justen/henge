@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{A6AA6A68-FC8D-45D5-BD25-F6B194EF15D9}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>Henge.Engine</RootNamespace>
-    <AssemblyName>Henge.Engine</AssemblyName>
+    <ProjectGuid>{7C0D7ED6-6708-4596-B1DA-9F3B048D8C88}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Henge.Rules</RootNamespace>
+    <AssemblyName>Henge.Rules</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -19,7 +19,6 @@
     <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -27,26 +26,21 @@
     <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="src\AssemblyInfo.cs" />
-    <Compile Include="src\Interaction.cs" />
-    <Compile Include="src\Interactor.cs" />
-    <Compile Include="src\Rulebook.cs" />
-  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="src\" />
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\data\Henge.Data.csproj">
-      <Project>{2B345116-71E3-4C8E-BBC1-9354791C7451}</Project>
-      <Name>Henge.Data</Name>
-      <Private>False</Private>
-    </ProjectReference>
+    <Compile Include="src\RuleBundle.cs" />
+    <Compile Include="src\RuleInterface.cs" />
+    <Compile Include="src\Interfaces\IAntagonistRule.cs" />
+    <Compile Include="src\Interfaces\IInterferenceRule.cs" />
+    <Compile Include="src\Interfaces\IProtagonistRule.cs" />
+    <Compile Include="src\Interfaces\IRule.cs" />
+    <Compile Include="src\Rules\BasicRun\BasicRun.cs" />
+    <Compile Include="src\Rules\BasicRun\BasicRunAntagonist.cs" />
+    <Compile Include="src\Rules\BasicRun\BasicRunInterference.cs" />
+    <Compile Include="src\Rules\BasicRun\BasicRunProtagonist.cs" />
   </ItemGroup>
 </Project>

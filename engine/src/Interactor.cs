@@ -10,8 +10,7 @@ namespace Henge.Engine
 
 	public sealed class Interactor
 	{
-		//Dictionary structure: Dictionary<Rulename, Dictionary<Role, IRule>>
-		private Dictionary<string, RuleBundle> Ruleset; 
+		Rulebook Rulebook
 		private Interactor ()
 		{
 		}
