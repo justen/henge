@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using Henge.Data.Entities;
 
-namespace Henge.Engine.Ruleset.Core
+namespace Henge.Rules.Core
 {
 
 
@@ -12,6 +12,7 @@ namespace Henge.Engine.Ruleset.Core
 
 		public BasicRunProtagonist ()
 		{
+			this.ruletype = "protagonist";
 		}
 		
 		public Interaction BeginInteraction(Actor protagonist, IList<HengeEntity> interferers, IList<HengeEntity> antagonists)

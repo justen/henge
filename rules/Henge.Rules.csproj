@@ -6,7 +6,7 @@
     <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{7C0D7ED6-6708-4596-B1DA-9F3B048D8C88}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <RootNamespace>Henge.Rules</RootNamespace>
     <AssemblyName>Henge.Rules</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
@@ -42,5 +42,14 @@
     <Compile Include="src\Rules\BasicRun\BasicRunAntagonist.cs" />
     <Compile Include="src\Rules\BasicRun\BasicRunInterference.cs" />
     <Compile Include="src\Rules\BasicRun\BasicRunProtagonist.cs" />
+    <Compile Include="src\Rulebook.cs" />
+    <Compile Include="src\Ruleset.cs" />
+    <Compile Include="src\Interaction.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\data\Henge.Data.csproj">
+      <Project>{2B345116-71E3-4C8E-BBC1-9354791C7451}</Project>
+      <Name>Henge.Data</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

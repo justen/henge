@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Henge.Engine.Ruleset
+namespace Henge.Rules
 {
 
 

@@ -34,9 +34,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\AssemblyInfo.cs" />
-    <Compile Include="src\Interaction.cs" />
     <Compile Include="src\Interactor.cs" />
-    <Compile Include="src\Rulebook.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />
@@ -47,6 +45,10 @@
       <Project>{2B345116-71E3-4C8E-BBC1-9354791C7451}</Project>
       <Name>Henge.Data</Name>
       <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\rules\Henge.Rules.csproj">
+      <Project>{7C0D7ED6-6708-4596-B1DA-9F3B048D8C88}</Project>
+      <Name>Henge.Rules</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

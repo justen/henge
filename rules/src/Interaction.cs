@@ -4,7 +4,7 @@ using System.Text;
 using System.Collections.Generic;
 using Henge.Data.Entities;
 
-namespace Henge.Engine
+namespace Henge.Rules
 {
 
 	//this will be the transaction buffer for a single interaction

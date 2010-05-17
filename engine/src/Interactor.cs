@@ -1,7 +1,7 @@
 
 using System;
 using System.Collections.Generic;
-using Henge.Engine.Ruleset;
+using Henge.Rules;
 using Henge.Data.Entities;
 
 namespace Henge.Engine
@@ -10,7 +10,7 @@ namespace Henge.Engine
 
 	public sealed class Interactor
 	{
-		Rulebook Rulebook
+		Rulebook Rulebook;
 		private Interactor ()
 		{
 		}

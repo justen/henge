@@ -2,14 +2,13 @@
 using System;
 using Henge.Data.Entities;
 
-namespace Henge.Engine.Ruleset
+namespace Henge.Rules
 {
-
-
 	public interface IRule
 	{
-		string Name 		{get;}
+		string Interaction	{get;}
 		string Ruletype		{get;}
-		int Priority (HengeEntity actor, string interaction)
+		double Priority		{get;}
+		double EvaluatePriority (HengeEntity actor);
 	}
 }

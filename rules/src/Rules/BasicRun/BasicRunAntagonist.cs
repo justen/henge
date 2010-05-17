@@ -2,9 +2,9 @@
 using System;
 using System.Collections.Generic;
 using Henge.Data.Entities;
-using Henge.Engine.Ruleset;
+using Henge.Rules;
 
-namespace Henge.Engine.Ruleset.Core
+namespace Henge.Rules.Core
 {
 
 
@@ -12,7 +12,7 @@ namespace Henge.Engine.Ruleset.Core
 	{
 		public BasicRunAntagonist()
 		{
-			
+			this.ruletype = "antagonist";
 		}
 		
 		public  Interaction ConcludeInteraction(Interaction interaction)
@@ -96,5 +96,6 @@ namespace Henge.Engine.Ruleset.Core
 			}
 				
 		}
+		
 	}
 }

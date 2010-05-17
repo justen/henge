@@ -1,8 +1,8 @@
 
 using System;
-using Henge.Engine.Ruleset;
+using Henge.Rules;
 
-namespace Henge.Engine.Ruleset.Core
+namespace Henge.Rules.Core
 {
 
 
@@ -11,6 +11,7 @@ namespace Henge.Engine.Ruleset.Core
 
 		public BasicRunInterference ()
 		{
+			this.ruletype = "interference";
 		}
 		
 		public Interaction ContinueInteraction(Interaction interaction)
