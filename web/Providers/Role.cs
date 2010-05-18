@@ -27,9 +27,9 @@ namespace Henge.Web.Providers
 		{
 			// Db: Get all roles where "Name" is in rolenames
 			IList<Data.Entities.Role> roles = 
-				HengeApp.dataprovider.CreateCriteria<Data.Entities.Role>().Add(Restrictions.In("Name", rolenames)).List<Data.Entities.Role>();
+				HengeApplication.DataProvider.CreateCriteria<Data.Entities.Role>().Add(Restrictions.In("Name", rolenames)).List<Data.Entities.Role>();
 			// Db: Get all users where "Name" is in usernames
-			IList<User> users = HengeApp.dataprovider.CreateCriteria<User>().Add(Restrictions.In("Name", usernames)).List<User>();
+			IList<User> users = HengeApplication.DataProvider.CreateCriteria<User>().Add(Restrictions.In("Name", usernames)).List<User>();
 			
 			foreach (User user in users)
 			{
@@ -38,7 +38,7 @@ namespace Henge.Web.Providers
 			}
 			
 			// Persist the changes to the database
-			HengeApp.dataprovider.Flush();
+			HengeApplication.DataProvider.Flush();
 		}
 		
 		
@@ -46,7 +46,7 @@ namespace Henge.Web.Providers
 		public override void CreateRole(string rolename)
 		{
 			// Save a new transient role instance to the database			
-			HengeApp.dataprovider.Update(new Data.Entities.Role() { Name = rolename });
+			HengeApplication.DataProvider.Update(new Data.Entities.Role() { Name = rolename });
 		}
 		
 		
@@ -55,13 +55,13 @@ namespace Henge.Web.Providers
 		{
 			bool result = false;			
 			// Db: "SELECT * FROM Role WHERE Name=rolename"
-			Data.Entities.Role role = HengeApp.dataprovider.CreateCriteria<Data.Entities.Role>().Add(Restrictions.Eq("Name", rolename)).UniqueResult<Data.Entities.Role>();
+			Data.Entities.Role role = HengeApplication.DataProvider.CreateCriteria<Data.Entities.Role>().Add(Restrictions.Eq("Name", rolename)).UniqueResult<Data.Entities.Role>();
 			
 			// Check that role exists in the database
 			if (role != null)
 			{
 				// Delete the role and persist the changes
-				HengeApp.dataprovider.Delete(role);
+				HengeApplication.DataProvider.Delete(role);
 				result = true;
 			}
 			
@@ -75,7 +75,7 @@ namespace Henge.Web.Providers
 			List<string> result	= new List<string>();
 			
 			// Db: Get user where "Name" is like usernameToMatch and the user's role list contains roleName
-			IList<User> users = HengeApp.dataprovider.CreateCriteria<User>().Add(Restrictions.Like("Name", usernameToMatch)).CreateCriteria("Roles").Add(Restrictions.Eq("Name", roleName)).List<User>();
+			IList<User> users = HengeApplication.DataProvider.CreateCriteria<User>().Add(Restrictions.Like("Name", usernameToMatch)).CreateCriteria("Roles").Add(Restrictions.Eq("Name", roleName)).List<User>();
 			
 			// For each of the relevant users found in the database, add their name to the list
 			foreach (User user in users) result.Add(user.Name);
@@ -90,7 +90,7 @@ namespace Henge.Web.Providers
 			List<string> result	= new List<string>();
 			
 			// For each role in "SELECT * FROM Role" add the name to the list
-			foreach (Data.Entities.Role role in HengeApp.dataprovider.CreateCriteria<Data.Entities.Role>().List<Data.Entities.Role>()) result.Add(role.Name);
+			foreach (Data.Entities.Role role in HengeApplication.DataProvider.CreateCriteria<Data.Entities.Role>().List<Data.Entities.Role>()) result.Add(role.Name);
 			
 			return result.ToArray();
 		}
@@ -102,7 +102,7 @@ namespace Henge.Web.Providers
 			List<string> result = new List<string>();
 			
 			// Db: "SELECT * FROM User WHERE Name=username", the role list for that user is joined automatically
-			User user = HengeApp.dataprovider.CreateCriteria<User>().Add(Restrictions.Eq("Name", username)).UniqueResult<User>();
+			User user = HengeApplication.DataProvider.CreateCriteria<User>().Add(Restrictions.Eq("Name", username)).UniqueResult<User>();
 			
 			// If the user is found then add each of their roles to the list
 			if (user != null) foreach (Data.Entities.Role role in user.Roles) result.Add(role.Name);
@@ -117,7 +117,7 @@ namespace Henge.Web.Providers
 			List<string> result = new List<string>();
 			
 			// For each user that has a role named rolename, add their name to the list
-			foreach (User user in HengeApp.dataprovider.CreateCriteria<User>().CreateCriteria("Roles").Add(Restrictions.Eq("Name", rolename)).List<User>()) result.Add(user.Name);
+			foreach (User user in HengeApplication.DataProvider.CreateCriteria<User>().CreateCriteria("Roles").Add(Restrictions.Eq("Name", rolename)).List<User>()) result.Add(user.Name);
 			
 			return result.ToArray();	
 		}
@@ -127,7 +127,7 @@ namespace Henge.Web.Providers
 		public override bool IsUserInRole (string username, string rolename)
 		{
 			// If user exists with "Name=username" and has a role with "Name=rolename" return true
-			return HengeApp.dataprovider.CreateCriteria<User>().Add(Restrictions.Eq("Name", username)).CreateCriteria("Roles").Add(Restrictions.Eq("Name", rolename)).UniqueResult<User>() != null;
+			return HengeApplication.DataProvider.CreateCriteria<User>().Add(Restrictions.Eq("Name", username)).CreateCriteria("Roles").Add(Restrictions.Eq("Name", rolename)).UniqueResult<User>() != null;
 		}
 		
 		
@@ -135,9 +135,9 @@ namespace Henge.Web.Providers
 		public override void RemoveUsersFromRoles (string[] usernames, string[] rolenames)
 		{
 			// Db: Get all roles where "Name" is in rolenames
-			IList<Data.Entities.Role> roles = HengeApp.dataprovider.CreateCriteria<Data.Entities.Role>().Add(Restrictions.In("Name", rolenames)).List<Data.Entities.Role>();
+			IList<Data.Entities.Role> roles = HengeApplication.DataProvider.CreateCriteria<Data.Entities.Role>().Add(Restrictions.In("Name", rolenames)).List<Data.Entities.Role>();
 			// Db: Get all users where "Name" is in usernames
-			IList<User> users = HengeApp.dataprovider.CreateCriteria<User>().Add(Restrictions.In("Name", usernames)).List<User>();
+			IList<User> users = HengeApplication.DataProvider.CreateCriteria<User>().Add(Restrictions.In("Name", usernames)).List<User>();
 			
 			foreach (User user in users)
 			{
@@ -145,7 +145,7 @@ namespace Henge.Web.Providers
 				foreach (Data.Entities.Role role in roles) user.Roles.Remove(role);
 			}
 			
-			HengeApp.dataprovider.Flush();
+			HengeApplication.DataProvider.Flush();
 		}
 		
 		
@@ -153,7 +153,7 @@ namespace Henge.Web.Providers
 		public override bool RoleExists (string rolename)
 		{			
 			// Get the role called rolename from the database, if it exists return true
-			return HengeApp.dataprovider.CreateCriteria<Data.Entities.Role>().Add(Restrictions.Eq("Name", rolename)).UniqueResult<Data.Entities.Role>() != null;
+			return HengeApplication.DataProvider.CreateCriteria<Data.Entities.Role>().Add(Restrictions.Eq("Name", rolename)).UniqueResult<Data.Entities.Role>() != null;
 		}
 	}
 }

@@ -38,7 +38,7 @@ namespace Henge.Web.Providers
 		{
 			bool result	= false;
 			
-			User user = HengeApp.dataprovider.CreateCriteria<User>().Add(Restrictions.Eq("Name", name)).UniqueResult<User>();
+			User user = HengeApplication.DataProvider.CreateCriteria<User>().Add(Restrictions.Eq("Name", name)).UniqueResult<User>();
 			
 			if (user != null) 
 			{
@@ -47,7 +47,7 @@ namespace Henge.Web.Providers
 				{
 					// Update the user with the hashed new password and persist the changes
 					user.Password = FormsAuthentication.HashPasswordForStoringInConfigFile(newPwd, "sha1");
-					HengeApp.dataprovider.Flush();
+					HengeApplication.DataProvider.Flush();
 					
 					result = true;
 				}
@@ -64,10 +64,10 @@ namespace Henge.Web.Providers
 			User user = new User() { Name = username, Password = FormsAuthentication.HashPasswordForStoringInConfigFile(password, "sha1") };
 			
 			// Persist the user to the database
-			HengeApp.dataprovider.Update(user);
+			HengeApplication.DataProvider.Update(user);
 			
 			// Refresh the user, should make the object persistent
-			HengeApp.dataprovider.Refresh(user);
+			HengeApplication.DataProvider.Refresh(user);
 			
 			status = MembershipCreateStatus.Success;
 			
@@ -83,13 +83,13 @@ namespace Henge.Web.Providers
 			
 			
 			// Get the user from the database based on name
-			User user = HengeApp.dataprovider.CreateCriteria<User>().Add(Restrictions.Eq("Name", name)).UniqueResult<User>();
+			User user = HengeApplication.DataProvider.CreateCriteria<User>().Add(Restrictions.Eq("Name", name)).UniqueResult<User>();
 			
 			// Check that the user exists
 			if (user != null)
 			{
 				// Delete the user from the database
-				HengeApp.dataprovider.Delete(user);
+				HengeApplication.DataProvider.Delete(user);
 				result = true;
 			}
 			
@@ -101,7 +101,7 @@ namespace Henge.Web.Providers
 		public override MembershipUser GetUser(string name, bool userIsOnline)
 		{
 			// Get the user from the database based on name
-			User user = HengeApp.dataprovider.CreateCriteria<User>().Add(Restrictions.Eq("Name", name)).UniqueResult<User>();
+			User user = HengeApplication.DataProvider.CreateCriteria<User>().Add(Restrictions.Eq("Name", name)).UniqueResult<User>();
 			
 			// If the user exists return a new MembershipUser with most of hte extra values empty or set to Now
 			return (user == null) ? null : new MembershipUser("HengeMembershipProvider", name, user.Id, "", "", "", true, false, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now);
@@ -112,7 +112,7 @@ namespace Henge.Web.Providers
 		public override bool ValidateUser (string name, string password)
 		{
 			// Get the user from the database based on name
-			User user = HengeApp.dataprovider.CreateCriteria<User>().Add(Restrictions.Eq("Name", name)).UniqueResult<User>();
+			User user = HengeApplication.DataProvider.CreateCriteria<User>().Add(Restrictions.Eq("Name", name)).UniqueResult<User>();
 			
 			// If the user exists, return true if the passwords match and false otherwise. If the user does not exist return false.
 			return (user != null) ? FormsAuthentication.HashPasswordForStoringInConfigFile(password, "sha1") == user.Password : false;

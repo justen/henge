@@ -151,7 +151,7 @@ namespace Henge.Data
 		}
 		
 
-		public T UpdateAndRefresh<T>(T entity) where T: Entity
+		public T UpdateAndRefresh<T>(T entity) where T : Entity
 		{
 			ISession session = this.GetSession();
 			
@@ -177,7 +177,8 @@ namespace Henge.Data
 			}
 		}		
 
-		public T Get<T>(object id) where T: Entity
+
+		public T Get<T>(object id) where T : Entity
 		{
 			ISession session = this.GetSession();
 			
@@ -207,16 +208,19 @@ namespace Henge.Data
 		
 		public ICriteria CreateCriteria<T>() where T : Entity
 		{
-			ICriteria result = null;
 			ISession session = this.GetSession();
 			
-			if (session != null) 
-			{
-				result = session.CreateCriteria<T>();
-			}
-			
-			return result;
+			return (session != null) ? session.CreateCriteria<T>() : null;
 		}
+		
+		
+		/*public INHibernateQueryable Linq<T>() where T : Entity
+		{
+			ISession session = this.GetSession();
+
+			//return (session != null) ? session.Linq<T>() : null;
+			return null;
+		}*/
 		
 		
 		public void Flush()

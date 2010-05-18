@@ -1,1 +1,1 @@
-<%@ Application Inherits="Henge.Web.HengeApp" %>
+<%@ Application Inherits="Henge.Web.HengeApplication" %>

@@ -28,7 +28,8 @@ namespace Henge.Web.Controllers
 		protected override void OnActionExecuting(ActionExecutingContext ctx) 
 		{
 		    base.OnActionExecuting(ctx);
-		    db = HengeApp.dataprovider;
+			
+		    this.db = HengeApplication.DataProvider;
 		    	    
 		    // If the user has logged in then add their name to the view data
 		    if (this.User.Identity.IsAuthenticated)
