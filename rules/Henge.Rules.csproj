@@ -45,11 +45,15 @@
     <Compile Include="src\Rulebook.cs" />
     <Compile Include="src\Ruleset.cs" />
     <Compile Include="src\Interaction.cs" />
+    <Compile Include="src\RuleBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\data\Henge.Data.csproj">
       <Project>{2B345116-71E3-4C8E-BBC1-9354791C7451}</Project>
       <Name>Henge.Data</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
   </ItemGroup>
 </Project>

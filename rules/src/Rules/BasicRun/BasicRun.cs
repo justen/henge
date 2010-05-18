@@ -36,20 +36,9 @@ namespace Henge.Rules.Core
 			}
 		}
 		
-		public double Priority
-		{
-			get
-			{
-				return this.priority;
-			}
-			protected set
-			{
-				this.priority = value;
-			}
-		}
-		
+	
 		//this effectively disables all derived rules - override this in specific cases to enable.
-		public double EvaluatePriority (HengeEntity actor)
+		public double Priority (HengeEntity actor)
 		{
 			this.priority = -1.0;	
 			return this.priority;

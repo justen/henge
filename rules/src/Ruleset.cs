@@ -43,16 +43,16 @@ namespace Henge.Rules
 			return result;
 		}
 		
-		public Ruleset(IRule rule, string role)
+		public Ruleset(IRule rule)
 		{
-			this.Add(rule, role);
+			this.Add(rule);
 		}
 			
-		public void Add(IRule rule, string role)
+		public void Add(IRule rule)
 		{
-			if (role=="antagonist") this.antagonist.Add((IAntagonistRule)rule);
-			if (role=="protagonist") this.protagonist.Add((IProtagonistRule)rule);
-			if (role=="interference") this.interference.Add((IInterferenceRule)rule);
+			if (rule is IAntagonistRule) this.antagonist.Add((IAntagonistRule)rule);
+			if (rule is IProtagonistRule) this.protagonist.Add((IProtagonistRule)rule);
+			if (rule is IInterferenceRule) this.interference.Add((IInterferenceRule)rule);
 		}
 		
 		protected IRule BestRule(List<IRule> rules, HengeEntity entity)
@@ -62,9 +62,9 @@ namespace Henge.Rules
 			double newPriority = -1;
 			foreach (IRule candidate in rules)
 			{
-				if (candidate.EvaluatePriority(entity) > priority)
+				if ((newPriority = candidate.Priority(entity)) > priority)
 				{
-					priority = candidate.Priority;
+					priority = newPriority;
 					result = candidate;
 				}
 			}

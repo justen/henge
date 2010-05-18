@@ -12,9 +12,8 @@ namespace Henge.Rules
 	{
       public static Rulebook LoadRules()
         {
-			Rulebook rulebook = new Rulebook();
 			DirectoryInfo info = new DirectoryInfo("rules/");
-
+			List<IRule> rules = new List<IRule>();
 			foreach(FileInfo file in info.GetFiles("*.dll"))
 			{
 				if (!file.Name.Equals("Henge.Rules.dll")) 
@@ -27,19 +26,17 @@ namespace Henge.Rules
 						{
 							if (type.GetInterface("Henge.Rules.IRule") != null)
 							{
-								var rule = (IRule)Activator.CreateInstance(type);
-								
+								IRule rule = (IRule)Activator.CreateInstance(type);
 								if (rule != null)
 								{
-									rulebook.Add(rule, rule.Interaction, rule.Ruletype);
+									rules.Add(rule);
 								}
 							}
 						}
 					}
 				}
 			}
-
-            return rulebook;
+            return new Rulebook(rules);
         }
 	}
 }

@@ -7,8 +7,6 @@ namespace Henge.Rules
 	public interface IRule
 	{
 		string Interaction	{get;}
-		string Ruletype		{get;}
-		double Priority		{get;}
-		double EvaluatePriority (HengeEntity actor);
+		double Priority (HengeEntity actor);
 	}
 }
