@@ -32,8 +32,6 @@
     <Folder Include="src\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\RuleBundle.cs" />
-    <Compile Include="src\RuleInterface.cs" />
     <Compile Include="src\Interfaces\IAntagonistRule.cs" />
     <Compile Include="src\Interfaces\IInterferenceRule.cs" />
     <Compile Include="src\Interfaces\IProtagonistRule.cs" />
@@ -45,7 +43,8 @@
     <Compile Include="src\Rulebook.cs" />
     <Compile Include="src\Ruleset.cs" />
     <Compile Include="src\Interaction.cs" />
-    <Compile Include="src\RuleBase.cs" />
+    <Compile Include="src\Loader.cs" />
+    <Compile Include="src\Rule.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\data\Henge.Data.csproj">

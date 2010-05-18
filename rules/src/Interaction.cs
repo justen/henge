@@ -1,24 +1,32 @@
-
 using System;
 using System.Text;
 using System.Collections.Generic;
+
 using Henge.Data.Entities;
+
 
 namespace Henge.Rules
 {
-
-	//this will be the transaction buffer for a single interaction
+	// This will be the transaction buffer for a single interaction
 	public class Interaction
 	{
 		private Dictionary<string, object> transaction = new Dictionary<string, object>();
-		private bool succeeded = false;
-		private bool illegal = false;
+		
 		private string conclusion;
-		private Actor protagonist = null;
-		private int antagonist = -1;
-		private int interferer = -1;
-		private IList<HengeEntity> antagonists = null;
-		private IList<HengeEntity> interferers = null;
+		private bool succeeded					= false;
+		private bool illegal 					= false;
+		private Actor protagonist				= null;
+		private int antagonist					= -1;
+		private int interferer					= -1;
+		private IList<HengeEntity> antagonists	= null;
+		private IList<HengeEntity> interferers	= null;
+		
+		
+		public Interaction ()
+		{
+			this.conclusion = "";
+		}
+		
 		
 		public Actor Protagonist
 		{
@@ -32,6 +40,7 @@ namespace Henge.Rules
 				this.protagonist = value;
 			}
 		}
+		
 		
 		public HengeEntity Antagonist
 		{
@@ -50,6 +59,7 @@ namespace Henge.Rules
 			}	
 		}
 		
+		
 		public HengeEntity Interferer
 		{
 			get
@@ -66,6 +76,7 @@ namespace Henge.Rules
 				this.interferer = 0;
 			}	
 		}
+		
 		
 		public IList<HengeEntity> Antagonists
 		{
@@ -84,6 +95,7 @@ namespace Henge.Rules
 			}
 		}	
 		
+		
 		public IList<HengeEntity> Interferers
 		{
 			get
@@ -101,6 +113,7 @@ namespace Henge.Rules
 			}
 		}
 		
+		
 		public bool Concluded
 		{
 			get
@@ -109,6 +122,7 @@ namespace Henge.Rules
 			}
 		}
 		
+		
 		public Dictionary<string, object> Transaction
 		{
 			get
@@ -116,16 +130,14 @@ namespace Henge.Rules
 				return this.transaction;	
 			}
 		}
-		public Interaction ()
-		{
-			this.conclusion = "";
-		}
+		
 		
 		public void Succeeded(string message)
 		{
 			this.succeeded = true;
 			this.conclusion = message;
 		}
+		
 		
 		public void Failed (IList<string> failures)
 		{
@@ -139,11 +151,13 @@ namespace Henge.Rules
 			this.conclusion = messenger.ToString();
 		}
 		
+		
 		public void Illegal (string message)
 		{
 			this.illegal = true;
 			this.conclusion = message;		
 		}
+		
 		
 		public bool CycleInterferers()
 		{
@@ -156,6 +170,7 @@ namespace Henge.Rules
 			return result;
 		}
 		
+		
 		public bool ResetInterferers()
 		{
 			if ((this.interferers!=null)&&(this.interferers.Count>0))
@@ -167,6 +182,7 @@ namespace Henge.Rules
 			return false;
 		}	
 		
+		
 		public bool ResetAntagonists()
 		{
 			if ((this.antagonists!=null)&&(this.antagonists.Count>0))
@@ -177,6 +193,7 @@ namespace Henge.Rules
 			this.antagonist = -1;
 			return false;
 		}
+		
 		
 		public bool CycleAntagonists()
 		{

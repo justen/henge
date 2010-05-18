@@ -1,12 +1,13 @@
-
 using System;
 using System.Collections.Generic;
+
 
 namespace Henge.Rules
 {
 	public class Rulebook
 	{
-		private Dictionary<string, Ruleset> rules = new Dictionary<string, Ruleset>();
+		private Dictionary<string, Set> rules = new Dictionary<string, Set>();
+		
 		public Rulebook (List<IRule> rules)
 		{
 			if (rules != null)
@@ -14,8 +15,9 @@ namespace Henge.Rules
 				foreach (IRule rule in rules)
 				{
 					string interaction = rule.Interaction;
-					if (this.rules.ContainsKey(interaction)==false) this.rules.Add(interaction, new Ruleset(rule));
-					else this.rules[interaction].Add(rule);					
+					
+					if (!this.rules.ContainsKey(interaction)) 	this.rules.Add(interaction, new Set(rule));
+					else 										this.rules[interaction].Add(rule);					
 				}
 			}
 		}
