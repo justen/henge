@@ -21,5 +21,10 @@ namespace Henge.Rules
 				}
 			}
 		}
+		
+		public Set Chapter(string interaction)
+		{
+			return rules.ContainsKey(interaction) ? rules[interaction] : null;
+		}
 	}
 }

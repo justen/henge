@@ -28,15 +28,7 @@ namespace Henge.Rules.Antagonist.Move.Run
 					{
 						if ( this.CalculateDistance(interaction.Protagonist.Location, (Location)interaction.Antagonist) < this.CheckSpeed(interaction.Protagonist, interaction))
 						{
-							string failures = this.TestInteraction(interaction, interaction.Protagonist);
-							
-							if (failures == null)
-							{
-								this.ApplyInteraction(interaction, interaction.Protagonist, (Location)interaction.Antagonist);
-								
-								interaction.Success("Moved");	
-							}
-							else interaction.Failure(failures, false);	
+							this.ApplyInteraction(interaction, interaction.Protagonist, (Location)interaction.Antagonist);
 						}
 						else interaction.Failure("Out of range", true);
 					}
@@ -92,14 +84,17 @@ namespace Henge.Rules.Antagonist.Move.Run
 				actor.Location.Inhabitants.Remove((Avatar)actor);
 				actor.Location = target;
 				actor.Location.Inhabitants.Add((Avatar)actor);
+				interaction.Success("Moved");	
 			}
 			else if (actor is Npc)
 			{
 				actor.Location.Fauna.Remove((Npc)actor);
 				actor.Location = target;
 				actor.Location.Fauna.Add((Npc)actor);
+				interaction.Success("Moved");	
 
 			}
+			else interaction.Failure("Antagonist cannot move", true);
 				
 		}
 		

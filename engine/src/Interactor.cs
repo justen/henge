@@ -10,11 +10,12 @@ namespace Henge.Engine
 
 	public sealed class Interactor
 	{
-		Rulebook Rulebook;
+		private Rulebook rulebook;
 		
 		
 		private Interactor ()
 		{
+			this.rulebook = Loader.LoadRules();
 		}
 		
 		
@@ -39,14 +40,14 @@ namespace Henge.Engine
 			internal static readonly Interactor instance = new Interactor();
 		}
 		
-		
-		public void Interact(Actor protagonist, HengeEntity antagonist, string Interaction)
+		//special case when there are no Interferers
+		public void Interact(Actor protagonist, HengeEntity antagonist, string interaction)
 		{
-	
+			Interaction result = this.rulebook.Chapter(interaction).Rule<IAntagonistRule>(antagonist).ConcludeInteraction(this.rulebook.Chapter(interaction).Rule<IProtagonistRule>(protagonist).BeginInteraction(protagonist, antagonist));
 		}
 		
 		
-		public void Interact(Actor protagonist, IList<HengeEntity> antagonists, string Interaction)
+		public void Interact(Actor protagonist, IList<HengeEntity> antagonists, string interaction)
 		{
 			//string protagonistRule = protagonist.GetProtagonistRule(Interaction);
 		}
