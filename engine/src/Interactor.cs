@@ -11,9 +11,12 @@ namespace Henge.Engine
 	public sealed class Interactor
 	{
 		Rulebook Rulebook;
+		
+		
 		private Interactor ()
 		{
 		}
+		
 		
 	    public static Interactor Instance
 	    {
@@ -22,6 +25,7 @@ namespace Henge.Engine
 	            return Internal.instance;
 	        }
 	    }
+		
 		
 		class Internal
 		{
@@ -35,10 +39,12 @@ namespace Henge.Engine
 			internal static readonly Interactor instance = new Interactor();
 		}
 		
+		
 		public void Interact(Actor protagonist, HengeEntity antagonist, string Interaction)
 		{
 	
 		}
+		
 		
 		public void Interact(Actor protagonist, IList<HengeEntity> antagonists, string Interaction)
 		{

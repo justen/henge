@@ -7,203 +7,109 @@ using Henge.Data.Entities;
 
 namespace Henge.Rules
 {
+	public enum Involvement
+	{
+		Protagonist,
+		Antagonist,
+		Interferer
+	}
+	
+	
 	// This will be the transaction buffer for a single interaction
 	public class Interaction
 	{
-		private Dictionary<string, object> transaction = new Dictionary<string, object>();
-		
-		private string conclusion;
-		private bool succeeded					= false;
-		private bool illegal 					= false;
-		private Actor protagonist				= null;
-		private int antagonist					= -1;
-		private int interferer					= -1;
 		private IList<HengeEntity> antagonists	= null;
 		private IList<HengeEntity> interferers	= null;
+
+		public Actor Protagonist						{ get; set; }
+		public string Conclusion						{ get; private set; }
+		public bool Finished							{ get; private set; }
+		public bool Succeeded							{ get; private set; }
+		public bool Illegal								{ get; private set; }
+		public HengeEntity Antagonist					{ get; private set; }
+		public HengeEntity Interferer					{ get; private set; }
+		public Dictionary<string, object> Transaction 	{ get; private set; }
 		
 		
 		public Interaction ()
 		{
-			this.conclusion = "";
+			this.Transaction = new Dictionary<string, object>();
 		}
 		
 		
-		public Actor Protagonist
-		{
-			get
-			{
-				return this.protagonist;
-			}
+		public IList<HengeEntity> Antagonists	
+		{ 
+			get { return this.antagonists; }
 			
 			set
 			{
-				this.protagonist = value;
+				this.antagonists 	= value;
+				this.Antagonist		= (value != null && value.Count > 0) ? value[0] : null;
 			}
 		}
 		
 		
-		public HengeEntity Antagonist
-		{
-			get
-			{
-				if ((this.antagonist>=0) && (this.antagonist<this.antagonists.Count))
-					return this.antagonists[this.antagonist];
-				else return null;
-			}
+		public IList<HengeEntity> Interferers	
+		{ 
+			get { return this.interferers; }
 			
-			set 
-			{
-				this.antagonists = new List<HengeEntity>();
-				this.antagonists.Add(value);
-				this.antagonist = 0;
-			}	
-		}
-		
-		
-		public HengeEntity Interferer
-		{
-			get
-			{
-				if ((this.interferer>=0) && (this.interferer<this.interferers.Count))
-					return this.interferers[this.interferer];
-				else return null;
-			}
-			
-			set 
-			{
-				this.interferers = new List<HengeEntity>();
-				this.interferers.Add(value);
-				this.interferer = 0;
-			}	
-		}
-		
-		
-		public IList<HengeEntity> Antagonists
-		{
-			get
-			{
-				return this.antagonists;
-			}
 			set
 			{
-				this.antagonists = value;
-				if (this.Antagonists != null)
-				{
-					this.antagonist = 0;
-				}
-				else this.antagonist = -1;
-			}
-		}	
-		
-		
-		public IList<HengeEntity> Interferers
-		{
-			get
-			{
-				return this.interferers;
-			}
-			set
-			{
-				this.interferers = value;
-				if (this.interferers != null)
-				{
-					this.interferer = 0;
-				}
-				else this.interferer = -1;
+				this.interferers	= value;
+				this.Interferer		= (value != null && value.Count > 0) ? value[0] : null;
 			}
 		}
 		
 		
-		public bool Concluded
+		public void Success(string message)
 		{
-			get
+			this.Finished	= true;
+			this.Succeeded	= true;
+			this.Illegal	= false;
+			this.Conclusion = message;
+		}
+		
+		
+		public void Failure(string message, bool illegal)
+		{
+			this.Finished	= true;
+			this.Succeeded 	= false;
+			this.Illegal	= illegal;
+			this.Conclusion	= message;
+		}
+		
+		
+		public void Next(Involvement involment)
+		{
+			switch (involment)
 			{
-				return (!this.conclusion.Equals(""));
+				case Involvement.Antagonist:	this.Antagonist = this.Next(this.Antagonist, this.antagonists);		break;
+				case Involvement.Interferer:	this.Interferer	= this.Next(this.Interferer, this.interferers);		break;
 			}
 		}
 		
 		
-		public Dictionary<string, object> Transaction
+		public void Reset(Involvement involment)
 		{
-			get
+			switch (involment)
 			{
-				return this.transaction;	
+				case Involvement.Antagonist:	this.Antagonist = (this.antagonists != null && this.antagonists.Count > 0) ? this.antagonists[0] : null;	break;
+				case Involvement.Interferer:	this.Interferer	= (this.interferers != null && this.interferers.Count > 0) ? this.interferers[0] : null;	break;
 			}
 		}
 		
 		
-		public void Succeeded(string message)
+		private HengeEntity Next(HengeEntity current, IList<HengeEntity> subjects)
 		{
-			this.succeeded = true;
-			this.conclusion = message;
-		}
-		
-		
-		public void Failed (IList<string> failures)
-		{
-			this.succeeded = false;
-			StringBuilder messenger = new StringBuilder(failures[0]);
-			for (int i = 1; i < failures.Count; i++)
+			HengeEntity result = null;
+			
+			if (current != null && subjects != null)
 			{
-				messenger.Append(", ");
-				messenger.Append(failures[i]);
+				int index = subjects.IndexOf(current) + 1;	
+				if (index > 0 && index < subjects.Count) result = subjects[index];
 			}
-			this.conclusion = messenger.ToString();
-		}
-		
-		
-		public void Illegal (string message)
-		{
-			this.illegal = true;
-			this.conclusion = message;		
-		}
-		
-		
-		public bool CycleInterferers()
-		{
-			bool result = false;
-			if ((this.interferer!=-1)&&(this.interferer+1<this.antagonists.Count))
-			{
-				this.interferer++;
-				result = true;
-			}
+			
 			return result;
-		}
-		
-		
-		public bool ResetInterferers()
-		{
-			if ((this.interferers!=null)&&(this.interferers.Count>0))
-			{
-				this.interferer = 0;
-				return true;
-			}
-			this.interferer = -1;
-			return false;
-		}	
-		
-		
-		public bool ResetAntagonists()
-		{
-			if ((this.antagonists!=null)&&(this.antagonists.Count>0))
-			{
-				this.antagonist = 0;
-				return true;
-			}
-			this.antagonist = -1;
-			return false;
-		}
-		
-		
-		public bool CycleAntagonists()
-		{
-			bool result = false;
-			if ((this.antagonist!=-1)&&(this.antagonist+1<this.antagonists.Count))
-			{
-				this.antagonist++;
-				result = true;
-			}
-			return result;			
 		}
 	}
 }

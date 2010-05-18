@@ -31,40 +31,6 @@ namespace Henge.Rules
 		}
 	
 		
-		/*public IAntagonistRule Antagonist(HengeEntity antagonist)
-		{
-			IAntagonistRule result = null;
-			if ((this.antagonist!=null) && (this.antagonist.Count>0))
-			{
-				result = (IAntagonistRule)this.BestRule(this.antagonist, antagonist);	
-			}
-			return result;
-		}
-		
-		
-		public IProtagonistRule Protagonist(Actor protagonist)
-		{
-			IProtagonistRule result = null;
-			if ((this.protagonist!=null) && (this.protagonist.Count>0))
-			{
-				result = (IProtagonistRule)this.BestRule(this.protagonist, (HengeEntity)protagonist);	
-			}
-			return result;
-		}
-		
-		
-		public IInterferenceRule Interference(HengeEntity interferer)
-		{
-			IInterferenceRule result = null;
-			if ((this.interference!=null) && (this.interference.Count>0))
-			{
-				result = (IInterferenceRule)this.BestRule(this.interference, interferer);	
-			}
-			return result;
-		}*/
-
-			
-		
 		public void Add(IRule rule)
 		{
 			if (rule is IAntagonistRule) 		this.antagonist.Add(rule);

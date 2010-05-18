@@ -4,16 +4,14 @@ using System.Collections.Generic;
 using Henge.Data.Entities;
 using Henge.Rules;
 
-namespace Henge.Rules.Core
+namespace Henge.Rules.Antagonist.Move.Run
 {
-
-
-	public class BasicRunAntagonist : BasicRun, IAntagonistRule
+	public class BasicRun : Rule, IAntagonistRule
 	{
-		public BasicRunAntagonist()
+		public BasicRun()
 		{
-			this.ruletype = "antagonist";
 		}
+		
 		
 		public  Interaction ConcludeInteraction(Interaction interaction)
 		{
@@ -22,38 +20,44 @@ namespace Henge.Rules.Core
 			 *  IF (ConditionsMet(protagonist, antagonists, interaction))
 			 *  THEN ApplyChanges (protagonist, antagonists, interaction)
 			 */
-			if (interaction.Antagonists.Count==1)
+			if (interaction.Antagonists.Count == 1)
 			{
-				if (!interaction.Concluded)
+				if (!interaction.Finished)
 				{
 					if ((interaction.Antagonist is Location) && (interaction.Protagonist.Location.Map == ((Location)interaction.Antagonist).Map))
 					{
 						if ( this.CalculateDistance(interaction.Protagonist.Location, (Location)interaction.Antagonist) < this.CheckSpeed(interaction.Protagonist, interaction))
 						{
-							List<string> failures = this.TestInteraction(interaction, interaction.Protagonist);
-							if (failures.Count==0)
+							string failures = this.TestInteraction(interaction, interaction.Protagonist);
+							
+							if (failures == null)
 							{
 								this.ApplyInteraction(interaction, interaction.Protagonist, (Location)interaction.Antagonist);
-								interaction.Succeeded("Moved");	
+								
+								interaction.Success("Moved");	
 							}
-							else interaction.Failed(failures);	
+							else interaction.Failure(failures, false);	
 						}
-						else interaction.Illegal("Out of range");
+						else interaction.Failure("Out of range", true);
 					}
-					else interaction.Illegal("Invalid destination");
+					else interaction.Failure("Invalid destination", true);
 				}
 			}
-			else interaction.Illegal("Multiple targets");
+			else interaction.Failure("Multiple targets", true);
+			
 			return interaction;	
 		}
+		
 		
 		private double CalculateDistance(Location source, Location destination)
 		{
 			int deltaX = source.X - destination.X;
 			int deltaY = source.Y - destination.Y;
 			int deltaZ = source.Z - destination.Z;
+			
 			return Math.Sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 		}
+		
 		
 		private double CheckSpeed(Actor actor, Interaction interaction)
 		{
@@ -71,11 +75,13 @@ namespace Henge.Rules.Core
 			else return -1;
 		}
 		
-		private List<string> TestInteraction (Interaction interaction, Actor actor)
+		
+		private string TestInteraction(Interaction interaction, Actor actor)
 		{
 			//no charge for this interaction at present, so it's always going to be doable
-			return new List<string>();	
+			return null;
 		}
+		
 		
 		private void ApplyInteraction (Interaction interaction, Actor actor, Location target)
 		{
