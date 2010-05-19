@@ -9,6 +9,6 @@ namespace Henge.Rules
 	{
 		string Interaction	{ get; }
 		double Priority(HengeEntity actor);
-		bool Apply(Interaction interaction);
+		Interaction Apply(Interaction interaction);
 	}
 }

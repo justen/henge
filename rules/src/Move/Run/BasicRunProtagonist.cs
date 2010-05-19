@@ -12,29 +12,27 @@ namespace Henge.Rules.Protaganist.Move.Run
 		}
 		
 		
-		public override bool Apply(Interaction interaction)
+		public override Interaction Apply(Interaction interaction)
 		{
 			//structure of this rule is
 			/*
 			 *  IF (ConditionsMet(protagonist, antagonists, interaction))
 			 *  THEN ApplyChanges (protagonist, antagonists, interaction)
 			 */
-			bool result = false;
 			if (!interaction.Finished)
 			{
 				if ((interaction.Antagonist is Location) && (interaction.Protagonist.Location.Map == ((Location)interaction.Antagonist).Map))
 				{
 					if ( this.CalculateDistance(interaction.Protagonist.Location, (Location)interaction.Antagonist) < this.CheckSpeed(interaction.Protagonist, interaction))
 					{
-						result = this.ApplyInteraction(interaction, interaction.Protagonist, (Location)interaction.Antagonist);
+						this.ApplyInteraction(interaction, interaction.Protagonist, (Location)interaction.Antagonist);
 					}
 					else interaction.Failure("Out of range", true);
 				}
 				else interaction.Failure("Invalid destination", true);
 			}
 	
-			
-			return result;	
+			return interaction;
 		}
 		
 		
@@ -72,18 +70,16 @@ namespace Henge.Rules.Protaganist.Move.Run
 		}
 		
 		
-		private bool ApplyInteraction (Interaction interaction, Actor actor, Location target)
+		private void ApplyInteraction (Interaction interaction, Actor actor, Location target)
 		{
 			//we would apply any charges built up in interaction here, but there are none at present so
 			//it's not going to be used.
-			bool result = false;
 			if (actor is Avatar)
 			{
 				actor.Location.Inhabitants.Remove((Avatar)actor);
 				actor.Location = target;
 				actor.Location.Inhabitants.Add((Avatar)actor);
 				interaction.Success("Moved");	
-				result = true;
 			}
 			else if (actor is Npc)
 			{
@@ -91,10 +87,8 @@ namespace Henge.Rules.Protaganist.Move.Run
 				actor.Location = target;
 				actor.Location.Fauna.Add((Npc)actor);
 				interaction.Success("Moved");	
-				result = true;
 			}
 			else interaction.Failure("Antagonist cannot move", true);
-			return result;	
 		}
 		
 	}

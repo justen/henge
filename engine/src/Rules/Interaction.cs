@@ -7,33 +7,26 @@ using Henge.Data.Entities;
 
 namespace Henge.Rules
 {
-	public enum Involvement
-	{
-		Protagonist,
-		Antagonist,
-		Interferer
-	}
-	
-	
 	// This will be the transaction buffer for a single interaction
 	public class Interaction
 	{
 		public IList<HengeEntity> Interferers			{ get; set; }
+		public HengeEntity Subject						{ get; set; }
 		public HengeEntity Antagonist					{ get; set; }
 		public Actor Protagonist						{ get; set; }
 		public string Conclusion						{ get; private set; }
 		public bool Finished							{ get; private set; }
 		public bool Succeeded							{ get; private set; }
 		public bool Illegal								{ get; private set; }
-		public HengeEntity Interferer					{ get; private set; }
 		public Dictionary<string, object> Transaction 	{ get; private set; }
-		public HengeEntity Subject						{ get; set; }
 		
 		
 		public Interaction ()
 		{
-			this.Transaction = new Dictionary<string, object>();
+			this.Transaction 	= new Dictionary<string, object>();
+			this.Interferers	= new List<HengeEntity>();
 		}		
+		
 		
 		public void Success(string message)
 		{
@@ -51,7 +44,5 @@ namespace Henge.Rules
 			this.Illegal	= illegal;
 			this.Conclusion	= message;
 		}
-		
-
 	}
 }

@@ -15,7 +15,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
+    <OutputPath>..\web\bin\rules\</OutputPath>
     <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -23,33 +23,27 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Release</OutputPath>
+    <OutputPath>..\web\bin\rules\</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="src\" />
-    <Folder Include="src\Rules\Move\" />
-    <Folder Include="src\Rules\Move\Run\" />
-    <Folder Include="src\Rules\Base\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\Interfaces\IRule.cs" />
-    <Compile Include="src\Rulebook.cs" />
-    <Compile Include="src\Interaction.cs" />
-    <Compile Include="src\Loader.cs" />
-    <Compile Include="src\Rules\Move\Run\BasicRunProtagonist.cs" />
-    <Compile Include="src\Section.cs" />
-    <Compile Include="src\Rules\Base\Rule.cs" />
-    <Compile Include="src\Rules\Base\AntagonistRule.cs" />
-    <Compile Include="src\Rules\Base\ProtagonistRule.cs" />
-    <Compile Include="src\Rules\Base\InterferenceRule.cs" />
+    <Compile Include="src\Move\Run\BasicRunProtagonist.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\data\Henge.Data.csproj">
       <Project>{2B345116-71E3-4C8E-BBC1-9354791C7451}</Project>
       <Name>Henge.Data</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\engine\Henge.Engine.csproj">
+      <Project>{A6AA6A68-FC8D-45D5-BD25-F6B194EF15D9}</Project>
+      <Name>Henge.Engine</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

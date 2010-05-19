@@ -26,14 +26,15 @@ namespace Henge.Rules
 			return 0;
 		}
 		
-		public virtual bool Apply(Interaction interaction)
-		{
-			return true;	
+		
+		public virtual Interaction Apply(Interaction interaction)
+		{	
+			return interaction;
 		}
+		
 		
 		public Rule()
 		{
-		
 		}
 	}
 }

@@ -8,7 +8,8 @@ namespace Henge.Rules
 	{
 		private Dictionary<string, Section> rules = new Dictionary<string, Section>();
 		
-		public Rulebook (List<IRule> rules)
+		
+		public Rulebook(List<IRule> rules)
 		{
 			if (rules != null)
 			{
@@ -21,6 +22,7 @@ namespace Henge.Rules
 				}
 			}
 		}
+		
 		
 		public Section Section(string interaction)
 		{

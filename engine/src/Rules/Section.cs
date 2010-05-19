@@ -15,24 +15,30 @@ namespace Henge.Rules
 		
 		public Section(IRule rule)
 		{
+			// Add the default rules
 			this.Add(new AntagonistRule());
 			this.Add(new ProtagonistRule());
 			this.Add(new InterferenceRule());
+			
 			this.Add(rule);
 		}
 		
 		
-		public bool ApplyRule<T>(Interaction interaction, HengeEntity subject) where T : IRule
+		public Interaction ApplyRules(Interaction interaction)
 		{
-		   bool result = false;
-		   interaction.Subject = subject;
-		   
-		   if (result is AntagonistRule)    result = this.BestRule(this.antagonist, subject).Apply(interaction);
-		   else if (result is ProtagonistRule)  result = this.BestRule(this.protagonist, subject).Apply(interaction);
-		   else if (result is InterferenceRule) result = this.BestRule(this.interference, subject).Apply(interaction);
-		   
-		   return result;
-
+			if (!this.BestRule(this.antagonist, interaction.Antagonist).Apply(interaction).Finished)
+			{
+				foreach (HengeEntity interferer in interaction.Interferers)
+				{
+					interaction.Subject = interferer;
+					
+					if (this.BestRule(this.interference, interferer).Apply(interaction).Finished) break;
+				}
+				
+				if (!interaction.Finished) this.BestRule(this.protagonist, interaction.Protagonist).Apply(interaction);
+			}
+			
+			return interaction;
 		}
 	
 		
