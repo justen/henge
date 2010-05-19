@@ -6,7 +6,6 @@ namespace Henge.Data.Entities
 	public class Location : HengeEntity
 	{
 	    public virtual IList<Avatar> Inhabitants		{get; set;}
-		public virtual IList<Actor> Stuff               {get; set;}
 		public virtual IList<Edifice> Structures		{get; set;}
 		public virtual IList<Npc> Fauna					{get; set;}
 		public virtual int X							{get; set;}			

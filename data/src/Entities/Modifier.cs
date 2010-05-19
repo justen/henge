@@ -3,8 +3,6 @@ using System.Collections.Generic;
 
 namespace Henge.Data.Entities
 {
-
-
 	public class Modifier : Entity
 	{
 		public virtual string Name {get; set;}

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Henge.Data.Entities
 {
-	public class Actor : MapEntity
+	public abstract class Actor : MapEntity
 	{
 	    public virtual IList<Item> Inventory {get; set;}
 		//"learned" skills - i.e., not common to everything of this type

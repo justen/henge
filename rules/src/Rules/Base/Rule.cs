@@ -21,11 +21,15 @@ namespace Henge.Rules
 		}
 		
 		
-		public double Priority(HengeEntity actor)
+		public virtual double Priority(HengeEntity actor)
 		{
-			return -1.0;
+			return 0;
 		}
 		
+		public virtual bool Apply(Interaction interaction)
+		{
+			return true;	
+		}
 		
 		public Rule()
 		{

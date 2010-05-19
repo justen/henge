@@ -11,45 +11,54 @@ namespace Henge.Engine
 	public sealed class Interactor
 	{
 		private Rulebook rulebook;
+		private static readonly Interactor instance = new Interactor();
 		
-		
-		private Interactor ()
+		static Interactor ()
 		{
-			this.rulebook = Loader.LoadRules();
+
 		}
 		
+		private Interactor()
+		{
+			this.rulebook = Loader.LoadRules();			
+		}
 		
 	    public static Interactor Instance
 	    {
 	        get
 	        {
-	            return Internal.instance;
+	            return instance;
 	        }
 	    }
 		
 		
-		class Internal
-		{
-			// Explicit static constructor to tell C# compiler
-			// not to mark type as beforefieldinit
-			static Internal()
-			{
-				
-			}
-			
-			internal static readonly Interactor instance = new Interactor();
-		}
-		
 		//special case when there are no Interferers
-		public void Interact(Actor protagonist, HengeEntity antagonist, string interaction)
+		public Interaction Interact(Actor protagonist, HengeEntity antagonist, string interaction)
 		{
-			Interaction result = this.rulebook.Chapter(interaction).Rule<IAntagonistRule>(antagonist).ConcludeInteraction(this.rulebook.Chapter(interaction).Rule<IProtagonistRule>(protagonist).BeginInteraction(protagonist, antagonist));
+			Interaction result = new Interaction() {Antagonist = antagonist, Protagonist = protagonist};
+			if (this.rulebook.Section(interaction).ApplyRule<AntagonistRule>(result, antagonist))
+			{
+				this.rulebook.Section(interaction).ApplyRule<ProtagonistRule>(result, protagonist);
+			}
+			return result;
 		}
 		
 		
-		public void Interact(Actor protagonist, IList<HengeEntity> antagonists, string interaction)
+		public Interaction Interact(Actor protagonist, IList<HengeEntity> interferers, HengeEntity antagonist, string interaction)
 		{
-			//string protagonistRule = protagonist.GetProtagonistRule(Interaction);
+			Interaction result = new Interaction() {Antagonist = antagonist, Interferers = interferers, Protagonist = protagonist};
+			Section rules = this.rulebook.Section(interaction);
+			if (rules.ApplyRule<AntagonistRule>(result, antagonist))
+			{
+				bool success = true;
+				foreach (HengeEntity interferer in interferers)
+				{
+					success = rules.ApplyRule<InterferenceRule>(result, interferer);
+					if(!success) break;
+				}
+				if (success) this.rulebook.Section(interaction).ApplyRule<ProtagonistRule>(result, protagonist);
+			}
+			return result;
 		}
 	}
 }

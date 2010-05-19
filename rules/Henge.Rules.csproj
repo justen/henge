@@ -32,20 +32,19 @@
     <Folder Include="src\" />
     <Folder Include="src\Rules\Move\" />
     <Folder Include="src\Rules\Move\Run\" />
+    <Folder Include="src\Rules\Base\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\Interfaces\IAntagonistRule.cs" />
-    <Compile Include="src\Interfaces\IInterferenceRule.cs" />
-    <Compile Include="src\Interfaces\IProtagonistRule.cs" />
     <Compile Include="src\Interfaces\IRule.cs" />
     <Compile Include="src\Rulebook.cs" />
     <Compile Include="src\Interaction.cs" />
     <Compile Include="src\Loader.cs" />
-    <Compile Include="src\Set.cs" />
-    <Compile Include="src\Rule.cs" />
-    <Compile Include="src\Rules\Move\Run\BasicRunAntagonist.cs" />
-    <Compile Include="src\Rules\Move\Run\BasicRunInterference.cs" />
     <Compile Include="src\Rules\Move\Run\BasicRunProtagonist.cs" />
+    <Compile Include="src\Section.cs" />
+    <Compile Include="src\Rules\Base\Rule.cs" />
+    <Compile Include="src\Rules\Base\AntagonistRule.cs" />
+    <Compile Include="src\Rules\Base\ProtagonistRule.cs" />
+    <Compile Include="src\Rules\Base\InterferenceRule.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\data\Henge.Data.csproj">

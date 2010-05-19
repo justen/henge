@@ -4,14 +4,14 @@ using Henge.Rules;
 
 namespace Henge.Rules.Interference.Move.Run
 {
-	public class BasicRun : Rule, IInterferenceRule
+	public class BasicRun : InterferenceRule
 	{
 		public BasicRun()
 		{
 		}
 		
 		
-		public Interaction ContinueInteraction(Interaction interaction)
+		public override Interaction ContinueInteraction(Interaction interaction)
 		{
 			return interaction;	
 		}

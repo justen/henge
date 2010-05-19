@@ -1,13 +1,20 @@
+
 using System;
 using System.Collections.Generic;
-
+	
 using Henge.Data.Entities;
-
 
 namespace Henge.Rules
 {
-	public interface IAntagonistRule : IRule
+
+
+	public class AntagonistRule : Rule
 	{
-		Interaction ConcludeInteraction(Interaction interaction);
+
+		public AntagonistRule ()
+		{
+			
+		}
+		
 	}
 }
