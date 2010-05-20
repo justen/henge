@@ -38,36 +38,43 @@ namespace Henge.Web.Controllers
 		public ActionResult Move(string button)
 		{
 			Actor protagonist		= this.db.Get<Avatar>(this.avatarId);
-			int x = protagonist.Location.X;
-			int y = protagonist.Location.Y;
-			int z = protagonist.Location.Z;
-			if (button.Contains("North"))
+			if (protagonist!=null)
 			{
-				y--;
+				int x = protagonist.Location.X;
+				int y = protagonist.Location.Y;
+				int z = protagonist.Location.Z;
+				if (button.Contains("North"))
+				{
+					y--;
+				}
+				if (button.Contains("South"))
+				{
+					y++;
+				}
+				if (button.Contains("East"))
+				{
+					x++;
+				}
+				if (button.Contains("West"))
+				{
+					x--;
+				}
+				if (button.Contains("Up"))
+				{
+					z++;
+				}
+				if (button.Contains("Down"))
+				{
+					z--;
+				}
+				Location location = this.db.CreateCriteria<Location>().Add(Restrictions.Eq("X", x)).Add(Restrictions.Eq("Y", y)).Add(Restrictions.Eq("Z", z)).Add(Restrictions.Eq("Map", protagonist.Location.Map)).UniqueResult<Location>();
+				Interactor.Instance.Interact(protagonist, location, "Move.Run");
+				this.db.Flush();
 			}
-			if (button.Contains("South"))
+			else
 			{
-				y++;
+				return RedirectToAction ("Account", "User");
 			}
-			if (button.Contains("East"))
-			{
-				x++;
-			}
-			if (button.Contains("West"))
-			{
-				x--;
-			}
-			if (button.Contains("Up"))
-			{
-				z++;
-			}
-			if (button.Contains("Down"))
-			{
-				z--;
-			}
-			Location location = this.db.CreateCriteria<Location>().Add(Restrictions.Eq("X", x)).Add(Restrictions.Eq("Y", y)).Add(Restrictions.Eq("Z", z)).Add(Restrictions.Eq("Map", protagonist.Location.Map)).UniqueResult<Location>();
-			Interactor.Instance.Interact(protagonist, location, "Move.Run");
-			this.db.Flush();
 			
 			return RedirectToAction("Index");
 		}
