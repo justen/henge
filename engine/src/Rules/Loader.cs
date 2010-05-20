@@ -11,14 +11,15 @@ namespace Henge.Rules
 	{
       	public static Rulebook LoadRules()
         {
-			DirectoryInfo info	= new DirectoryInfo("rules/");
+			string path			= Path.Combine("bin", "rules");
+			DirectoryInfo info	= new DirectoryInfo(path);
 			List<IRule> rules	= new List<IRule>();
-			IRule rule;
+
 			foreach(FileInfo file in info.GetFiles("*.dll"))
 			{
 				if (!file.Name.Equals("Henge.Data.dll")) 
 				{	                    
-					Assembly asm = Assembly.LoadFrom(Path.GetFullPath("rules/" + file.Name));
+					Assembly asm = Assembly.LoadFrom(Path.Combine(path, file.Name));
 
                     if (asm != null)
 					{
@@ -26,7 +27,7 @@ namespace Henge.Rules
 						{
 							if (type.GetInterface("Henge.Rules.IRule") != null)
 							{
-								rule = (IRule)Activator.CreateInstance(type);
+								IRule rule = (IRule)Activator.CreateInstance(type);
 								if (rule != null) rules.Add((IRule)rule);
 							}
 						}
