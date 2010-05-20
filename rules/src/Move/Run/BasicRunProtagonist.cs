@@ -63,7 +63,7 @@ namespace Henge.Rules.Protagonist.Move.Run
 				double slow = 0;
 				if (interaction.Transaction.ContainsKey("boostSpeed")) boost = (double)interaction.Transaction["boostSpeed"];
 				if (interaction.Transaction.ContainsKey("reduceSpeed")) slow = (double)interaction.Transaction["reduceSpeed"];
-				return 1;//actor.GetStat("speed") + boost - slow;
+				return 1.5;//actor.GetStat("speed") + boost - slow;
 			}
 			else return -1;
 		}

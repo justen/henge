@@ -23,16 +23,22 @@
 			<form method="post" action="<%= Url.Action("Move") %>" >
 				<dl>
 					<dd class="button">
-						<input type="submit" name="button" id="North" value="North" tabindex="1" />
-					</dd>
-					<dd class="button">
-						<input type="submit" name="button" id="South" value="South" tabindex="2" />
-					</dd>
-					<dd class="button">
-						<input type="submit" name="button" id="East" value="East" tabindex="3" />
+						<input type="submit" name="button" id="NorthWest" value="North West" tabindex="1" />
+						<input type="submit" name="button" id="North" value="North" tabindex="2" />
+						<input type="submit" name="button" id="NorthEast" value="North East" tabindex="3" />
 					</dd>
 					<dd class="button">
 						<input type="submit" name="button" id="West" value="West" tabindex="4" />
+						<input type="submit" name="button" id="Up" value="Up" tabindex="5" />
+						<input type="submit" name="button" id="East" value="East" tabindex="6" />
+					</dd>
+					<dd class="button">
+						<input type="submit" name="button" id="SouthWest" value="South West" tabindex="7" />
+						<input type="submit" name="button" id="South" value="South" tabindex="8" />
+						<input type="submit" name="button" id="SouthEast" value="South East" tabindex="9" />
+					</dd>
+					<dd class="button">
+						<input type="submit" name="button" id="Down" value="Down" tabindex="10" />
 					</dd>
 				</dl>
 			</form>	

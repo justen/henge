@@ -37,9 +37,36 @@ namespace Henge.Web.Controllers
 		[AcceptVerbs(HttpVerbs.Post)]
 		public ActionResult Move(string button)
 		{
-			Actor antagonist		= this.db.Get<Avatar>(this.avatarId);
-			HengeEntity location	= this.db.Get<Location>(6L);
-			Interactor.Instance.Interact(antagonist, location, "Move.Run");
+			Actor protagonist		= this.db.Get<Avatar>(this.avatarId);
+			int x = protagonist.Location.X;
+			int y = protagonist.Location.Y;
+			int z = protagonist.Location.Z;
+			if (button.Contains("North"))
+			{
+				y--;
+			}
+			if (button.Contains("South"))
+			{
+				y++;
+			}
+			if (button.Contains("East"))
+			{
+				x++;
+			}
+			if (button.Contains("West"))
+			{
+				x--;
+			}
+			if (button.Contains("Up"))
+			{
+				z++;
+			}
+			if (button.Contains("Down"))
+			{
+				z--;
+			}
+			Location location = this.db.CreateCriteria<Location>().Add(Restrictions.Eq("X", x)).Add(Restrictions.Eq("Y", y)).Add(Restrictions.Eq("Z", z)).Add(Restrictions.Eq("Map", protagonist.Location.Map)).UniqueResult<Location>();
+			Interactor.Instance.Interact(protagonist, location, "Move.Run");
 			this.db.Flush();
 			
 			return RedirectToAction("Index");
