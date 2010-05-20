@@ -168,7 +168,7 @@ namespace Henge.Web.Controllers
 		[Authorize][AcceptVerbs(HttpVerbs.Post)]
 		public ActionResult ConnectAvatar(long id)
 		{
-			Session.Add("Avatar", id);
+			this.Session.Add("Avatar", id);
 			return RedirectToAction ("", "Game");	
 		}
 		
