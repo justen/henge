@@ -10,6 +10,7 @@ using NHibernate.Criterion;
 using Henge.Web;
 
 
+
 namespace Henge.Web.Controllers
 {
 	/// <summary>
@@ -29,8 +30,7 @@ namespace Henge.Web.Controllers
 		{
 		    base.OnActionExecuting(ctx);
 			
-		    this.db = HengeApplication.DataProvider;
-		    	    
+		    this.db = HengeApplication.DataProvider;	    
 		    // If the user has logged in then add their name to the view data
 		    if (this.User.Identity.IsAuthenticated)
 			{

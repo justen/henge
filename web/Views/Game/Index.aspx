@@ -19,4 +19,23 @@
 			<% } %> and 
 		<% } else { %> is <% } %> <%= Model.Others[Model.Others.Count -1].BaseAppearance.Name %>
 	<% } %>	
+	
+			<form method="post" action="<%= Url.Action("Move") %>" >
+				<dl>
+					<dd class="button">
+						<input type="submit" name="button" id="North" value="North" tabindex="1" />
+					</dd>
+					<dd class="button">
+						<input type="submit" name="button" id="South" value="South" tabindex="2" />
+					</dd>
+					<dd class="button">
+						<input type="submit" name="button" id="East" value="East" tabindex="3" />
+					</dd>
+					<dd class="button">
+						<input type="submit" name="button" id="West" value="West" tabindex="4" />
+					</dd>
+				</dl>
+			</form>	
+	
+
 </asp:Content>

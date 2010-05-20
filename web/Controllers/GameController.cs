@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using System.Web.Mvc.Ajax;
 using Henge.Data.Entities;
 using NHibernate.Criterion;
+using Henge.Engine;
 
 namespace Henge.Web.Controllers
 {
@@ -30,6 +31,14 @@ namespace Henge.Web.Controllers
 		{
 			Avatar avatar = this.db.Get<Avatar>(this.avatarId);
 			return View (new GameViewModel(avatar, this.currentUser.Clan, avatar.Location.Inhabitants.Where(i=> i.Id != avatar.Id).ToList()));
+		}
+		
+		/// <summary>Action to create a new user</summary>
+		[AcceptVerbs(HttpVerbs.Post)]
+		public ActionResult Move(string button)
+		{
+			Interactor.Instance.Interact(this.db.Get<Avatar>(this.avatarId), this.db.Get<Location>((long)12), "Move.Run" );
+			return RedirectToAction("Index");
 		}
 	}	
 }

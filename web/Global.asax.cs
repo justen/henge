@@ -3,13 +3,11 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 
-
 namespace Henge.Web
 {
 	public class HengeApplication : System.Web.HttpApplication
 	{
 		public static Henge.Data.DataProvider DataProvider { get; private set; }
-		
 		
 		public static void RegisterRoutes (RouteCollection routes)
 		{
