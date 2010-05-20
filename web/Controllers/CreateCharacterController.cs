@@ -25,7 +25,7 @@ namespace Henge.Web.Controllers
 			{
 				Location location		= this.db.Get<Location>((long)5);
 				Appearance appearance	= this.db.UpdateAndRefresh<Appearance>(new Appearance { Name = name });
-				Avatar avatar			= this.db.UpdateAndRefresh<Avatar>(new Avatar {Name = name, BaseAppearance = appearance, User  = this.currentUser,  Location = location});
+				Avatar avatar			= this.db.UpdateAndRefresh<Avatar>(new Avatar {Name = name, BaseAppearance = appearance, User  = this.user,  Location = location});
 				//avatar.BaseAppearance = this.db.UpdateAndRefresh(new Appearance {Name = name});
 				location.Inhabitants.Add(avatar);
 				this.db.Flush();	

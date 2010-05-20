@@ -7,8 +7,10 @@ using System.Web.Mvc.Ajax;
 using System.Web.Security;
 using NHibernate;
 using NHibernate.Criterion;
-using Henge.Web;
 
+using Henge.Web;
+using Henge.Data;
+using Henge.Data.Entities;
 
 
 namespace Henge.Web.Controllers
@@ -19,11 +21,10 @@ namespace Henge.Web.Controllers
 	/// </summary>
 	public class MasterController : Controller
 	{	
-		/// <summary>Used to store the current database session for simple access within all inherited controllers.</summary>
-	//	protected ISession db;
-		protected Henge.Data.DataProvider db;
-		protected Henge.Data.Entities.User currentUser;
-		protected long avatarId;
+		protected DataProvider db;
+		protected User user;
+		protected Avatar avatar;
+		
 		
 		// Called before the action in the inherited controller is executed, allowing certain members to be set
 		protected override void OnActionExecuting(ActionExecutingContext ctx) 
@@ -34,18 +35,23 @@ namespace Henge.Web.Controllers
 		    // If the user has logged in then add their name to the view data
 		    if (this.User.Identity.IsAuthenticated)
 			{
-				this.ViewData["User"] = this.User.Identity.Name;
-				long key = (long)Membership.GetUser(false).ProviderUserKey;
-				this.currentUser = this.db.Get<Henge.Data.Entities.User>(key);
-				if (Session["Avatar"]!=null)
-				{
-					this.avatarId = (long)Session["Avatar"];
-				}
+				this.ViewData["User"] 	= this.User.Identity.Name;
+				this.user 				= this.db.Get<User>(Membership.GetUser(false).ProviderUserKey);
+				this.avatar				= (Session["Avatar"] == null) ? null : this.db.Get<Avatar>(Session["Avatar"]);
 			}
 			else
 			{
-				this.currentUser = null;
+				this.user 	= null;
+				this.avatar	= null;
 			}
+		}
+		
+		
+		protected override void OnActionExecuted (ActionExecutedContext filterContext)
+		{
+			this.db.Flush();
+			
+			base.OnActionExecuted (filterContext);
 		}
 
 		

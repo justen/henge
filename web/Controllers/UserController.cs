@@ -41,6 +41,7 @@ namespace Henge.Web.Controllers
 			return View();
 		}
 		
+		
 		/// <summary>Action to attempt user login</summary>
 		public ActionResult Login(string username, string password)
 		{
@@ -67,10 +68,12 @@ namespace Henge.Web.Controllers
 		{
 			// Use forms authentication sessions to logout the user
 			FormsAuthentication.SignOut();
+			this.Session.Remove("user");
 			
 			// Redirect to the index action of this controller
 			return RedirectToAction("Index");
 		}
+		
 		
 		/// <summary>Action to create a new user</summary>
 		[AcceptVerbs(HttpVerbs.Post)]
@@ -91,6 +94,7 @@ namespace Henge.Web.Controllers
 			return RedirectToAction("Index");
 		}
 		
+		
 		/// <summary>
 		///	Action to allow the user to enter new password details for their account.
 		/// The accept verbs filter allows this action to be chosen when there are no
@@ -99,11 +103,7 @@ namespace Henge.Web.Controllers
 		[Authorize][AcceptVerbs(HttpVerbs.Get)]
 		public ActionResult Account()
 		{
-			if (this.currentUser!=null)
-			{
-				return View(new AccountViewModel(this.currentUser.Clan, this.currentUser.Avatars));
-			}
-			else return View();
+			return View(new AccountViewModel(this.user.Clan, this.user.Avatars));
 		}
 		
 		
@@ -136,12 +136,13 @@ namespace Henge.Web.Controllers
 			return View();
 		}
 		
+		
 		[Authorize][AcceptVerbs(HttpVerbs.Post)]
 		public ActionResult Clan(string clan)
 		{
 			if (this.db.CreateCriteria<User>().Add(Restrictions.Eq("Clan", clan)).UniqueResult<User>() == null)
 			{
-				this.currentUser.Clan = clan;
+				this.user.Clan = clan;
 				this.db.Flush();	
 			}
 			else
@@ -151,6 +152,7 @@ namespace Henge.Web.Controllers
 			return RedirectToAction ("Account");
 		}
 
+		
 		[Authorize][AcceptVerbs(HttpVerbs.Post)]
 		public ActionResult DeleteAvatar(long id)
 		{
@@ -162,12 +164,14 @@ namespace Henge.Web.Controllers
 			return RedirectToAction ("Account");	
 		}
 	
+		
 		[Authorize][AcceptVerbs(HttpVerbs.Post)]
 		public ActionResult ConnectAvatar(long id)
 		{
 			Session.Add("Avatar", id);
 			return RedirectToAction ("", "Game");	
 		}
+		
 		
 		[Authorize][AcceptVerbs(HttpVerbs.Post)]
 		public ActionResult CreateAvatar()
