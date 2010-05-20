@@ -15,5 +15,13 @@ namespace Henge.Data.Entities
 	    public virtual IList<Region> Regions			{get; set;}
 	    //the Map this location exists in
 	    public virtual Map Map							{get; set;}
+		
+		
+		public Location()
+		{
+			this.Inhabitants 	= new List<Avatar>();
+			this.Structures		= new List<Edifice>();
+			this.Fauna			= new List<Npc>();
+		}
 	}
 }

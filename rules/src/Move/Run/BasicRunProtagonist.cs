@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Henge.Data.Entities;
 
 
-namespace Henge.Rules.Protaganist.Move.Run
+namespace Henge.Rules.Protagonist.Move.Run
 {
 	public class BasicRun : ProtagonistRule
 	{
@@ -23,7 +23,7 @@ namespace Henge.Rules.Protaganist.Move.Run
 			{
 				if ((interaction.Antagonist is Location) && (interaction.Protagonist.Location.Map == ((Location)interaction.Antagonist).Map))
 				{
-					if ( this.CalculateDistance(interaction.Protagonist.Location, (Location)interaction.Antagonist) < this.CheckSpeed(interaction.Protagonist, interaction))
+					if ( this.CalculateDistance(interaction.Protagonist.Location, (Location)interaction.Antagonist) <= this.CheckSpeed(interaction.Protagonist, interaction))
 					{
 						this.ApplyInteraction(interaction, interaction.Protagonist, (Location)interaction.Antagonist);
 					}
@@ -33,6 +33,12 @@ namespace Henge.Rules.Protaganist.Move.Run
 			}
 	
 			return interaction;
+		}
+		
+		
+		public override double Priority (HengeEntity subject)
+		{
+			return (subject is Actor) ? 1 : -1;
 		}
 		
 		
@@ -57,7 +63,7 @@ namespace Henge.Rules.Protaganist.Move.Run
 				double slow = 0;
 				if (interaction.Transaction.ContainsKey("boostSpeed")) boost = (double)interaction.Transaction["boostSpeed"];
 				if (interaction.Transaction.ContainsKey("reduceSpeed")) slow = (double)interaction.Transaction["reduceSpeed"];
-				return -1;//actor.GetStat("speed") + boost - slow;
+				return 1;//actor.GetStat("speed") + boost - slow;
 			}
 			else return -1;
 		}

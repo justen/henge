@@ -11,22 +11,19 @@ namespace Henge.Rules
 		
 		public Rulebook(List<IRule> rules)
 		{
-			if (rules != null)
+			foreach (IRule rule in rules)
 			{
-				foreach (IRule rule in rules)
-				{
-					string interaction = rule.Interaction;
-					
-					if (!this.rules.ContainsKey(interaction)) 	this.rules.Add(interaction, new Section(rule));
-					else 										this.rules[interaction].Add(rule);					
-				}
+				string interaction = rule.Interaction;
+				
+				if (!this.rules.ContainsKey(interaction)) 	this.rules.Add(interaction, new Section(rule));
+				else 										this.rules[interaction].Add(rule);					
 			}
 		}
 		
 		
 		public Section Section(string interaction)
 		{
-			return rules.ContainsKey(interaction) ? rules[interaction] : null;
+			return this.rules.ContainsKey(interaction) ? this.rules[interaction] : null;
 		}
 	}
 }

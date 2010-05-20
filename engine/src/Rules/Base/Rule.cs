@@ -16,12 +16,12 @@ namespace Henge.Rules
 			{
 				Match match = regex.Match(this.GetType().Namespace);
 				
-				return match.Success ? match.Result("interaction") : "Undefined";
+				return match.Success ? match.Result("${interaction}") : "Undefined";
 			}
 		}
 		
 		
-		public virtual double Priority(HengeEntity actor)
+		public virtual double Priority(HengeEntity subject)
 		{
 			return 0;
 		}

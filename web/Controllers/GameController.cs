@@ -37,7 +37,11 @@ namespace Henge.Web.Controllers
 		[AcceptVerbs(HttpVerbs.Post)]
 		public ActionResult Move(string button)
 		{
-			Interactor.Instance.Interact(this.db.Get<Avatar>(this.avatarId), this.db.Get<Location>((long)12), "Move.Run" );
+			Actor antagonist		= this.db.Get<Avatar>(this.avatarId);
+			HengeEntity location	= this.db.Get<Location>(6L);
+			Interactor.Instance.Interact(antagonist, location, "Move.Run");
+			this.db.Flush();
+			
 			return RedirectToAction("Index");
 		}
 	}	
