@@ -116,7 +116,8 @@ var giCanvas = new Class(
 		this.visible.length = 0;
 		
 		
-		var x, y, dx, dy, opacity, tile;
+		var x, y, dx, dy, opacity, tile, i=0;
+		var queue = new Array();
 	
 		for (y=startY; y<=endY; y++)
 		{
@@ -142,16 +143,18 @@ var giCanvas = new Class(
 						{
 							this.tiles[y][x] = tile = new giTile(this.canvas, x, y, opacity);
 	
-							request.getTileData(x, y, tile.bound.handleData);
+							queue[i++] = { x: x, y: y, tile: tile };
+							//request.getTileData(x, y, tile.bound.handleData);
 						}
 	
 						tile.show(opacity);
 						this.visible.push(tile);
 					}
 				}
-			}
+			}	
 		}
-			
+		
+		if (queue.length > 0) request.getTileData(queue);	
 
 		/* Old PHP ajax code
 			var requiredData = '';

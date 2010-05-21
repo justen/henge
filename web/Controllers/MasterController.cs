@@ -31,19 +31,22 @@ namespace Henge.Web.Controllers
 		{
 		    base.OnActionExecuting(ctx);
 			
-		    this.db = HengeApplication.DataProvider;	    
+		    this.db = HengeApplication.DataProvider;
+			
 		    // If the user has logged in then add their name to the view data
 		    if (this.User.Identity.IsAuthenticated)
 			{
 				this.ViewData["User"] 	= this.User.Identity.Name;
 				this.user 				= this.db.Get<User>(Membership.GetUser(false).ProviderUserKey);
-				this.avatar				= (Session["Avatar"] == null) ? null : this.db.Get<Avatar>(Session["Avatar"]);
+				this.avatar				= (this.Session["Avatar"] == null) ? null : this.db.Get<Avatar>(this.Session["Avatar"]);
 			}
 			else
 			{
 				this.user 	= null;
 				this.avatar	= null;
 			}
+			
+			//Console.WriteLine(this.Request.RawUrl + " : " + this.Session.SessionID + " : " + this.Session.IsNewSession);
 		}
 		
 		

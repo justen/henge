@@ -16,10 +16,10 @@ var giTile = new Class(
 		this.type 		= -1;
 		var colour = [Math.floor(Math.random() * 255), Math.floor(Math.random() * 255), Math.floor(Math.random() * 255)].rgbToHex();
 		
-		this.bound = {
+		/*this.bound = {
 			handleData:		this.handleData.bind(this),
 			handleUpdate:	this.handleUpdate.bind(this)
-		};
+		};*/
 
 
 		this.tile = new Element('div', {
