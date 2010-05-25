@@ -70,6 +70,8 @@
     <Compile Include="src\Entities\Skill.cs" />
     <Compile Include="src\Entities\Statistic.cs" />
     <Compile Include="src\Entities\User.cs" />
+    <Compile Include="src\Entities\Group.cs" />
+    <Compile Include="src\Entities\GroupRole.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />
