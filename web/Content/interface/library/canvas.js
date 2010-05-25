@@ -143,7 +143,7 @@ var giCanvas = new Class(
 						{
 							this.tiles[y][x] = tile = new giTile(this.canvas, x, y, opacity);
 	
-							queue[i++] = { x: x, y: y, tile: tile };
+							queue[i++] = tile;
 							//request.getTileData(x, y, tile.bound.handleData);
 						}
 	

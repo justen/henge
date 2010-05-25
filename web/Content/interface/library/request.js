@@ -29,11 +29,11 @@ var giRequest = new Class(
 	getTileData: function(queue)
 	{
 		new Request.JSON({
-			url:	'/Map/Tile',
-			data:	queue.map(function(item) { return 'x=' + item.x + '&y=' + item.y }).join('&'),
+			url:		'/Map/Tile',
+			data:		queue.map(function(item) { return 'x=' + item.x + '&y=' + item.y }).join('&'),
 			onSuccess:	function(data)
 			{
-				if (data.length == queue.length) data.each(function(item, index) { queue[index].tile.handleData(item) });
+				if (data.length == queue.length) data.each(function(item, index) { queue[index].handleData(item) });
 			}
 		}).send();
 	}
