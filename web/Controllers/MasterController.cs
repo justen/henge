@@ -32,7 +32,7 @@ namespace Henge.Web.Controllers
 		    base.OnActionExecuting(ctx);
 			
 		    this.db = HengeApplication.DataProvider;
-			if ( this.db==null ) throw new Exception("No dataprovider");
+			
 		    // If the user has logged in then add their name to the view data
 		    if (this.User.Identity.IsAuthenticated)
 			{
