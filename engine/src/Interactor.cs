@@ -16,11 +16,12 @@ namespace Henge.Engine
 		
 		
 		static Interactor () {}
+		private Interactor() {}
 		
 		
-		private Interactor()
+		public void Initialise(string applicationPath)
 		{
-			this.rulebook = Loader.LoadRules();			
+			this.rulebook = Loader.LoadRules(applicationPath);
 		}
 		
 

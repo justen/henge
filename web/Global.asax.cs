@@ -1,7 +1,9 @@
 using System;
+using System.IO;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+
 
 namespace Henge.Web
 {
@@ -21,6 +23,7 @@ namespace Henge.Web
 			DataProvider = new Henge.Data.DataProvider();
 			DataProvider.Initialise("mysql","Server=localhost;Uid=henge;Pwd=henge;Database=henge" , true);
 			DataProvider.UpdateSchema();
+			Henge.Engine.Interactor.Instance.Initialise(Path.Combine(Request.PhysicalApplicationPath, "bin"));
 			RegisterRoutes (RouteTable.Routes);
 		}
 		

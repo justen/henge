@@ -9,9 +9,9 @@ namespace Henge.Rules
 {
 	public class Loader
 	{
-      	public static Rulebook LoadRules()
-        {
-			string path			= Path.Combine("bin", "rules");
+      	public static Rulebook LoadRules(string applicationPath)
+        {			
+			string path			= Path.Combine(applicationPath, "rules");
 			DirectoryInfo info	= new DirectoryInfo(path);
 			List<IRule> rules	= new List<IRule>();
 
