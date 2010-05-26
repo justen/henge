@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using FluentNHibernate.Mapping;
-
 
 namespace Henge.Data.Entities
 {
@@ -16,19 +14,5 @@ namespace Henge.Data.Entities
 		public virtual IList<Role> Roles		{get; set;}
 		public virtual string Password			{get; set;}	
 		public virtual string Clan				{get; set;}
-	}
-	
-	
-	public class UserMap : SubclassMap<User>
-	{
-		public UserMap()
-		{
-			Map(x => x.Name);
-			Map(x => x.Password);
-			Map(x => x.Enabled);
-			
-			//HasManyToMany
-			
-		}
 	}
 }
