@@ -29,7 +29,7 @@ var giRequest = new Class(
 	getTileData: function(queue)
 	{
 		new Request.JSON({
-			url:		'/Map/Tile',
+			url:		root + 'Map/Tile',
 			data:		queue.map(function(item) { return 'x=' + item.x + '&y=' + item.y }).join('&'),
 			onSuccess:	function(data)
 			{

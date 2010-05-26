@@ -11,7 +11,7 @@
 		<link href="<%= Url.Content("~/Content/styles/screen.css") %>" rel="stylesheet" type="text/css" media="screen" />
 		<script type="text/javascript" src="<%= Url.Content("~/Content/scripts/mootools.js") %>"></script>
 		<script type="text/javascript" src="<%= Url.Content("~/Content/scripts/mootools-more.js") %>"></script>
-		<script type="text/javascript">var root = "<%= Url.Content("~/Content/") %>";</script>
+		<script type="text/javascript">var root = "<%= Url.Content("~/") %>";</script>
 	</head>
 	<body>
 		<div id="header">

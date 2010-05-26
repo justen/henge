@@ -9,12 +9,12 @@
 var map 	= null;
 var request = null;
 
-new Asset.css(root + '/interface/styles/map.css');
-new Asset.javascript(root + '/interface/library/library.js');
-new Asset.javascript(root + '/interface/library/request.js');
-new Asset.javascript(root + '/interface/library/tile.js');
-new Asset.javascript(root + '/interface/library/canvas.js');
-new Asset.javascript(root + '/interface/library/map.js');
+new Asset.css(root + 'Content/interface/styles/map.css');
+new Asset.javascript(root + 'Content/interface/library/library.js');
+new Asset.javascript(root + 'Content/interface/library/request.js');
+new Asset.javascript(root + 'Content/interface/library/tile.js');
+new Asset.javascript(root + 'Content/interface/library/canvas.js');
+new Asset.javascript(root + 'Content/interface/library/map.js');
 
 function boot()
 {

@@ -11,8 +11,7 @@ namespace Henge.Rules
 	{
       	public static Rulebook LoadRules()
         {
-			string path 		= Path.Combine(".", "bin");
-			path			= Path.Combine(path, "rules");
+			string path			= Path.Combine("bin", "rules");
 			DirectoryInfo info	= new DirectoryInfo(path);
 			List<IRule> rules	= new List<IRule>();
 
