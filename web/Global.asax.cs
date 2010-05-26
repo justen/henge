@@ -23,7 +23,7 @@ namespace Henge.Web
 			DataProvider = new Henge.Data.DataProvider();
 			DataProvider.Initialise("mysql","Server=localhost;Uid=henge;Pwd=henge;Database=henge" , true);
 			DataProvider.UpdateSchema();
-			Henge.Engine.Interactor.Instance.Initialise(Path.Combine(Request.PhysicalApplicationPath, "bin"));
+			Henge.Engine.Interactor.Instance.Initialise(Path.Combine(Server.MapPath("~"), "bin"));
 			RegisterRoutes (RouteTable.Routes);
 		}
 		
