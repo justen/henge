@@ -8,11 +8,13 @@ using NHibernate.Cfg;
 using NHibernate.Context;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
-using FluentNHibernate.Automapping;
+//using FluentNHibernate.Automapping;
+using FluentNHibernate.Mapping;
 using FluentNHibernate.Conventions;
 using NHibernate.Tool.hbm2ddl;
 
 using Henge.Data.Entities;
+
 
 namespace Henge.Data
 {
@@ -23,6 +25,7 @@ namespace Henge.Data
 			return (property == null) ? type.Name + "Id" : property.Name + "Id";
 		}
 	}
+	
 
 	public class DataProvider
 	{
@@ -36,16 +39,15 @@ namespace Henge.Data
 			string context = web?"web":"thread_static";
 			if (this.sessionFactory == null)
 			{
-				AutoPersistenceModel map = AutoMap
+				/*AutoPersistenceModel map = AutoMap
 					.AssemblyOf<Henge.Data.Entities.Entity>()
 					.Where(t => t.Namespace.EndsWith("Entities"))
-					.Conventions.Setup(c => c.Add<HengeForeignKeyConvention>());
+					.Conventions.Setup(c => c.Add<HengeForeignKeyConvention>());*/
 					//.Override<Role>(k => k.HasManyToMany<Meta>(x => x.Meta).LazyLoad().Table("RoleMeta"));
-
 				
 				this.configuration = Fluently.Configure()
 					.Database(this.GetConfiguration(storageType, connectionString))
-					.Mappings(m => m.AutoMappings.Add(map))
+					.Mappings(m => m.FluentMappings.AddFromAssemblyOf<Entity>().Conventions.Setup(c => c.Add<HengeForeignKeyConvention>()))
 					.ExposeConfiguration(c => c.Properties.Add("hbm2ddl.keywords", "none"))
 					.ExposeConfiguration(x => x.SetProperty("current_session_context_class", context))
 					.BuildConfiguration();
