@@ -14,16 +14,18 @@ using NHibernate.Tool.hbm2ddl;
 
 using Henge.Data.Entities;
 
+
 namespace Henge.Data
 {
 	internal class HengeForeignKeyConvention : ForeignKeyConvention
 	{
-		protected override string GetKeyName(PropertyInfo property, Type type)
+		protected override string GetKeyName (FluentNHibernate.Member property, Type type)
 		{
 			return (property == null) ? type.Name + "Id" : property.Name + "Id";
 		}
 	}
 
+	
 	public class DataProvider
 	{
 		private ISessionFactory sessionFactory	= null;
