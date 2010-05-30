@@ -8,7 +8,7 @@
     <ProjectGuid>{2B345116-71E3-4C8E-BBC1-9354791C7451}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>Henge.Data</RootNamespace>
-    <AssemblyName>HengeData</AssemblyName>
+    <AssemblyName>Henge.Data</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -20,6 +20,11 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="AfterBuild" command="mono Db4oTool.exe -v -collections -tp -by-name:Henge.Data.Entities ${TargetDir}/${TargetName}" workingdir="${SolutionDir}/references" />
+      </CustomCommands>
+    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -28,18 +33,27 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="AfterBuild" command="mono Db4oTool.exe -v -collections -tp -by-name:Henge.Data.Entities ${TargetDir}/${TargetName}" workingdir="${SolutionDir}/references" />
+      </CustomCommands>
+    </CustomCommands>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="NHibernate, Version=2.1.2.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4">
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="Db4objects.Db4o.CS, Version=7.13.144.14312, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\references\NHibernate.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\references\Db4objects.Db4o.CS.dll</HintPath>
     </Reference>
-    <Reference Include="FluentNHibernate, Version=1.0.0.593, Culture=neutral, PublicKeyToken=8aa435e3cb308880">
+    <Reference Include="Db4objects.Db4o, Version=7.13.144.14312, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\references\FluentNHibernate.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\references\Db4objects.Db4o.dll</HintPath>
+    </Reference>
+    <Reference Include="Db4objects.Db4o.Linq, Version=7.13.144.14312, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\references\Db4objects.Db4o.Linq.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -66,15 +80,21 @@
     <Compile Include="src\Entities\PhysicalEntity.cs" />
     <Compile Include="src\Entities\Prerequisite.cs" />
     <Compile Include="src\Entities\Region.cs" />
-    <Compile Include="src\Entities\Role.cs" />
     <Compile Include="src\Entities\Skill.cs" />
     <Compile Include="src\Entities\Statistic.cs" />
     <Compile Include="src\Entities\User.cs" />
     <Compile Include="src\Entities\Group.cs" />
     <Compile Include="src\Entities\GroupRole.cs" />
+    <Compile Include="src\Entities\Sets\StatisticSet.cs" />
+    <Compile Include="src\Context\IContext.cs" />
+    <Compile Include="src\Context\ThreadContext.cs" />
+    <Compile Include="src\Context\WebContext.cs" />
+    <Compile Include="src\Indexing.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />
+    <Folder Include="src\Entities\Sets\" />
+    <Folder Include="src\Context\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

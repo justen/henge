@@ -29,18 +29,19 @@
 					</dl>
 				</form>
 			<table class="main">
+			<% int i=0; %>
 			<% foreach (var avatar in Model.Avatars) { %>
 				<tr>
 					<form method="post" action="<%= Url.Action("ConnectAvatar") %>" >
 						<td><%= avatar.BaseAppearance.Name %></td>
 						<td>
-							<input type="hidden" name="id" id="id" value="<%= avatar.Id %>"/>
+							<input type="hidden" name="index" id="index" value="<%= i %>"/>
 							<input type="submit" name="submit" id="submit" value="Connect"/>
 						</td>
 					</form>
 					<form method="post" action="<%= Url.Action("DeleteAvatar") %>" >
 						<td>
-							<input type="hidden" name="id" id="id" value="<%= avatar.Id %>"/>
+							<input type="hidden" name="index" id="index" value="<%= i++ %>"/>
 							<input type="submit" name="submit" id="submit" value="Delete"/>
 						</td>
 					</form>

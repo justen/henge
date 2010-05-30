@@ -20,9 +20,13 @@ namespace Henge.Web
 		
 		protected void Application_Start ()
 		{
+			string path = Path.Combine(Server.MapPath("~"), "bin/db");
+			if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+			
 			DataProvider = new Henge.Data.DataProvider();
-			DataProvider.Initialise("mysql","Server=localhost;Uid=henge;Pwd=henge;Database=henge" , true);
-			DataProvider.UpdateSchema();
+			DataProvider.Initialise(Path.Combine(path, "henge.yap"), true);
+			
+			//DataProvider.UpdateSchema();
 			Henge.Engine.Interactor.Instance.Initialise(Path.Combine(Server.MapPath("~"), "bin"));
 			RegisterRoutes (RouteTable.Routes);
 		}
@@ -31,8 +35,6 @@ namespace Henge.Web
 		/// <summary>This is called at the beginning of each web request and represents a single user session.</summary>
 		protected void Application_BeginRequest()
 		{
-			// Start new a NHibernate session. Sessions are lightweight and taken from a pool, but they are
-			// not thread safe, so a session must be created for each concurrent web request.
 			DataProvider.RegisterContext();
 		}
 		
@@ -40,9 +42,6 @@ namespace Henge.Web
 		/// <summary>This is called at the end of each web request.</summary>
 		protected void Application_EndRequest()
 		{
-			// Unbind the NHibernate session from the thread. This returns the session to the pool, allowing it
-			// to be re-used by later web requests.
-			// No need to close the session as it is already automatically closed at this point
 			DataProvider.ReleaseContext();
 		}
 		

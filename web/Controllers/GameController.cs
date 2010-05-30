@@ -4,9 +4,10 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Mvc.Ajax;
+
 using Henge.Data.Entities;
-using NHibernate.Criterion;
 using Henge.Engine;
+
 
 namespace Henge.Web.Controllers
 {
@@ -29,7 +30,12 @@ namespace Henge.Web.Controllers
 	{
 		public ActionResult Index ()
 		{
-			return View (new GameViewModel(this.avatar, this.user.Clan, this.avatar.Location.Inhabitants.Where(i=> i.Id != this.avatar.Id).ToList()));
+			if (this.avatar != null) 
+			{
+				return View (new GameViewModel(this.avatar, this.user.Clan, this.avatar.Location.Inhabitants.Where(i=> i.Name != this.avatar.Name).ToList()));
+			}
+			
+			return RedirectToAction("Account", "User");
 		}
 		
 		/// <summary>Action to create a new user</summary>
@@ -49,14 +55,18 @@ namespace Henge.Web.Controllers
 				if (button.Contains("Up"))		z++;
 				if (button.Contains("Down"))	z--;
 				
-				Location location = this.db.CreateCriteria<Location>()
+				/*Location location = this.db.CreateCriteria<Location>()
 					.Add(Restrictions.Eq("X", x))
 					.Add(Restrictions.Eq("Y", y))
 					.Add(Restrictions.Eq("Z", z))
 					.Add(Restrictions.Eq("Map", this.avatar.Location.Map))
-					.UniqueResult<Location>();
+					.UniqueResult<Location>();*/
 				
-				Interactor.Instance.Interact(this.avatar, location, "Move.Run");
+				Location location =	(from l in this.db.Query<Location>()
+									 where l.X == x && l.Y == y && l.Z == z && l.Map == this.avatar.Location.Map
+									 select l).SingleOrDefault();
+				
+				if (location != null) Interactor.Instance.Interact(this.avatar, location, "Move.Run");
 				
 				return RedirectToAction("Index");
 			}

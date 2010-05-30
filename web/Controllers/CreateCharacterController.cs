@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Mvc.Ajax;
 using Henge.Data.Entities;
-using NHibernate.Criterion;
+
 
 namespace Henge.Web.Controllers
 {
@@ -21,13 +21,14 @@ namespace Henge.Web.Controllers
 		[AcceptVerbs(HttpVerbs.Post)]
 		public ActionResult Create(string name)
 		{
-			if (this.db.CreateCriteria<Avatar>().CreateAlias("BaseAppearance", "A").Add(Restrictions.Eq("A.Name", name)).UniqueResult<Avatar>() == null)
+			//if (this.db.CreateCriteria<Avatar>().CreateAlias("BaseAppearance", "A").Add(Restrictions.Eq("A.Name", name)).UniqueResult<Avatar>() == null)
+			if ( (from a in this.db.Query<Avatar>() where a.Name == name select true).Count() == 0 )
 			{
-				Location location		= this.db.Get<Location>((long)5);
-				Appearance appearance	= this.db.UpdateAndRefresh<Appearance>(new Appearance { Name = name });
-				Avatar avatar			= this.db.UpdateAndRefresh<Avatar>(new Avatar {Name = name, BaseAppearance = appearance, User  = this.user,  Location = location});
+				//Location location		= this.db.Get<Location>((long)5);
+				Avatar avatar			= this.db.Store<Avatar>(new Avatar {Name = name, BaseAppearance = new Appearance { Name = name }, User  = this.user,  Location = null/*location*/});
 				//avatar.BaseAppearance = this.db.UpdateAndRefresh(new Appearance {Name = name});
-				location.Inhabitants.Add(avatar);
+				this.user.Avatars.Add(avatar);
+				//location.Inhabitants.Add(avatar);
 				this.db.Flush();	
 				return RedirectToAction("Account", "User");
 			}

@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
+
 
 namespace Henge.Data.Entities
 {
@@ -20,11 +22,19 @@ namespace Henge.Data.Entities
 		
 		public virtual String Name { get; set; }
 		
-	    public virtual IList<Statistic> Stats			{get; set;}
+		public virtual IList<Statistic> Statistics { get; set; }
+	    //public virtual StatisticSet StatisticSet { get; set; }
+		
+		
+		public HengeEntity()
+		{
+			this.Statistics = new List<Statistic>();
+		}
+		
 		
 		public virtual Statistic Statistic(string name)
 		{
-			Statistic result = null;
+			/*Statistic result = null;
 			foreach (Statistic stat in this.Stats)
 			{
 				if (stat.Attribute.Name == name)
@@ -32,8 +42,10 @@ namespace Henge.Data.Entities
 					result = stat;
 					break;
 				}
-			}
-			return result;	
+			}*/
+			
+			//return this.StatisticSet.Statistics.Where(s => s.Attribute.Name == name).SingleOrDefault();
+			return this.Statistics.Where(s => s.Attribute.Name == name).SingleOrDefault();
 		}
 		
 	}

@@ -5,9 +5,8 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Mvc.Ajax;
 using System.Web.Security;
-using NHibernate.Criterion;
-using Henge.Data.Entities;
 
+using Henge.Data.Entities;
 
 
 namespace Henge.Web.Controllers
@@ -83,9 +82,8 @@ namespace Henge.Web.Controllers
 			if (name.Length > 0 && password.Length > 0 && password == passwordRepeat)
 			{
 				// Save a new user to the database, simply by creating a new transient User object and passing it to nhibernate
-				this.db.Update(new User { Name = name, Clan = name, Password = FormsAuthentication.HashPasswordForStoringInConfigFile(password, "sha1") });
-				this.db.Flush();	
-				
+				//this.db.Update(new User { Name = name, Clan = name, Password = FormsAuthentication.HashPasswordForStoringInConfigFile(password, "sha1") });
+				this.db.Store(new User { Name = name, Clan = name, Password = FormsAuthentication.HashPasswordForStoringInConfigFile(password, "sha1") });
 				this.SetMessage("User added successfully");
 			}
 			else this.SetError("Please fill in all details and ensure the passwords match");
@@ -140,7 +138,8 @@ namespace Henge.Web.Controllers
 		[Authorize][AcceptVerbs(HttpVerbs.Post)]
 		public ActionResult Clan(string clan)
 		{
-			if (this.db.CreateCriteria<User>().Add(Restrictions.Eq("Clan", clan)).UniqueResult<User>() == null)
+			//if (this.db.CreateCriteria<User>().Add(Restrictions.Eq("Clan", clan)).UniqueResult<User>() == null)
+			if ( (from u in this.db.Query<User>() where u.Clan == clan select true).Count() == 0 )
 			{
 				this.user.Clan = clan;
 				this.db.Flush();	
@@ -154,21 +153,37 @@ namespace Henge.Web.Controllers
 
 		
 		[Authorize][AcceptVerbs(HttpVerbs.Post)]
-		public ActionResult DeleteAvatar(long id)
+		public ActionResult DeleteAvatar(int index)
 		{
-			Avatar avatar = this.db.Get<Avatar>(id);
-			avatar.Location.Inhabitants.Remove(avatar);
-			this.db.Delete(avatar);
-			this.db.Delete(avatar.BaseAppearance);
-			this.db.Flush();
+			/*Avatar avatar = this.db.Get<Avatar>(id);
+			
+			if (avatar != null)
+			{
+				avatar.Location.Inhabitants.Remove(avatar);
+				
+				this.db.Delete(new Entity [] { avatar.BaseAppearance, avatar });
+				//this.db.Delete(avatar);
+				//this.db.Delete(avatar.BaseAppearance);
+			}*/
+			
+			Avatar avatar = this.user.Avatars.ElementAtOrDefault(index);
+			
+			if (avatar != null)
+			{
+				if (this.user.CurrentAvatar == avatar) this.user.CurrentAvatar = null;
+				avatar.Location.Inhabitants.Remove(avatar);
+				this.user.Avatars.Remove(avatar);
+				this.db.Delete(avatar);
+			}
+			
 			return RedirectToAction ("Account");	
 		}
 	
 		
 		[Authorize][AcceptVerbs(HttpVerbs.Post)]
-		public ActionResult ConnectAvatar(long id)
+		public ActionResult ConnectAvatar(int index)
 		{
-			this.Session.Add("Avatar", id);
+			this.user.CurrentAvatar = this.user.Avatars.ElementAtOrDefault(index);
 			return RedirectToAction ("", "Game");	
 		}
 		

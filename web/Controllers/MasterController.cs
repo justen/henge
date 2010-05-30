@@ -5,8 +5,6 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Mvc.Ajax;
 using System.Web.Security;
-using NHibernate;
-using NHibernate.Criterion;
 
 using Henge.Web;
 using Henge.Data;
@@ -37,8 +35,10 @@ namespace Henge.Web.Controllers
 		    if (this.User.Identity.IsAuthenticated)
 			{
 				this.ViewData["User"] 	= this.User.Identity.Name;
-				this.user 				= this.db.Get<User>(Membership.GetUser(false).ProviderUserKey);
-				this.avatar				= (this.Session["Avatar"] == null) ? null : this.db.Get<Avatar>(this.Session["Avatar"]);
+				this.user				= this.db.Get<User>(x => x.Name == this.User.Identity.Name);
+				this.avatar				= this.user.CurrentAvatar;
+				//this.user 				= this.db.Get<User>(Membership.GetUser(false).ProviderUserKey);
+				//this.avatar				= (this.Session["Avatar"] == null) ? null : this.db.Get<Avatar>(this.Session["Avatar"]);
 			}
 			else
 			{
