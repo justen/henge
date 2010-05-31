@@ -96,5 +96,10 @@
     <Folder Include="src\Entities\Sets\" />
     <Folder Include="src\Context\" />
   </ItemGroup>
+
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+
+  <Target Name="AfterBuild">
+	<Exec WorkingDirectory="$(ProjectDir)../references" Command="mono Db4oTool.exe -v -collections -tp -by-name:Henge.Data.Entities $(TargetPath)" />
+  </Target>
 </Project>
