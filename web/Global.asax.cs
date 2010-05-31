@@ -20,7 +20,7 @@ namespace Henge.Web
 		
 		protected void Application_Start ()
 		{
-			string path = Path.Combine(Server.MapPath("~"), "bin/db");
+			string path = Path.Combine(Server.MapPath("~"), "Data");
 			if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 			
 			DataProvider = new Henge.Data.DataProvider();
