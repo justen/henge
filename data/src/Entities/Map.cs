@@ -5,7 +5,13 @@ namespace Henge.Data.Entities
 {
 	public class Map : Entity
 	{
-	    public virtual IList<Location> Locations 	{get; set;}
-	    public virtual string Name					{get; set;}
+	    public IList<Location> Locations 	{ get; set; }
+	    public string Name					{ get; set; }
+		
+		
+		public Map()
+		{
+			this.Locations = new List<Location>();
+		}
 	}
 }

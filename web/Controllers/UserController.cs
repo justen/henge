@@ -81,6 +81,7 @@ namespace Henge.Web.Controllers
 			// Make sure that something has at least been entered for the name and password, and that the passwords match
 			if (name.Length > 0 && password.Length > 0 && password == passwordRepeat)
 			{
+				//Console.WriteLine(FormsAuthentication.HashPasswordForStoringInConfigFile(password, "sha1"));
 				// Save a new user to the database, simply by creating a new transient User object and passing it to nhibernate
 				//this.db.Update(new User { Name = name, Clan = name, Password = FormsAuthentication.HashPasswordForStoringInConfigFile(password, "sha1") });
 				this.db.Store(new User { Name = name, Clan = name, Password = FormsAuthentication.HashPasswordForStoringInConfigFile(password, "sha1") });

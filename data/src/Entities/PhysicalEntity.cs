@@ -7,6 +7,6 @@ namespace Henge.Data.Entities
 	public abstract class PhysicalEntity : HengeEntity
 	{
 		//Modifiers currently affecting the entity
-		public virtual IList<Modifier> Modifiers {get; set;}
+		public IList<Modifier> Modifiers { get; set; }
 	}
 }

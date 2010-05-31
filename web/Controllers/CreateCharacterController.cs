@@ -24,12 +24,11 @@ namespace Henge.Web.Controllers
 			//if (this.db.CreateCriteria<Avatar>().CreateAlias("BaseAppearance", "A").Add(Restrictions.Eq("A.Name", name)).UniqueResult<Avatar>() == null)
 			if ( (from a in this.db.Query<Avatar>() where a.Name == name select true).Count() == 0 )
 			{
-				//Location location		= this.db.Get<Location>((long)5);
-				Avatar avatar			= this.db.Store<Avatar>(new Avatar {Name = name, BaseAppearance = new Appearance { Name = name }, User  = this.user,  Location = null/*location*/});
-				//avatar.BaseAppearance = this.db.UpdateAndRefresh(new Appearance {Name = name});
+				Location location	= this.db.Get<Location>(x => x.X == 0 && x.Y == 0);
+				Avatar avatar		= new Avatar {Name = name, BaseAppearance = new Appearance { Name = name }, User  = this.user,  Location = location};
 				this.user.Avatars.Add(avatar);
-				//location.Inhabitants.Add(avatar);
-				this.db.Flush();	
+				location.Inhabitants.Add(avatar);
+	
 				return RedirectToAction("Account", "User");
 			}
 			else

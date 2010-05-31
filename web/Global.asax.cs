@@ -25,7 +25,8 @@ namespace Henge.Web
 			
 			DataProvider = new Henge.Data.DataProvider();
 			DataProvider.Initialise(Path.Combine(path, "henge.yap"), true);
-			
+			DataProvider.Bootstrap();
+
 			//DataProvider.UpdateSchema();
 			Henge.Engine.Interactor.Instance.Initialise(Path.Combine(Server.MapPath("~"), "bin"));
 			RegisterRoutes (RouteTable.Routes);

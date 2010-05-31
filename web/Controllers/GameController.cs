@@ -13,9 +13,9 @@ namespace Henge.Web.Controllers
 {
 	public class GameViewModel
 	{
-		public string Clan {get; set;}
-		public Avatar Avatar {get; set;}
-		public IList<Avatar> Others {get; set;}
+		public string Clan 			{ get; set; }
+		public Avatar Avatar 		{ get; set; }
+		public IList<Avatar> Others { get; set; }
 		
 		public GameViewModel(Avatar avatar, string clan, IList<Avatar> others)
 		{
@@ -47,6 +47,7 @@ namespace Henge.Web.Controllers
 				int x = this.avatar.Location.X;
 				int y = this.avatar.Location.Y;
 				int z = this.avatar.Location.Z;
+				Map m = this.avatar.Location.Map;
 				
 				if (button.Contains("North"))	y--;
 				if (button.Contains("South"))	y++;
@@ -62,9 +63,11 @@ namespace Henge.Web.Controllers
 					.Add(Restrictions.Eq("Map", this.avatar.Location.Map))
 					.UniqueResult<Location>();*/
 				
-				Location location =	(from l in this.db.Query<Location>()
-									 where l.X == x && l.Y == y && l.Z == z && l.Map == this.avatar.Location.Map
-									 select l).SingleOrDefault();
+				//Location location =	(from l in this.db.Query<Location>()
+				//					 where l.X == x && l.Y == y && l.Z == z && l.Map == this.avatar.Location.Map
+				//					 select l).SingleOrDefault();
+				
+				Location location = this.db.Get<Location>(l => l.X == x && l.Y == y && l.Z == z && l.Map == m);
 				
 				if (location != null) Interactor.Instance.Interact(this.avatar, location, "Move.Run");
 				

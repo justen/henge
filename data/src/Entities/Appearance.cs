@@ -8,16 +8,16 @@ namespace Henge.Data.Entities
 	public class Appearance : Entity
 	{
 	    //put all the render junk in here. Somehow.
-	    public virtual int Priority 			{get; set;}
-	    public virtual string Name 				{get; set;}
-	    public virtual string Description 		{get; set;}
-	    public virtual string ShortDescription 	{get; set;}
+	    public int Priority 			{get; set;}
+	    public string Name 				{get; set;}
+	    public string Description 		{get; set;}
+	    public string ShortDescription 	{get; set;}
 	    
 	    //this is going to store Other Stuff depending upon what type of entity this is
 	    //(for example, icons, colourschemes, etc)
-	    public virtual IList<Parameter> Parameters 	{get; set;}
+	    public IList<Parameter> Parameters 	{get; set;}
 	
 	    //The conditions that must be met in order to "see" this appearance
-	    public virtual IList<Prerequisite> Prerequisites 		{get; set;}
+	    public IList<Prerequisite> Prerequisites 		{get; set;}
 	}
 }

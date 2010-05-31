@@ -5,16 +5,16 @@ namespace Henge.Data.Entities
 {
 	public class Location : HengeEntity
 	{
-	    public virtual IList<Avatar> Inhabitants		{get; set;}
-		public virtual IList<Edifice> Structures		{get; set;}
-		public virtual IList<Npc> Fauna					{get; set;}
-		public virtual int X							{get; set;}			
-	    public virtual int Y							{get; set;}
-	    public virtual int Z							{get; set;}
+	    public IList<Avatar> Inhabitants		{get; set;}
+		public IList<Edifice> Structures		{get; set;}
+		public IList<Npc> Fauna					{get; set;}
+		public int X							{get; set;}			
+	    public int Y							{get; set;}
+	    public int Z							{get; set;}
 	    //List of the Regions this Location is in
-	    public virtual IList<Region> Regions			{get; set;}
+	    public IList<Region> Regions			{get; set;}
 	    //the Map this location exists in
-	    public virtual Map Map							{get; set;}
+	    public Map Map							{get; set;}
 		
 		
 		public Location()
