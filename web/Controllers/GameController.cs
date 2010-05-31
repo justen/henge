@@ -44,30 +44,21 @@ namespace Henge.Web.Controllers
 		{
 			if (this.avatar != null)
 			{
-				int x = this.avatar.Location.X;
-				int y = this.avatar.Location.Y;
-				int z = this.avatar.Location.Z;
-				Map m = this.avatar.Location.Map;
+				Coordinates coordinates = new Coordinates(this.avatar.Location.Coordinates);
+				//int x = this.avatar.Location.Coordinates.X;
+				//int y = this.avatar.Location.Coordinates.Y;
+				//int z = this.avatar.Location.Coordinates.Z;
 				
-				if (button.Contains("North"))	y--;
-				if (button.Contains("South"))	y++;
-				if (button.Contains("East"))	x++;
-				if (button.Contains("West"))	x--;
-				if (button.Contains("Up"))		z++;
-				if (button.Contains("Down"))	z--;
+				if (button.Contains("North"))	coordinates.Y--;
+				if (button.Contains("South"))	coordinates.Y++;
+				if (button.Contains("East"))	coordinates.X++;
+				if (button.Contains("West"))	coordinates.X--;
+				if (button.Contains("Up"))		coordinates.Z++;
+				if (button.Contains("Down"))	coordinates.Z--;
 				
-				/*Location location = this.db.CreateCriteria<Location>()
-					.Add(Restrictions.Eq("X", x))
-					.Add(Restrictions.Eq("Y", y))
-					.Add(Restrictions.Eq("Z", z))
-					.Add(Restrictions.Eq("Map", this.avatar.Location.Map))
-					.UniqueResult<Location>();*/
-				
-				//Location location =	(from l in this.db.Query<Location>()
-				//					 where l.X == x && l.Y == y && l.Z == z && l.Map == this.avatar.Location.Map
-				//					 select l).SingleOrDefault();
-				
-				Location location = this.db.Get<Location>(l => l.X == x && l.Y == y && l.Z == z && l.Map == m);
+					
+				//Location location = this.db.Get<Location>(l => l.X == x && l.Y == y && l.Z == z && l.Map == m);
+				Location location = this.avatar.Location.Map.GetLocation(coordinates);
 				
 				if (location != null) Interactor.Instance.Interact(this.avatar, location, "Move.Run");
 				

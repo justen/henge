@@ -11,14 +11,13 @@ var giCanvas = new Class(
 	initialize: function(map)
 	{
 		this.map		= map;
-		this.mapSize	= 0;
+		this.mapSize	= { x: 0, y: 0 }
+		this.centre		= { x: 0, y: 0 };
+		this.location	= { x: 0, y: 0 };
+		this.position	= { x: 0, y: 0 };
 		this.mapWidth	= 0;
 		this.mapHeight	= 0;
-		this.position	= { x: 0, y: 0 };
-		this.location	= { x: 0, y: 0 };
-		//this.queryData	= new Array();
-
-		this.canvas = new Element('div', {
+		this.canvas		= new Element('div', {
 			'id':	'canvas'
 		});
 
@@ -71,6 +70,11 @@ var giCanvas = new Class(
 		this.mapSize 	= this.map.getSize();
 		this.mapWidth 	= Math.ceil(this.mapSize.x / TILE_SIZE);
 		this.mapHeight 	= Math.ceil(this.mapSize.y / TILE_SIZE);
+		this.centre		= { x: this.mapSize.x / 2, y: this.mapSize.y / 2 };
+		this.position	= { 
+			x: this.centre.x - this.location.x * TILE_SIZE - TILE_SIZE / 2, 
+			y: this.centre.y - this.location.y * TILE_SIZE - TILE_SIZE / 2 
+		};
 
 		this.refresh();
 	},

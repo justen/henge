@@ -44,9 +44,9 @@ namespace Henge.Rules.Protagonist.Move.Run
 		
 		private double CalculateDistance(Location source, Location destination)
 		{
-			int deltaX = source.X - destination.X;
-			int deltaY = source.Y - destination.Y;
-			int deltaZ = source.Z - destination.Z;
+			int deltaX = source.Coordinates.X - destination.Coordinates.X;
+			int deltaY = source.Coordinates.Y - destination.Coordinates.Y;
+			int deltaZ = source.Coordinates.Z - destination.Coordinates.Z;
 			
 			return Math.Sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 		}

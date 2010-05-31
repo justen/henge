@@ -61,13 +61,14 @@ namespace Henge.Data
 				foreach (var e in all) container.Delete(e);
 				
 				Appearance ap				= new Appearance { Priority = 1, Name = "Nondescript Wasteland", Description = "looks like the Creator simply couldn''t be bothered to do anything with it. It is totally unremarkable in every way", ShortDescription = "a thoroughly boring spot" };
+				Appearance apa				= new Appearance { Priority = 1, Name = "Oz", Description = "looks like you're not in Kansas any more", ShortDescription = "somewhat magical" };
 				Henge.Data.Entities.User u	= new Henge.Data.Entities.User { Name = "test", Password = "A94A8FE5CCB19BA61C4C0873D391E987982FBBD3", Clan = "Test" };
 				Map m 						= new Map { Name = "Main" };
-				Location l					= new Location { X = 0, Y = 0, Map = m, BaseAppearance = ap };
+				Location l					= new Location (0, 0, 0) { Map = m, BaseAppearance = apa };
 				Avatar av					= new Avatar { Name = "Og", User = u, Location = l, BaseAppearance = new Appearance { Name = "Og" } };
 				
 				u.Avatars.Add(av);
-				m.Locations.Add(l);
+				m.Locations.Add(l.Coordinates, l);
 				l.Inhabitants.Add(av);
 				
 				for (int y = -2; y < 3; y++)
@@ -75,7 +76,9 @@ namespace Henge.Data
 					for (int x = -2; x < 3; x++) 
 					{
 						if (x == 0 && y == 0) continue;
-						m.Locations.Add(new Location { X = x, Y = y, Map = m, BaseAppearance = ap });
+						
+						l = new Location (x, y, 0) { Map = m, BaseAppearance = ap }; 
+						m.Locations.Add(l.Coordinates, l);
 					}
 				}
 				

@@ -43,15 +43,15 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
-    <Reference Include="Db4objects.Db4o.CS, Version=7.13.144.14312, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb">
+    <Reference Include="Db4objects.Db4o.CS, Version=8.0.146.14426, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\references\Db4objects.Db4o.CS.dll</HintPath>
     </Reference>
-    <Reference Include="Db4objects.Db4o, Version=7.13.144.14312, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb">
+    <Reference Include="Db4objects.Db4o, Version=8.0.146.14426, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\references\Db4objects.Db4o.dll</HintPath>
     </Reference>
-    <Reference Include="Db4objects.Db4o.Linq, Version=7.13.144.14312, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb">
+    <Reference Include="Db4objects.Db4o.Linq, Version=8.0.146.14426, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\references\Db4objects.Db4o.Linq.dll</HintPath>
     </Reference>
@@ -85,7 +85,6 @@
     <Compile Include="src\Entities\User.cs" />
     <Compile Include="src\Entities\Group.cs" />
     <Compile Include="src\Entities\GroupRole.cs" />
-    <Compile Include="src\Entities\Sets\StatisticSet.cs" />
     <Compile Include="src\Context\IContext.cs" />
     <Compile Include="src\Context\ThreadContext.cs" />
     <Compile Include="src\Context\WebContext.cs" />
@@ -93,13 +92,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />
-    <Folder Include="src\Entities\Sets\" />
     <Folder Include="src\Context\" />
   </ItemGroup>
-
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-
   <Target Name="AfterBuild">
-	<Exec WorkingDirectory="$(ProjectDir)../references" Command="mono Db4oTool.exe -v -collections -tp -by-name:Henge.Data.Entities $(TargetPath)" />
+    <Exec WorkingDirectory="$(ProjectDir)../references" Command="mono Db4oTool.exe -v -collections -tp -by-name:Henge.Data.Entities $(TargetPath)" />
   </Target>
 </Project>

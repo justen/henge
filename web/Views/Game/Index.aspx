@@ -10,7 +10,7 @@
 	<div class="title">Map</div>	
 		
 	<br/>
-	You are <%= Model.Avatar.BaseAppearance.Name %> of clan <%= Model.Clan %>. You are standing at <%= Model.Avatar.Location.X %>, <%= Model.Avatar.Location.Y %>, A <%= Model.Avatar.Location.BaseAppearance.Name %>.
+	You are <%= Model.Avatar.BaseAppearance.Name %> of clan <%= Model.Clan %>. You are standing at <%= Model.Avatar.Location.Coordinates.X %>, <%= Model.Avatar.Location.Coordinates.Y %>, A <%= Model.Avatar.Location.BaseAppearance.Name %>.
 	It appears <%= Model.Avatar.Location.BaseAppearance.ShortDescription %>. After looking for a while you determine that it <%= Model.Avatar.Location.BaseAppearance.Description %>.
 	<%	if (Model.Others.Count > 0) { %>
 		<%= string.Format("Also here {0} {1}", (Model.Others.Count > 1) ? "are" : "is", Model.Others[0].BaseAppearance.Name) %>

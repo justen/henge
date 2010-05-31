@@ -156,17 +156,6 @@ namespace Henge.Web.Controllers
 		[Authorize][AcceptVerbs(HttpVerbs.Post)]
 		public ActionResult DeleteAvatar(int index)
 		{
-			/*Avatar avatar = this.db.Get<Avatar>(id);
-			
-			if (avatar != null)
-			{
-				avatar.Location.Inhabitants.Remove(avatar);
-				
-				this.db.Delete(new Entity [] { avatar.BaseAppearance, avatar });
-				//this.db.Delete(avatar);
-				//this.db.Delete(avatar.BaseAppearance);
-			}*/
-			
 			Avatar avatar = this.user.Avatars.ElementAtOrDefault(index);
 			
 			if (avatar != null)

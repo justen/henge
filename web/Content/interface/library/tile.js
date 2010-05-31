@@ -14,7 +14,6 @@ var giTile = new Class(
 		this.y			= y;
 		this.visible 	= true;
 		this.type 		= -1;
-		var colour = [Math.floor(Math.random() * 255), Math.floor(Math.random() * 255), Math.floor(Math.random() * 255)].rgbToHex();
 		
 		/*this.bound = {
 			handleData:		this.handleData.bind(this),
@@ -29,8 +28,7 @@ var giTile = new Class(
 				top:		this.y * TILE_SIZE,
 				width:		TILE_SIZE,
 				height: 	TILE_SIZE,
-				opacity:	opacity,
-				'background-color': colour
+				opacity:	opacity
 			}
 		});
 
@@ -64,7 +62,17 @@ var giTile = new Class(
 
 	handleData: function(data)
 	{
-		this.tile.set('text', data);
+		this.type = data.Type;
+		
+		if (this.type != -1)
+		{
+			var colour = [Math.floor(Math.random() * 255), Math.floor(Math.random() * 255), Math.floor(Math.random() * 255)].rgbToHex();
+			this.tile.setStyles({
+				border: '1px solid #000',
+				'background-color': colour
+			});
+			this.tile.set('text', data.Name);
+		}
 	},
 	
 	

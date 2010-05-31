@@ -5,6 +5,8 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Mvc.Ajax;
 
+using Henge.Data.Entities;
+
 
 namespace Henge.Web.Controllers
 {
@@ -14,13 +16,21 @@ namespace Henge.Web.Controllers
 		[AcceptVerbs(HttpVerbs.Post)]
 		public JsonResult Tile(int [] x, int [] y)
 		{
-			List<string> result = new List<string>();
+			List<object> result = new List<object>();
 			
 			if (x != null && y != null)
 			{
 				for (int i=0; i<x.Length; i++)
 				{
-					result.Add(string.Format("Test - {0}, {1}", x[i], y[i]));
+					//result.Add(string.Format("Test - {0}, {1}", x[i], y[i]));
+					//Location location = this.db.Get<Location>(l => l.X == x[i] && l.Y == y[i]);
+					Location location = this.avatar.Location.Map.GetLocation(x[i], y[i], 0);
+					
+					if (location != null)
+					{
+						result.Add(new { Type = 0, Name = location.BaseAppearance.Name });
+					}
+					else result.Add(new { Type = -1, Name = "" });
 				}
 			}
 			
