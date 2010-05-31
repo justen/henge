@@ -1,8 +1,5 @@
 /*
-	Prototype Game Interface
-	Author: Dan Parnham
-	Date: 16/03/2008
-
+	Henge Interface
 	Map Tile
 */
 
@@ -22,8 +19,8 @@ var giTile = new Class(
 
 
 		this.tile = new Element('div', {
-			'class':	'tile',
-			'styles': {
+			class:	'tile',
+			styles: {
 				left:		this.x * TILE_SIZE,
 				top:		this.y * TILE_SIZE,
 				width:		TILE_SIZE,
@@ -32,7 +29,7 @@ var giTile = new Class(
 			}
 		});
 
-		this.tile.set('text', x + ', ' + y);
+		//this.tile.set('text', x + ', ' + y);
 		this.tile.inject(canvas);
 	},
 

@@ -1,8 +1,5 @@
 /*
-	Prototype Game Interface
-	Author: Dan Parnham
-	Date: 16/03/2008
-
+	Henge Interface
 	Library of styles and images
 */
 

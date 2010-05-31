@@ -68,6 +68,7 @@
     <Compile Include="Controllers\CreateCharacterController.cs" />
     <Compile Include="Controllers\GameController.cs" />
     <Compile Include="Controllers\MapController.cs" />
+    <Compile Include="Controllers\InterfaceController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />
@@ -106,5 +107,8 @@
       <Project>{A6AA6A68-FC8D-45D5-BD25-F6B194EF15D9}</Project>
       <Name>Henge.Engine</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Content\interface\library\interface.js" />
   </ItemGroup>
 </Project>

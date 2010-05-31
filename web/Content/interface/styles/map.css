@@ -16,7 +16,17 @@ div#canvas
 div.tile
 {
 	position: absolute;
+	z-index: 1;
 	/*border: 1px solid #000000;*/
 	/*background-image: url('/images/mountains.png');*/
 }
 
+div#youarehere
+{
+	position: absolute;
+	background-color: #00f;
+	width: 10px;
+	height: 10px;
+	z-index: 100;
+	margin: 43px;
+}

@@ -14,17 +14,14 @@ var giRequest = new Class(
 	},
 
 
-	/*getTileData: function(x, y, handler)
+	move: function(dx, dy)
 	{
-		var request = new Request.JSON({
-			url:	'/Map/Tile',
-			onSuccess:	handler
-		});
-		
-		//this.queue.addRequest('tile', request);
-		
-		request.send("x=" + x + "&y=" + y);
-	}*/
+		new Request.JSON({
+			url:		root + 'Interface/Move',
+			data:		'dx=' + dx + '&dy=' + dy,
+			onSuccess:	function(data) { interface.handleMove(data) }
+		}).send();
+	},
 	
 	getTileData: function(queue)
 	{

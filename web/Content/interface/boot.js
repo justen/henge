@@ -1,27 +1,29 @@
 /*
-	Prototype Game Interface
-	Author: Dan Parnham
-	Date: 16/03/2008
-
+	Henge Interface
 	Bootstrap
 */
 
-var map 	= null;
-var request = null;
+
+var map 		= null;
+var request 	= null;
+var interface	= null;
 
 new Asset.css(root + 'Content/interface/styles/map.css');
+new Asset.javascript(root + 'Content/interface/library/interface.js');
 new Asset.javascript(root + 'Content/interface/library/library.js');
 new Asset.javascript(root + 'Content/interface/library/request.js');
 new Asset.javascript(root + 'Content/interface/library/tile.js');
 new Asset.javascript(root + 'Content/interface/library/canvas.js');
 new Asset.javascript(root + 'Content/interface/library/map.js');
 
+
 function boot()
 {
 	if (typeof(giMap) != 'undefined')
 	{
-		request = new giRequest();
-		map 	= new giMap();
+		request 	= new giRequest();
+		map 		= new giMap();
+		interface	= new giInterface();
 		resize();
 	}
 	else boot.delay(10);

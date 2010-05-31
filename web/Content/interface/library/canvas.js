@@ -1,8 +1,5 @@
 /*
-	Prototype Game Interface
-	Author: Dan Parnham
-	Date: 16/03/2008
-
+	Henge Interface
 	Map Canvas
 */
 
@@ -18,9 +15,15 @@ var giCanvas = new Class(
 		this.mapWidth	= 0;
 		this.mapHeight	= 0;
 		this.canvas		= new Element('div', {
-			'id':	'canvas'
+			id:	'canvas'
+		});
+		this.marker		= new Element('div', {
+			id: 	'youarehere',
+			left: 	0,
+			top:	0,
 		});
 
+		this.marker.inject(this.canvas);
 		this.canvas.inject(this.map);
 
 		this.tiles		= new Array();
@@ -34,33 +37,27 @@ var giCanvas = new Class(
 		this.position.y += dy;
 		this.refresh();
 	},
-
-
-	/*zoom: function(direction)
+	
+	setLocation: function(x, y)
 	{
-		var cx = (this.position.x - 0.5 * this.mapSize.x) / this.tileSize;
-		var cy = (this.position.y - 0.5 * this.mapSize.y) / this.tileSize;
-
-		if (direction > 0) 	this.mapZoom--;
-		else				this.mapZoom++;
-
-		if (this.mapZoom < 0) this.mapZoom = 0;
-		if (this.mapZoom >= TILE_SIZES.length) this.mapZoom = TILE_SIZES.length - 1;
-
-		this.tileSize	= TILE_SIZES[this.mapZoom];
-		this.mapWidth 	= Math.ceil(this.mapSize.x / this.tileSize);
-		this.mapHeight 	= Math.ceil(this.mapSize.y / this.tileSize);
-		this.position.x = cx * this.tileSize + 0.5 * this.mapSize.x;
-		this.position.y = cy * this.tileSize + 0.5 * this.mapSize.y;
-
-		this.refresh();
-	},*/
-
+		this.location.x = x;
+		this.location.y = y;
+		
+		this.marker.setStyles({
+			left: 	x * TILE_SIZE,
+			top:	y * TILE_SIZE
+		});
+		
+		this.jump(x, y);
+	},
+	
 
 	jump: function(x, y)
 	{
-		this.position.x = -x * TILE_SIZES[this.mapZoom];
-		this.position.y = -y * TILE_SIZES[this.mapZoom];
+		this.position = { 
+			x: this.centre.x - x * TILE_SIZE - TILE_SIZE / 2, 
+			y: this.centre.y - y * TILE_SIZE - TILE_SIZE / 2 
+		};
 		this.refresh();
 	},
 
@@ -71,12 +68,7 @@ var giCanvas = new Class(
 		this.mapWidth 	= Math.ceil(this.mapSize.x / TILE_SIZE);
 		this.mapHeight 	= Math.ceil(this.mapSize.y / TILE_SIZE);
 		this.centre		= { x: this.mapSize.x / 2, y: this.mapSize.y / 2 };
-		this.position	= { 
-			x: this.centre.x - this.location.x * TILE_SIZE - TILE_SIZE / 2, 
-			y: this.centre.y - this.location.y * TILE_SIZE - TILE_SIZE / 2 
-		};
-
-		this.refresh();
+		this.jump(this.location.x, this.location.y);
 	},
 	
 	
@@ -144,13 +136,10 @@ var giCanvas = new Class(
 						tile = this.tiles[y][x];
 	
 						if (!tile)
-						{
-							this.tiles[y][x] = tile = new giTile(this.canvas, x, y, opacity);
-	
-							queue[i++] = tile;
-							//request.getTileData(x, y, tile.bound.handleData);
+						{ 
+							queue[i++] = this.tiles[y][x] = tile = new giTile(this.canvas, x, y, opacity);
 						}
-	
+						
 						tile.show(opacity);
 						this.visible.push(tile);
 					}
@@ -158,92 +147,7 @@ var giCanvas = new Class(
 			}	
 		}
 		
-		if (queue.length > 0) request.getTileData(queue);	
-
-		/* Old PHP ajax code
-			var requiredData = '';
-	
-			for (var y=startY; y<=endY; y++)
-			{
-				if (!this.tiles[y]) this.tiles[y] = new Array();
-	
-				for (var x=startX; x<=endX; x++)
-				{
-					if (!this.tiles[y][x])
-					{
-						this.tiles[y][x] = new giTile(this.canvas, x, y, this.mapZoom);
-	
-						this.queryData.push([x,y]);
-						requiredData += x + ',' + y + ';';
-					}
-	
-					this.tiles[y][x].show(this.mapZoom);
-					this.visible.push(this.tiles[y][x]);
-				}
-			}
-	
-			if (requiredData)
-			{
-				request.pushQueue({
-					options: 'm=' + requiredData,
-					onResponse: this.handleTileData.bind(this)
-				});
-			}
-		*/
-		
-		/* Previous jquery code
-			var x, y, dx, dy, opacity, tile;
-		
-			request.beginBatch();
-		
-			for (y=startY; y<=endY; y++)
-			{
-				dy = Math.abs(y - this.location.y);
-		
-				if (dy <= MAP_RANGE)
-				{
-					if (!this.tiles[y]) this.tiles[y] = new Array();
-		
-					for (x=startX; x<=endX; x++)
-					{
-						dx = Math.abs(x - this.location.x);
-		
-						if (dx <= MAP_RANGE)
-						{
-							opacity = 1.0;
-							if (dx >= MAP_RANGE - 1 || dy >= MAP_RANGE - 1) opacity -= 0.5;
-							if (dx == MAP_RANGE || dy == MAP_RANGE)			opacity -= 0.3;
-		
-							tile = this.tiles[y][x];
-		
-							if (!tile)
-							{
-								this.tiles[y][x] = tile = new giTile(this.canvas, x, y, opacity);
-		
-								request.map.getTileData(x, y, tile.bound.handleData);
-							}
-		
-							tile.show(opacity);
-							this.visible.push(tile);
-						}
-					}
-				}
-			}
-		
-			request.endBatch();
-		*/
-	},
-
-
-/*	handleTileData: function(response)
-	{
-		var data = response.split(';');
-
-		for (var i=0; i<data.length; i++)
-		{
-			var loc = this.queryData.shift();
-			this.tiles[loc[1]][loc[0]].setData(data[i]);
-		}
-	},*/
+		if (queue.length > 0) request.getTileData(queue);
+	},	
 });
 

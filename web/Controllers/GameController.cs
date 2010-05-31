@@ -39,7 +39,7 @@ namespace Henge.Web.Controllers
 		}
 		
 		/// <summary>Action to create a new user</summary>
-		[AcceptVerbs(HttpVerbs.Post)]
+		/*[AcceptVerbs(HttpVerbs.Post)]
 		public ActionResult Move(string button)
 		{
 			if (this.avatar != null)
@@ -66,6 +66,6 @@ namespace Henge.Web.Controllers
 			}
 			
 			return RedirectToAction("Account", "User");
-		}
+		}*/
 	}	
 }
