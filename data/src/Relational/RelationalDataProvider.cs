@@ -31,6 +31,14 @@ namespace Henge.Data
 	
 	internal class RelationalDataProvider
 	{
+		// --------------------
+		// This is a nasty hack to force xbuild to correctly copy ALL of the necessary dependencies when this
+		// library is included in the Henge.Web build. These can be removed once xbuild starts behaving correctly
+		// (hopefully in a later revision).
+		MySql.Data.MySqlClient.MySqlHelper helper;
+		NHibernate.ByteCode.Castle.LazyInitializer lazy;
+		// --------------------
+		
 		private ISessionFactory sessionFactory	= null;
 		private Configuration	configuration	= null;
 		
