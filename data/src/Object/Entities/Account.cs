@@ -3,7 +3,7 @@ using System;
 
 namespace Henge.Data.Entities
 {
-	/*public class Account : Entity
+	/*public class Account : ObjectEntity
 	{
 	    public virtual string OpenId 	{get; set;}
 	    public virtual bool Enabled 	{get; set;}

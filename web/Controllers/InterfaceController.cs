@@ -35,6 +35,7 @@ namespace Henge.Web.Controllers
 					
 					if (result.Succeeded)
 					{
+						//this.db.Store<LogEntry>(new LogEntry { Occurred = DateTime.Now, Entry = "We moved!" });
 						return Json(new { Valid = true, X = coordinates.X, Y = coordinates.Y });
 					}
 					else error = result.Conclusion;

@@ -1,6 +1,7 @@
 using System;
 using Db4objects.Db4o;
 
+
 namespace Henge.Data.Context
 {
 	internal class ThreadContext : IContext

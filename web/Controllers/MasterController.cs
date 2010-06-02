@@ -37,16 +37,12 @@ namespace Henge.Web.Controllers
 				this.ViewData["User"] 	= this.User.Identity.Name;
 				this.user				= this.db.Get<User>(x => x.Name == this.User.Identity.Name);
 				this.avatar				= this.user.CurrentAvatar;
-				//this.user 				= this.db.Get<User>(Membership.GetUser(false).ProviderUserKey);
-				//this.avatar				= (this.Session["Avatar"] == null) ? null : this.db.Get<Avatar>(this.Session["Avatar"]);
 			}
 			else
 			{
 				this.user 	= null;
 				this.avatar	= null;
 			}
-			
-			//Console.WriteLine(this.Request.RawUrl + " : " + this.Session.SessionID + " : " + this.Session.IsNewSession);
 		}
 		
 		

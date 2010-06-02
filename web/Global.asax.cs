@@ -24,10 +24,11 @@ namespace Henge.Web
 			if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 			
 			DataProvider = new Henge.Data.DataProvider();
-			DataProvider.Initialise(Path.Combine(path, "henge.yap"), true);
+			//DataProvider.Initialise(Path.Combine(path, "henge.yap"), true);
+			DataProvider.Initialise(Path.Combine(path, "henge.yap"), "mysql", "Server=127.0.0.1;Uid=henge;Pwd=henge;Database=henge", true);
 			DataProvider.Bootstrap();
 
-			//DataProvider.UpdateSchema();
+			DataProvider.UpdateSchema();
 			Henge.Engine.Interactor.Instance.Initialise(Path.Combine(Server.MapPath("~"), "bin"));
 			RegisterRoutes (RouteTable.Routes);
 		}

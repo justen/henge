@@ -5,7 +5,7 @@ using Db4objects.Db4o;
 
 namespace Henge.Data.Entities
 {
-	public class User : Entity
+	public class User : ObjectEntity
 	{
 		[Indexed]
 	    public string Name				{ get; set; }

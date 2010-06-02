@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 
+
 namespace Henge.Data.Entities
 {
-	public class Region : Entity
+	public class Region : ObjectEntity
 	{
 	    public virtual string Name				{get; set;}
 	    public virtual string Description		{get; set;}

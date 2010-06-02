@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Henge.Data.Entities
 {
-	public class EntityType : Entity
+	public class EntityType : ObjectEntity
 	{
 	    // Name of the location type (this is the actual, real name of the entity type)
 	    public virtual string RealName {get; set;}

@@ -5,7 +5,7 @@ namespace Henge.Data.Entities
 {
 	/// Appearance contains all of the information about how an Entity is rendered in
 	/// the UI (which is a function of the viewer). Name, description, gui, colourscheme, etc.
-	public class Appearance : Entity
+	public class Appearance : ObjectEntity
 	{
 	    //put all the render junk in here. Somehow.
 	    public int Priority 			{get; set;}

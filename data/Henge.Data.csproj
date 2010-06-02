@@ -41,8 +41,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="NHibernate, Version=2.1.2.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\references\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentNHibernate, Version=1.1.0.685, Culture=neutral, PublicKeyToken=8aa435e3cb308880">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\references\FluentNHibernate.dll</HintPath>
+    </Reference>
     <Reference Include="System.Core" />
-    <Reference Include="System.Web" />
+    <Reference Include="NHibernate.ByteCode.Castle, Version=2.1.2.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\references\NHibernate.ByteCode.Castle.dll</HintPath>
+    </Reference>
     <Reference Include="Db4objects.Db4o.CS, Version=8.0.146.14426, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\references\Db4objects.Db4o.CS.dll</HintPath>
@@ -55,44 +66,56 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\references\Db4objects.Db4o.Linq.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="MySql.Data, Version=6.1.4.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\references\MySql.Data.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\AssemblyInfo.cs" />
     <Compile Include="src\DataProvider.cs" />
-    <Compile Include="src\Entities\Account.cs" />
-    <Compile Include="src\Entities\Actor.cs" />
-    <Compile Include="src\Entities\Appearance.cs" />
-    <Compile Include="src\Entities\Attribute.cs" />
-    <Compile Include="src\Entities\AttributeModifier.cs" />
-    <Compile Include="src\Entities\Avatar.cs" />
-    <Compile Include="src\Entities\Edifice.cs" />
     <Compile Include="src\Entities\Entity.cs" />
-    <Compile Include="src\Entities\EntityType.cs" />
-    <Compile Include="src\Entities\HengeEntity.cs" />
-    <Compile Include="src\Entities\Item.cs" />
-    <Compile Include="src\Entities\Location.cs" />
-    <Compile Include="src\Entities\LogEntry.cs" />
-    <Compile Include="src\Entities\Map.cs" />
-    <Compile Include="src\Entities\MapEntity.cs" />
-    <Compile Include="src\Entities\Modifier.cs" />
-    <Compile Include="src\Entities\Npc.cs" />
-    <Compile Include="src\Entities\Parameter.cs" />
-    <Compile Include="src\Entities\PhysicalEntity.cs" />
-    <Compile Include="src\Entities\Prerequisite.cs" />
-    <Compile Include="src\Entities\Region.cs" />
-    <Compile Include="src\Entities\Skill.cs" />
-    <Compile Include="src\Entities\Statistic.cs" />
-    <Compile Include="src\Entities\User.cs" />
-    <Compile Include="src\Entities\Group.cs" />
-    <Compile Include="src\Entities\GroupRole.cs" />
-    <Compile Include="src\Context\IContext.cs" />
-    <Compile Include="src\Context\ThreadContext.cs" />
-    <Compile Include="src\Context\WebContext.cs" />
-    <Compile Include="src\Indexing.cs" />
+    <Compile Include="src\Relational\RelationalDataProvider.cs" />
+    <Compile Include="src\Relational\Entities\LogEntry.cs" />
+    <Compile Include="src\Relational\Entities\RelationalEntity.cs" />
+    <Compile Include="src\Object\Indexing.cs" />
+    <Compile Include="src\Object\ObjectDataProvider.cs" />
+    <Compile Include="src\Object\Context\IContext.cs" />
+    <Compile Include="src\Object\Context\ThreadContext.cs" />
+    <Compile Include="src\Object\Context\WebContext.cs" />
+    <Compile Include="src\Object\Entities\Account.cs" />
+    <Compile Include="src\Object\Entities\Actor.cs" />
+    <Compile Include="src\Object\Entities\Appearance.cs" />
+    <Compile Include="src\Object\Entities\Attribute.cs" />
+    <Compile Include="src\Object\Entities\AttributeModifier.cs" />
+    <Compile Include="src\Object\Entities\Avatar.cs" />
+    <Compile Include="src\Object\Entities\Condition.cs" />
+    <Compile Include="src\Object\Entities\Edifice.cs" />
+    <Compile Include="src\Object\Entities\ObjectEntity.cs" />
+    <Compile Include="src\Object\Entities\EntityType.cs" />
+    <Compile Include="src\Object\Entities\Group.cs" />
+    <Compile Include="src\Object\Entities\GroupRole.cs" />
+    <Compile Include="src\Object\Entities\HengeEntity.cs" />
+    <Compile Include="src\Object\Entities\Item.cs" />
+    <Compile Include="src\Object\Entities\Location.cs" />
+    <Compile Include="src\Object\Entities\Map.cs" />
+    <Compile Include="src\Object\Entities\MapEntity.cs" />
+    <Compile Include="src\Object\Entities\Modifier.cs" />
+    <Compile Include="src\Object\Entities\Npc.cs" />
+    <Compile Include="src\Object\Entities\Parameter.cs" />
+    <Compile Include="src\Object\Entities\PhysicalEntity.cs" />
+    <Compile Include="src\Object\Entities\Prerequisite.cs" />
+    <Compile Include="src\Object\Entities\Region.cs" />
+    <Compile Include="src\Object\Entities\Skill.cs" />
+    <Compile Include="src\Object\Entities\Statistic.cs" />
+    <Compile Include="src\Object\Entities\User.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />
-    <Folder Include="src\Context\" />
+    <Folder Include="src\Relational\" />
+    <Folder Include="src\Relational\Entities\" />
+    <Folder Include="src\Entities\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild">

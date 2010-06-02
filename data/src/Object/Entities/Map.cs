@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 
+
 namespace Henge.Data.Entities
 {
-	public class Coordinates
+	public class Coordinates : ObjectEntity
 	{
 		public int X { get; set; }
 		public int Y { get; set; }
@@ -32,7 +33,8 @@ namespace Henge.Data.Entities
 		}
 	}
 	
-	public class Map : Entity
+	
+	public class Map : ObjectEntity
 	{
 	    //public IList<Location> Locations 	{ get; set; }
 		public IDictionary<Coordinates, Location> Locations	{ get; set; }

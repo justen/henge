@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 
+
 namespace Henge.Data.Entities
 {
 	public class Location : HengeEntity

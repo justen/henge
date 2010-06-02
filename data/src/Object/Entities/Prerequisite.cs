@@ -1,8 +1,9 @@
 using System;
 
+
 namespace Henge.Data.Entities
 {
-	public class Prerequisite : Entity
+	public class Prerequisite : ObjectEntity
 	{
 	    //The attribute that the prerequisite refers to
 	    public virtual Attribute Attribute 	{get; set;}

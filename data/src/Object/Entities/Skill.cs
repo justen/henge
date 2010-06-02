@@ -1,12 +1,10 @@
-
 using System;
 using System.Collections.Generic;
 
+
 namespace Henge.Data.Entities
 {
-
-
-	public class Skill : Entity
+	public class Skill : ObjectEntity
 	{
 		public virtual string Name 								{get; set;}
 		//the rules that this skill enables
