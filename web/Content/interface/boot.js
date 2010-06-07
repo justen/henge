@@ -5,10 +5,13 @@
 
 
 var map 		= null;
+var log			= null;
+//var menu		= null;
 var request 	= null;
 var interface	= null;
 
 new Asset.css(root + 'Content/interface/styles/map.css');
+new Asset.javascript(root + 'Content/interface/library/log.js');
 new Asset.javascript(root + 'Content/interface/library/interface.js');
 new Asset.javascript(root + 'Content/interface/library/library.js');
 new Asset.javascript(root + 'Content/interface/library/request.js');
@@ -22,8 +25,10 @@ function boot()
 	if (typeof(giMap) != 'undefined')
 	{
 		request 	= new giRequest();
+		log			= new giLog();
 		map 		= new giMap();
 		interface	= new giInterface();
+		
 		resize();
 	}
 	else boot.delay(10);
@@ -32,10 +37,16 @@ function boot()
 
 function resize()
 {
-	var height = window.getSize().y - $('content').getPosition().y - 12;
-
-	//$('panel').setStyle('height', height);
-	if (map) map.resize(height);
+	if (map) 
+	{
+		var height	= window.getSize().y - $('content').getPosition().y;
+		var menu	= $('menu');
+		var inner	= height - log.height - 25;
+		
+		$('content').setStyle('height', height);
+		$('menu').setStyle('height', inner);
+		map.resize(inner);	
+	}
 }
 
 
@@ -44,6 +55,5 @@ window.addEvent('resize', resize);
 
 
 /*-------------------------------------- Constants ------------------------------------------*/
-//var TILE_SIZES		= [400, 200, 100, 50];
 var TILE_SIZE = 96;
 var MAP_RANGE = 10;

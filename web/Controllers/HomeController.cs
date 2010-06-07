@@ -8,12 +8,18 @@ using System.Web.Mvc.Ajax;
 namespace Henge.Web.Controllers
 {
 
-	[HandleError]
+	[Authorize][HandleError]
 	public class HomeController : MasterController
 	{
 		public ActionResult Index ()
 		{
-			return View ();
+			if (this.avatar != null)
+			{
+				
+				return View ();
+			}
+			
+			return RedirectToAction("Account", "User");
 		}
 	}
 }

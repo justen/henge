@@ -47,18 +47,23 @@ var giMap = new Class(
 	mouseClick: function(event)
 	{
 		// Debug - trigger an update
-		this.canvas.update();
+		//this.canvas.update();
 	},
 
 
 	mouseDown: function(event)
 	{
-		this.mouse.current = event.page;
-
-		this.document.addEvents({
-			mouseup:	this.bound.mouseUp,
-			mousemove:	this.bound.mouseDrag
-		});
+		if (!event.rightClick)
+		{
+			this.mouse.current = event.page;
+	
+			this.document.addEvents({
+				mouseup:	this.bound.mouseUp,
+				mousemove:	this.bound.mouseDrag
+			});
+			
+			log.add('Time', 'Mouse down');
+		}
 
 		return false;	// Stops the event and prevents FF3 from dragging images
 	},

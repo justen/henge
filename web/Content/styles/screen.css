@@ -4,81 +4,80 @@ body
 	padding: 0;
 	font-family: tahoma, sans-serif;
 	font-size: 10pt;
-	background-color: #eee;
+	background-color: #aaa;
 }
 
 img { border: 0; }
-a	{ text-decoration: none; color: #0b0e55; }
+a	{ text-decoration: none; color: #228; }
 
 /*------------------- Header -------------------*/
 div#header
 {
 	position: relative;
-	background: #0b0e55 url("../images/henge.png") top left no-repeat;
-	height: 72px;
-	color: #fff;
+	background-color: #88f;
+	height: 48px;
+	color: #000;
+	margin: 0 5px;
+	border: 1px solid #000;
+	border-top: 0;
+	border-radius: 0 0 8px 8px;
+	-moz-border-radius: 0 0 8px 8px;
 }
 
 div#header h1
 {
 	margin: 0;
-	display: block;
 	font-size: 2.5em;
-	padding: 12px;
 	text-align: center;
 }
 
-div#header .status
+div#status
+{
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	padding: 5px;
+	border-top: 1px dashed #444;
+	border-right: 1px dashed #444;
+}
+
+div#main-menu
 {
 	position: absolute;
 	right: 0;
 	bottom: 0;
-	padding: 5px;
+	padding: 10px 5px 0 5px;
+	border-top: 1px dashed #444;
+	border-left: 1px dashed #444;
 }
 
-/*------------------- Menu -------------------*/
-div#tabs
-{
-	display: table;
-	margin: 0 auto;
-}
-
-ul#menu
+div#main-menu ul
 {
 	list-style: none;
 	padding: 0;
 	margin: 0;
 }
 
-ul#menu li
+div#main-menu li
 {
-	margin: 2px 2px 0 0;
+	margin: 0 5px;
 	float: left;
-	background-color: #fff;
-	border: 1px solid #0b0e55;
-	padding: 0;
+	font-size: 0.8em;
+	border-radius: 4px 4px 0 0;
+	-moz-border-radius: 4px 4px 0 0;
 }
 
-ul#menu li#select
+div#main-menu li:hover
 {
-	font-weight: bold;
+	background: #aaf;
 }
 
-ul#menu li:hover
+div#main-menu a
 {
-	background: #ccc;
-}
-
-ul#menu a
-{
+	padding: 2px 10px;
 	display: block;
-	padding: 3px 30px;
 }
 
-div.clear
-{
-	clear: both;
-}
 
 /*---------------- Messages ----------------*/
 div.message
@@ -96,128 +95,116 @@ div.error
 	background-color: #FFDDDD;
 }
 
-/*---------------- Forms ----------------*/
-form
-{
-	display: table;
-	margin: 0 auto;
-	padding: 10px 50px;
-	border: 1px solid #888;
-	width: 600px;
-}
-
-div.title
-{
-	display: table;
-	margin: 30px auto 0 auto;
-	width: 680px;
-	font-size: 1.5em;
-	font-weight: bold;
-	padding: 0 10px;
-}
-
-dl		{ margin: 0; position: relative; }
-dt		{ margin: 5px 0; width: 200px; float: left; text-align: right; }
-dd		{ margin: 5px 0; width: 400px; float: left; }
-
-input
-{
-	margin: 0 10px;
-}
-
-input[type="text"], input[type="password"]
-{
-	width: 100%;
-}
-
-dd.button
-{
-	text-align: center;
-	margin-top: 10px;
-	padding-top: 10px;
-	border-top: 1px solid #CCC;
-	width: 100%;
-}
-
-dd.buttons
-{
-	text-align: center;
-	width: 100%;
-}
-
-ul.feedback
-{
-	margin: 0 0 10px 10px;
-	color: #DD0000;
-	list-style: none;
-	padding: 0;
-}
-
 
 /*------------------- Content -------------------*/
 div#content
 {
-	padding: 0 50px;
+	position: relative;
+	height: 100%;
+}
+
+
+div#main
+{
 	position: relative;
 }
 
-table
+
+div#menu
 {
-	margin: 0;
+	border: 1px solid #000;
+	border-radius: 8px;
+	-moz-border-radius: 8px;
+	position: absolute;
+	top: 10px;
+	left: 5px;
+	width: 256px;
 }
 
-td
+
+div#map
 {
-	border: 0;
+	background-color: #ccc;
+	overflow: hidden;
+	border: 1px solid #000;
+	position: absolute;
+	top: 10px;
+	left: 271px;
+	right: 5px;
 }
 
-table.main
+
+div.bar
 {
-	border-collapse: collapse;	
-	margin: 20px 10px;
+	position: relative;
+	margin: 2px;
+	border: 1px solid #444;
+	width: 102px;
+	height: 1.1em;
+}
+
+div.bar label
+{
+	top: 1px;
+	left: 0;
+	position: absolute;
+	font-size: 0.8em;
+	text-align: center;
+	width: 100%;
+	z-index: 1;
+}
+
+div.bar div
+{
+	position: absolute;
+	top: 1px;
+	bottom: 1px;
+	left: 1px;
+	width: 50%;
+	background-color: #0c0;
+	z-index: 0;
+}
+
+/*------------------- Log -------------------*/
+div#log
+{
+	background-color: #fff;
+	border-top: 1px solid #000;
+	position: absolute;
+	position: absolute;
+	height: 64px;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	font-size: 0.8em;
+	overflow: auto;
+	z-index: 1000;
+}
+
+
+table#log-table
+{
+	border-collapse: collapse;
 	width: 100%;
 }
 
-
-table.main > tbody > tr > td, table.main > tbody > tr > th
+table#log-table td:nth-child(odd)
 {
-	border: 1px solid #888;
-	padding: 2px 10px;
-	vertical-align: top;
+	font-weight: bold;
+	padding: 0 10px;
 }
 
-table.main > tbody > tr > th
+table#log-table td:nth-child(even)
 {
-	background-color: #444;
-	color: #eee;
+	padding: 0;
+	width: 100%;
 }
 
-table.main > tbody > tr:nth-child(odd)
+table#log-table tr:nth-child(odd)
 {
 	background-color: #ccc;
 }
 
-table.main > tbody > tr:hover
-{
-	background-color: #afa;
-}
-
-
-table form
-{
-	border: 0;
-	display: inline;
-	margin: 0;
-	padding: 0;
-	width: auto;
-}
-
-div#map
-{
-	width: 45%;
-	margin: 10px;
-	float: left;
-}
 /*---------------- Sidebar ----------------*/
 ul.sidebar
 {
