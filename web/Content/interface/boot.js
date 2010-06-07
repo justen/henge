@@ -9,29 +9,36 @@ var log			= null;
 //var menu		= null;
 var request 	= null;
 var interface	= null;
-
-new Asset.css(root + 'Content/interface/styles/map.css');
-new Asset.javascript(root + 'Content/interface/library/log.js');
-new Asset.javascript(root + 'Content/interface/library/interface.js');
-new Asset.javascript(root + 'Content/interface/library/library.js');
-new Asset.javascript(root + 'Content/interface/library/request.js');
-new Asset.javascript(root + 'Content/interface/library/tile.js');
-new Asset.javascript(root + 'Content/interface/library/canvas.js');
-new Asset.javascript(root + 'Content/interface/library/map.js');
+var assets		= [
+	{ type: 'js',	path: 'library/map.js' },
+	{ type: 'js',	path: 'library/canvas.js' },
+	{ type: 'js',	path: 'library/tile.js' },
+	{ type: 'js',	path: 'library/request.js' },
+	{ type: 'js',	path: 'library/library.js' },
+	{ type: 'js',	path: 'library/interface.js' },
+	{ type: 'js',	path: 'library/log.js' },
+	{ type: 'css',	path: 'styles/map.css' },
+];
 
 
 function boot()
 {
-	if (typeof(giMap) != 'undefined')
+	if (asset = assets.pop())
+	{
+		switch (asset.type)
+		{
+			case 'css':	new Asset.css(root + 'Content/interface/' + asset.path);								boot();			break;				
+			case 'js':	new Asset.javascript(root + 'Content/interface/' + asset.path, { onload: function() { 	boot(); }});	break;
+		}
+	}
+	else
 	{
 		request 	= new giRequest();
 		log			= new giLog();
 		map 		= new giMap();
 		interface	= new giInterface();
-		
 		resize();
 	}
-	else boot.delay(10);
 }
 
 
