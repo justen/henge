@@ -1,4 +1,19 @@
-/*------------------- Bar -------------------*/
+/*------------------- Status -------------------*/
+
+div.status-text
+{
+	clear: both;
+	font-size: 0.9em;
+	font-weight: bold;
+}
+
+
+div.status-text a
+{
+	font-weight: normal;
+	font-size: 0.8em;
+}
+
 div.bar
 {
 	float:left;

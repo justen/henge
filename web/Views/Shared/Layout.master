@@ -18,7 +18,11 @@
 	</head>
 	<body>
 		<div id="header">
-			<div id="status"></div>
+			<div id="status">
+				<% if (ViewData["Character"] != null) { %>
+				<div class="status-text"><%= ViewData["Character"] %> <a href="<%= Url.Action("DisconnectAvatar", "User") %>">[Disconnect]</a></div>
+				<% } %>
+			</div>
 			<img src="<%= Url.Content("~/Content/images/henge_small.png") %>" alt="Henge Logo" />
 			<div id="main-menu">
 				<ul>

@@ -34,9 +34,10 @@ namespace Henge.Web.Controllers
 		    // If the user has logged in then add their name to the view data
 		    if (this.User.Identity.IsAuthenticated)
 			{
-				this.ViewData["User"] 	= this.User.Identity.Name;
-				this.user				= this.db.Get<User>(x => x.Name == this.User.Identity.Name);
-				this.avatar				= this.user.CurrentAvatar;
+				this.user					= this.db.Get<User>(x => x.Name == this.User.Identity.Name);
+				this.avatar					= this.user.CurrentAvatar;
+				this.ViewData["User"] 		= this.User.Identity.Name;
+				this.ViewData["Character"]	= (this.avatar != null) ? this.avatar.Name : null;
 			}
 			else
 			{

@@ -178,6 +178,14 @@ namespace Henge.Web.Controllers
 		}
 		
 		
+		[Authorize]
+		public ActionResult DisconnectAvatar()
+		{
+			this.user.CurrentAvatar = null;
+			return RedirectToAction("Account");
+		}
+		
+		
 		[Authorize][AcceptVerbs(HttpVerbs.Post)]
 		public ActionResult CreateAvatar()
 		{

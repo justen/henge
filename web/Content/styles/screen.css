@@ -25,6 +25,10 @@ div#header
 	text-align: center;
 }
 
+div#header a:hover
+{
+	color: #fff;
+}
 
 div#status
 {
@@ -57,11 +61,6 @@ div#main-menu li
 	font-size: 0.8em;
 	border-radius: 4px 4px 0 0;
 	-moz-border-radius: 4px 4px 0 0;
-}
-
-div#main-menu li:hover
-{
-	background: #aaf;
 }
 
 div#main-menu a
