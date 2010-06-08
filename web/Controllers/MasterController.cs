@@ -37,7 +37,7 @@ namespace Henge.Web.Controllers
 				this.user					= this.db.Get<User>(x => x.Name == this.User.Identity.Name);
 				this.avatar					= this.user.CurrentAvatar;
 				this.ViewData["User"] 		= this.User.Identity.Name;
-				this.ViewData["Character"]	= (this.avatar != null) ? this.avatar.Name : null;
+				this.ViewData["Character"]	= (this.avatar != null) ? string.Format("{0} of {1}", this.avatar.Name, this.user.Clan) : null;
 			}
 			else
 			{

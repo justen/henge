@@ -48,7 +48,7 @@ div.bar div
 /*------------------- Log -------------------*/
 div#log
 {
-	background-color: #fff;
+	background-color: #eee;
 	border-top: 1px solid #000;
 	position: absolute;
 	position: absolute;
@@ -82,5 +82,5 @@ table#log-table td:nth-child(even)
 
 table#log-table tr:nth-child(odd)
 {
-	background-color: #ccc;
+	background-color: #bbb;
 }
