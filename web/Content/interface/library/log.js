@@ -13,7 +13,6 @@ var giLog = new Class(
 		this.height		= this.container.getSize().y;
 		
 		this.container.set('tween', { duration: 100 });
-		
 		this.container.addEvents({
 			mouseover:	this.mouseOver.bind(this),
 			mouseout:	this.mouseOut.bind(this)

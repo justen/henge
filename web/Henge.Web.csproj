@@ -115,5 +115,6 @@
     <None Include="Content\interface\styles\interface.css" />
     <None Include="Content\interface\library\widget\bar.js" />
     <None Include="Content\interface\library\widget\avatar.js" />
+    <None Include="Content\interface\library\widget\icon.js" />
   </ItemGroup>
 </Project>

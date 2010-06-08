@@ -9,6 +9,7 @@ var log			= null;
 //var menu		= null;
 var request 	= null;
 var interface	= null;
+var library		= null;
 var assets		= [
 	{ type: 'js',	path: 'library/map.js' },
 	{ type: 'js',	path: 'library/canvas.js' },
@@ -18,6 +19,8 @@ var assets		= [
 	{ type: 'js',	path: 'library/interface.js' },
 	{ type: 'js',	path: 'library/log.js' },
 	{ type: 'js',	path: 'library/widget/bar.js' },
+	{ type: 'js',	path: 'library/widget/icon.js' },
+	{ type: 'js',	path: 'library/widget/avatar.js' },
 	{ type: 'css',	path: 'styles/map.css' },
 	{ type: 'css',	path: 'styles/interface.css' },
 ];
@@ -33,8 +36,9 @@ function boot()
 			case 'js':	new Asset.javascript(root + 'Content/interface/' + asset.path, { onload: function() { 	boot(); }});	break;
 		}
 	}
-	else
+	else if (!map)
 	{
+		library		= new giLibrary();
 		request 	= new giRequest();
 		log			= new giLog();
 		map 		= new giMap();
@@ -63,5 +67,5 @@ window.addEvent('resize', resize);
 
 
 /*-------------------------------------- Constants ------------------------------------------*/
-var TILE_SIZE = 96;
+var TILE_SIZE = 128;
 var MAP_RANGE = 10;

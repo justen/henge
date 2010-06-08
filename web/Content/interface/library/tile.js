@@ -30,7 +30,7 @@ var giTile = new Class(
 		});
 
 		//this.tile.set('text', x + ', ' + y);
-		this.tile.inject(canvas);
+		this.tile.inject(canvas);	
 	},
 
 
@@ -63,12 +63,17 @@ var giTile = new Class(
 		
 		if (this.type != -1)
 		{
+			this.locationIcon 	= new giIcon(this.tile, library.icons[0]);
+			this.peopleIcon 	= new giIcon(this.tile, library.icons[1]);
+			this.animalsIcon 	= new giIcon(this.tile, library.icons[2]);
+			this.structuresIcon = new giIcon(this.tile, library.icons[3]);
+			
 			var colour = [Math.floor(Math.random() * 255), Math.floor(Math.random() * 255), Math.floor(Math.random() * 255)].rgbToHex();
 			this.tile.setStyles({
 				border: '1px solid #000',
 				'background-color': colour
 			});
-			this.tile.set('text', data.Name);
+			//this.tile.set('text', data.Name);
 		}
 	},
 	
