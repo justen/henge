@@ -16,7 +16,7 @@
 	<body>
 		<div id="header">
 			<div id="status"></div>
-			<h1>HENGE</h1>
+			<img src="<%= Url.Content("~/Content/images/henge_small.png") %>" alt="Henge Logo" />
 			<div id="main-menu">
 				<ul>
 					<li><a href="<%= Url.Action("", "") %>">Map</a></li>

@@ -14,7 +14,7 @@ a	{ text-decoration: none; color: #228; }
 div#header
 {
 	position: relative;
-	background-color: #88f;
+	background: #88f url('../images/henge_back.png') repeat-x left top;
 	height: 48px;
 	color: #000;
 	margin: 0 5px;
@@ -22,14 +22,9 @@ div#header
 	border-top: 0;
 	border-radius: 0 0 8px 8px;
 	-moz-border-radius: 0 0 8px 8px;
-}
-
-div#header h1
-{
-	margin: 0;
-	font-size: 2.5em;
 	text-align: center;
 }
+
 
 div#status
 {
@@ -60,6 +55,7 @@ div#main-menu ul
 
 div#main-menu li
 {
+	padding-bottom: 2px;
 	margin: 0 5px;
 	float: left;
 	font-size: 0.8em;
