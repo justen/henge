@@ -16,6 +16,7 @@ var giLibrary = new Class(
 			root + 'Content/interface/images/icons/people.png',
 			root + 'Content/interface/images/icons/animals.png',
 			root + 'Content/interface/images/icons/structures.png',
+			root + 'Content/interface/images/icons/avatar.png',
 		]);
     }
 });

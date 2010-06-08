@@ -1,6 +1,6 @@
 /*
 	Henge Interface
-	Bar widget
+	Icon widget
 */
 
 var giIcon = new Class(

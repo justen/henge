@@ -10,20 +10,15 @@ var giCanvas = new Class(
 		this.map		= map;
 		this.mapSize	= { x: 0, y: 0 }
 		this.centre		= { x: 0, y: 0 };
-		this.location	= { x: 0, y: 0 };
 		this.position	= { x: 0, y: 0 };
 		this.mapWidth	= 0;
 		this.mapHeight	= 0;
 		this.canvas		= new Element('div', {
 			id:	'canvas'
 		});
-		this.marker		= new Element('div', {
-			id: 	'youarehere',
-			left: 	0,
-			top:	0,
-		});
-
-		this.marker.inject(this.canvas);
+		
+		this.avatar = new giAvatar(this.canvas, library.icons[4]);
+		
 		this.canvas.inject(this.map);
 
 		this.tiles		= new Array();
@@ -40,14 +35,7 @@ var giCanvas = new Class(
 	
 	setLocation: function(x, y)
 	{
-		this.location.x = x;
-		this.location.y = y;
-		
-		this.marker.setStyles({
-			left: 	x * TILE_SIZE,
-			top:	y * TILE_SIZE
-		});
-		
+		this.avatar.setLocation(x, y);
 		this.jump(x, y);
 	},
 	
@@ -68,7 +56,7 @@ var giCanvas = new Class(
 		this.mapWidth 	= Math.ceil(this.mapSize.x / TILE_SIZE);
 		this.mapHeight 	= Math.ceil(this.mapSize.y / TILE_SIZE);
 		this.centre		= { x: this.mapSize.x / 2, y: this.mapSize.y / 2 };
-		this.jump(this.location.x, this.location.y);
+		this.jump(this.avatar.x, this.avatar.y);
 	},
 	
 	
@@ -117,7 +105,7 @@ var giCanvas = new Class(
 	
 		for (y=startY; y<=endY; y++)
 		{
-			dy = Math.abs(y - this.location.y);
+			dy = Math.abs(y - this.avatar.y);
 	
 			if (dy <= MAP_RANGE)
 			{
@@ -125,7 +113,7 @@ var giCanvas = new Class(
 	
 				for (x=startX; x<=endX; x++)
 				{
-					dx = Math.abs(x - this.location.x);
+					dx = Math.abs(x - this.avatar.x);
 	
 					if (dx <= MAP_RANGE)
 					{

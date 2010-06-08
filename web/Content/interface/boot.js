@@ -10,6 +10,7 @@ var log			= null;
 var request 	= null;
 var interface	= null;
 var library		= null;
+var avatar		= null;
 var assets		= [
 	{ type: 'js',	path: 'library/map.js' },
 	{ type: 'js',	path: 'library/canvas.js' },
