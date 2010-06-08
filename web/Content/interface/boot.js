@@ -17,7 +17,9 @@ var assets		= [
 	{ type: 'js',	path: 'library/library.js' },
 	{ type: 'js',	path: 'library/interface.js' },
 	{ type: 'js',	path: 'library/log.js' },
+	{ type: 'js',	path: 'library/widget/bar.js' },
 	{ type: 'css',	path: 'styles/map.css' },
+	{ type: 'css',	path: 'styles/interface.css' },
 ];
 
 
@@ -47,7 +49,6 @@ function resize()
 	if (map) 
 	{
 		var height	= window.getSize().y - $('content').getPosition().y;
-		var menu	= $('menu');
 		var inner	= height - log.height - 25;
 		
 		$('content').setStyle('height', height);

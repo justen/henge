@@ -10,8 +10,6 @@ div.tile
 {
 	position: absolute;
 	z-index: 1;
-	/*border: 1px solid #000000;*/
-	/*background-image: url('/images/mountains.png');*/
 }
 
 div#youarehere

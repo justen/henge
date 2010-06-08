@@ -8,6 +8,16 @@ var giInterface = new Class(
 {
 	initialize: function()
 	{
+		var status = $('status');
+		
+		this.health			= new giBar(status, 'Health');
+		this.energy			= new giBar(status, 'Energy');
+		this.constitution	= new giBar(status, 'Constitution');
+		
+		// Debug
+		this.health.set(50);
+		this.energy.set(100);
+		this.constitution.set(25);
 	},
 	
 	

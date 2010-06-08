@@ -15,9 +15,7 @@
 	</head>
 	<body>
 		<div id="header">
-			<div id="status">
-				<div class="bar"><label>Health</label><div></div></div>
-			</div>
+			<div id="status"></div>
 			<h1>HENGE</h1>
 			<div id="main-menu">
 				<ul>
