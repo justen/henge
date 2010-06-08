@@ -6,6 +6,10 @@ namespace Henge.Data.Entities
 {
 	public class Group : HengeEntity
 	{
-		public virtual IList<GroupRole> Membership	{get; set;}	
+		public Dictionary<String, GroupRole> Membership	{get; set;}
+		public Group()
+		{
+			this.Membership = new Dictionary<string, GroupRole>();
+		}
 	}
 }

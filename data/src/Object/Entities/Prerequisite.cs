@@ -5,8 +5,6 @@ namespace Henge.Data.Entities
 {
 	public class Prerequisite : ObjectEntity
 	{
-	    //The attribute that the prerequisite refers to
-	    public virtual Attribute Attribute 	{get; set;}
 	    //minimum value of the attribute to meet the prerequisite
 	    public virtual long Minimum 		{get; set;}
 	    //maximum value of the attribute to meet the prerequisite

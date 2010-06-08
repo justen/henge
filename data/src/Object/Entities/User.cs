@@ -13,8 +13,8 @@ namespace Henge.Data.Entities
 		public string Clan				{ get; set; }
 	    public string Email				{ get; set; }
 		public bool Enabled 			{ get; set; }
-		public IList<Avatar> Avatars 	{ get; set; }
-		public IList<string> Roles		{ get; set; }
+		public List<Avatar> Avatars 	{ get; set; }
+		public List<string> Roles		{ get; set; }
 		public Avatar CurrentAvatar		{ get; set; }
 		//public IList<Account> Account	{ get; set; }
 		

@@ -10,15 +10,15 @@
 	<div class="title">Map</div>	
 		
 	<br/>
-	You are <%= Model.Avatar.BaseAppearance.Name %> of clan <%= Model.Clan %>. 
+	You are <%= Model.Avatar.IndividualAppearance.Name %> of clan <%= Model.Clan %>. 
 	
 	<div id="description">
-		You are standing at <%= Model.Avatar.Location.Coordinates.X %>, <%= Model.Avatar.Location.Coordinates.Y %>, A <%= Model.Avatar.Location.BaseAppearance.Name %>.
-		It appears <%= Model.Avatar.Location.BaseAppearance.ShortDescription %>. After looking for a while you determine that it <%= Model.Avatar.Location.BaseAppearance.Description %>.
+		You are standing at <%= Model.Avatar.Location.Coordinates.X %>, <%= Model.Avatar.Location.Coordinates.Y %>, A <%= Model.Avatar.Location.Type.BaseAppearance.Name %>.
+		It appears <%= Model.Avatar.Location.Type.BaseAppearance.ShortDescription %>. After looking for a while you determine that it <%= Model.Avatar.Location.Type.BaseAppearance.Description %>.
 		<%	if (Model.Others.Count > 0) { %>
-			<%= string.Format("Also here {0} {1}", (Model.Others.Count > 1) ? "are" : "is", Model.Others[0].BaseAppearance.Name) %>
+			<%= string.Format("Also here {0} {1}", (Model.Others.Count > 1) ? "are" : "is", Model.Others[0].IndividualAppearance.Name, ", a ", Model.Others[0].Type.BaseAppearance.ShortDescription ) %>
 			<% for (int i=1; i<Model.Others.Count; i++) { %>
-				<%= string.Format(" and {0}", Model.Others[i].BaseAppearance.Name) %>
+				<%= string.Format(" and {0}", Model.Others[i].IndividualAppearance.Name) %>
 			<% } %>
 		<% } %>
 	</div>

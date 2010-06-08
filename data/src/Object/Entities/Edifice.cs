@@ -9,6 +9,11 @@ namespace Henge.Data.Entities
 	    private Location InnerLocation 		{get; set;}
 	    //Things inhabiting the Edifice itself (as distinct from having passed
 	    //into the map it links to)
-	    private IList<Actor> Inhabitants	{get; set;}
+	    private List<Actor> Inhabitants	{get; set;}
+		
+		public Edifice()
+		{
+		 	this.Inhabitants = new List<Actor>();	
+		}
 	}
 }

@@ -59,13 +59,17 @@ namespace Henge.Data
 				
 				var all = from Entity a in container select a;
 				foreach (var e in all) container.Delete(e);
-				
+				 
 				Appearance ap				= new Appearance { Priority = 1, Name = "Nondescript Wasteland", Description = "looks like the Creator simply couldn''t be bothered to do anything with it. It is totally unremarkable in every way", ShortDescription = "a thoroughly boring spot" };
+				EntityType type 			= new EntityType { Type = "Nondescript Wasteland", BaseAppearance = ap};
 				Appearance apa				= new Appearance { Priority = 1, Name = "Oz", Description = "looks like you're not in Kansas any more", ShortDescription = "somewhat magical" };
+				EntityType typea			= new EntityType { Type = "Magical Land Of Wonder", BaseAppearance = apa};
 				Henge.Data.Entities.User u	= new Henge.Data.Entities.User { Name = "test", Password = "A94A8FE5CCB19BA61C4C0873D391E987982FBBD3", Clan = "Test" };
 				Map m 						= new Map { Name = "Main" };
-				Location l					= new Location (0, 0, 0) { Map = m, BaseAppearance = apa };
-				Avatar av					= new Avatar { Name = "Og", User = u, Location = l, BaseAppearance = new Appearance { Name = "Og" } };
+				Location l					= new Location (0, 0, 0) { Map = m, Type = typea };
+				Appearance avatarAppearance = new Appearance {Priority = 1, Name = "Person", ShortDescription = "another person", Description = "another person"};
+				EntityType avatar			= new EntityType { Type = "avatar", BaseAppearance = avatarAppearance};
+				Avatar av					= new Avatar { Name = "Og", User = u, Location = l, Type = avatar, IndividualAppearance = new Appearance { Name = "Og" } };
 				
 				u.Avatars.Add(av);
 				m.Locations.Add(l.Coordinates, l);
@@ -77,7 +81,7 @@ namespace Henge.Data
 					{
 						if (x == 0 && y == 0) continue;
 						
-						l = new Location (x, y, 0) { Map = m, BaseAppearance = ap }; 
+						l = new Location (x, y, 0) { Map = m, Type = type }; 
 						m.Locations.Add(l.Coordinates, l);
 					}
 				}

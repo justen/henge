@@ -84,13 +84,9 @@
     <Compile Include="src\Object\Context\IContext.cs" />
     <Compile Include="src\Object\Context\ThreadContext.cs" />
     <Compile Include="src\Object\Context\WebContext.cs" />
-    <Compile Include="src\Object\Entities\Account.cs" />
     <Compile Include="src\Object\Entities\Actor.cs" />
     <Compile Include="src\Object\Entities\Appearance.cs" />
-    <Compile Include="src\Object\Entities\Attribute.cs" />
-    <Compile Include="src\Object\Entities\AttributeModifier.cs" />
     <Compile Include="src\Object\Entities\Avatar.cs" />
-    <Compile Include="src\Object\Entities\Condition.cs" />
     <Compile Include="src\Object\Entities\Edifice.cs" />
     <Compile Include="src\Object\Entities\ObjectEntity.cs" />
     <Compile Include="src\Object\Entities\EntityType.cs" />
@@ -103,12 +99,9 @@
     <Compile Include="src\Object\Entities\MapEntity.cs" />
     <Compile Include="src\Object\Entities\Modifier.cs" />
     <Compile Include="src\Object\Entities\Npc.cs" />
-    <Compile Include="src\Object\Entities\Parameter.cs" />
     <Compile Include="src\Object\Entities\PhysicalEntity.cs" />
     <Compile Include="src\Object\Entities\Prerequisite.cs" />
     <Compile Include="src\Object\Entities\Region.cs" />
-    <Compile Include="src\Object\Entities\Skill.cs" />
-    <Compile Include="src\Object\Entities\Statistic.cs" />
     <Compile Include="src\Object\Entities\User.cs" />
   </ItemGroup>
   <ItemGroup>

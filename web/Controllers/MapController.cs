@@ -26,7 +26,7 @@ namespace Henge.Web.Controllers
 					
 					if (location != null)
 					{
-						result.Add(new { Type = 0, Name = location.BaseAppearance.Name });
+						result.Add(new { Type = 0, Name = location.Type.BaseAppearance.Name });
 					}
 					else result.Add(new { Type = -1 });
 				}
