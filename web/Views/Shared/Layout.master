@@ -12,6 +12,9 @@
 		<script type="text/javascript" src="<%= Url.Content("~/Content/scripts/mootools.js") %>"></script>
 		<script type="text/javascript" src="<%= Url.Content("~/Content/scripts/mootools-more.js") %>"></script>
 		<script type="text/javascript">var root = "<%= Url.Content("~/") %>";</script>
+		
+		<link rel="shortcut icon" href="<%= Url.Content("~/Content/images/favicon.ico") %>" />
+		<link rel="icon" href="<%= Url.Content("~/Content/images/favicon.ico") %>" />
 	</head>
 	<body>
 		<div id="header">
