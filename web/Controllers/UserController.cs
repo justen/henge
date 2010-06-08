@@ -174,7 +174,15 @@ namespace Henge.Web.Controllers
 		public ActionResult ConnectAvatar(int index)
 		{
 			this.user.CurrentAvatar = this.user.Avatars.ElementAtOrDefault(index);
-			return RedirectToAction ("", "Game");	
+			return RedirectToAction ("", "");	
+		}
+		
+		
+		[Authorize]
+		public ActionResult DisconnectAvatar()
+		{
+			this.user.CurrentAvatar = null;
+			return RedirectToAction("Account");
 		}
 		
 		

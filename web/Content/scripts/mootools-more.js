@@ -23,8 +23,8 @@ provides: [MooTools.More]
 */
 
 MooTools.More = {
-	'version': '1.2.4.2',
-	'build': 'bd5a93c0913cce25917c48cbdacde568e15e02ef'
+	'version': '1.2.4.4',
+	'build': '6f6057dc645fdb7547689183b2311063bd653ddf'
 };
 
 /*
@@ -213,6 +213,337 @@ Log.logger = function(){
 /*
 ---
 
+script: Depender.js
+
+description: A stand alone dependency loader for the MooTools library.
+
+license: MIT-style license
+
+authors:
+- Aaron Newton
+
+requires:
+- core:1.2.4/Element.Events
+- core:1.2.4/Request.JSON
+- /MooTools.More
+- /Log
+
+provides: Depender
+
+...
+*/
+
+var Depender = {
+
+	options: {
+		/* 
+		onRequire: $empty(options),
+		onRequirementLoaded: $empty([scripts, options]),
+		onScriptLoaded: $empty({
+			script: script, 
+			totalLoaded: percentOfTotalLoaded, 
+			loaded: scriptsState
+		}),
+		serial: false,
+		target: null,
+		noCache: false,
+		log: false,*/
+		loadedSources: [],
+		loadedScripts: ['Core', 'Browser', 'Array', 'String', 'Function', 'Number', 'Hash', 'Element', 'Event', 'Element.Event', 'Class', 'DomReady', 'Class.Extras', 'Request', 'JSON', 'Request.JSON', 'More', 'Depender', 'Log'],
+		useScriptInjection: true
+	},
+
+	loaded: [],
+
+	sources: {},
+
+	libs: {},
+
+	include: function(libs){
+		this.log('include: ', libs);
+		this.mapLoaded = false;
+		var loader = function(data){
+			this.libs = $merge(this.libs, data);
+			$each(this.libs, function(data, lib){
+				if (data.scripts) this.loadSource(lib, data.scripts);
+			}, this);
+		}.bind(this);
+		if ($type(libs) == 'string'){
+			this.log('fetching libs ', libs);
+			this.request(libs, loader);
+		} else {
+			loader(libs);
+		}
+		return this;
+	},
+
+	required: [],
+
+	require: function(options){
+		var loaded = function(){
+			var scripts = this.calculateDependencies(options.scripts);
+			if (options.sources){
+				options.sources.each(function(source){
+					scripts.combine(this.libs[source].files);
+				}, this);
+			}
+			if (options.serial) scripts.combine(this.getLoadedScripts());
+			options.scripts = scripts;
+			this.required.push(options);
+			this.fireEvent('require', options);
+			this.loadScripts(options.scripts);
+		};
+		if (this.mapLoaded) loaded.call(this);
+		else this.addEvent('mapLoaded', loaded.bind(this));
+		return this;
+	},
+
+	cleanDoubleSlash: function(str){
+		if (!str) return str;
+		var prefix = '';
+		if (str.test(/^http:\/\//)){
+			prefix = 'http://';
+			str = str.substring(7, str.length);
+		}
+		str = str.replace(/\/\//g, '/');
+		return prefix + str;
+	},
+
+	request: function(url, callback){
+		new Request.JSON({
+			url: url,
+			secure: false,
+			onSuccess: callback
+		}).send();
+	},
+
+	loadSource: function(lib, source){
+		if (this.libs[lib].files){
+			this.dataLoaded();
+			return;
+		}
+		this.log('loading source: ', source);
+		this.request(this.cleanDoubleSlash(source + '/scripts.json'), function(result){
+			this.log('loaded source: ', source);
+			this.libs[lib].files = result;
+			this.dataLoaded();
+		}.bind(this));
+	},
+
+	dataLoaded: function(){
+		var loaded = true;
+		$each(this.libs, function(v, k){
+			if (!this.libs[k].files) loaded = false;
+		}, this);
+		if (loaded){
+			this.mapTree();
+			this.mapLoaded = true;
+			this.calculateLoaded();
+			this.lastLoaded = this.getLoadedScripts().getLength();
+			this.fireEvent('mapLoaded');
+			this.removeEvents('mapLoaded');
+		}
+	},
+
+	calculateLoaded: function(){
+		var set = function(script){
+			this.scriptsState[script] = true;
+		}.bind(this);
+		if (this.options.loadedScripts) this.options.loadedScripts.each(set);
+		if (this.options.loadedSources){
+			this.options.loadedSources.each(function(lib){
+				$each(this.libs[lib].files, function(dir){
+					$each(dir, function(data, file){
+						set(file);
+					}, this);
+				}, this);
+			}, this);
+		}
+	},
+
+	deps: {},
+
+	pathMap: {},
+
+	mapTree: function(){
+		$each(this.libs, function(data, source){
+			$each(data.files, function(scripts, folder){
+				$each(scripts, function(details, script){
+					var path = source + ':' + folder + ':' + script;
+					if (this.deps[path]) return;
+					this.deps[path] = details.deps;
+					this.pathMap[script] = path;
+				}, this);
+			}, this);
+		}, this);
+	},
+
+	getDepsForScript: function(script){
+		return this.deps[this.pathMap[script]] || [];
+	},
+
+	calculateDependencies: function(scripts){
+		var reqs = [];
+		$splat(scripts).each(function(script){
+			if (script == 'None' || !script) return;
+			var deps = this.getDepsForScript(script);
+			if (!deps){
+				if (window.console && console.warn) console.warn('dependencies not mapped: script: %o, map: %o, :deps: %o', script, this.pathMap, this.deps);
+			} else {
+				deps.each(function(scr){
+					if (scr == script || scr == 'None' || !scr) return;
+					if (!reqs.contains(scr)) reqs.combine(this.calculateDependencies(scr));
+					reqs.include(scr);
+				}, this);
+			}
+			reqs.include(script);
+		}, this);
+		return reqs;
+	},
+
+	getPath: function(script){
+		try {
+			var chunks = this.pathMap[script].split(':');
+			var lib = this.libs[chunks[0]];
+			var dir = (lib.path || lib.scripts) + '/';
+			chunks.shift();
+			return this.cleanDoubleSlash(dir + chunks.join('/') + '.js');
+		} catch(e){
+			return script;
+		}
+	},
+
+	loadScripts: function(scripts){
+		scripts = scripts.filter(function(s){
+			if (!this.scriptsState[s] && s != 'None'){
+				this.scriptsState[s] = false;
+				return true;
+			}
+		}, this);
+		if (scripts.length){
+			scripts.each(function(scr){
+				this.loadScript(scr);
+			}, this);
+		} else {
+			this.check();
+		}
+	},
+
+	toLoad: [],
+
+	loadScript: function(script){
+		if (this.scriptsState[script] && this.toLoad.length){
+			this.loadScript(this.toLoad.shift());
+			return;
+		} else if (this.loading){
+			this.toLoad.push(script);
+			return;
+		}
+		var finish = function(){
+			this.loading = false;
+			this.scriptLoaded(script);
+			if (this.toLoad.length) this.loadScript(this.toLoad.shift());
+		}.bind(this);
+		var error = function(){
+			this.log('could not load: ', scriptPath);
+		}.bind(this);
+		this.loading = true;
+		var scriptPath = this.getPath(script);
+		if (this.options.useScriptInjection){
+			this.log('injecting script: ', scriptPath);
+			var loaded = function(){
+				this.log('loaded script: ', scriptPath);
+				finish();
+			}.bind(this);
+			new Element('script', {
+				src: scriptPath + (this.options.noCache ? '?noCache=' + new Date().getTime() : ''),
+				events: {
+					load: loaded,
+					readystatechange: function(){
+						if (['loaded', 'complete'].contains(this.readyState)) loaded();
+					},
+					error: error
+				}
+			}).inject(this.options.target || document.head);
+		} else {
+			this.log('requesting script: ', scriptPath);
+			new Request({
+				url: scriptPath,
+				noCache: this.options.noCache,
+				onComplete: function(js){
+					this.log('loaded script: ', scriptPath);
+					$exec(js);
+					finish();
+				}.bind(this),
+				onFailure: error,
+				onException: error
+			}).send();
+		}
+	},
+
+	scriptsState: $H(),
+	
+	getLoadedScripts: function(){
+		return this.scriptsState.filter(function(state){
+			return state;
+		});
+	},
+
+	scriptLoaded: function(script){
+		this.log('loaded script: ', script);
+		this.scriptsState[script] = true;
+		this.check();
+		var loaded = this.getLoadedScripts();
+		var loadedLength = loaded.getLength();
+		var toLoad = this.scriptsState.getLength();
+		this.fireEvent('scriptLoaded', {
+			script: script,
+			totalLoaded: (loadedLength / toLoad * 100).round(),
+			currentLoaded: ((loadedLength - this.lastLoaded) / (toLoad - this.lastLoaded) * 100).round(),
+			loaded: loaded
+		});
+		if (loadedLength == toLoad) this.lastLoaded = loadedLength;
+	},
+
+	lastLoaded: 0,
+
+	check: function(){
+		var incomplete = [];
+		this.required.each(function(required){
+			var loaded = [];
+			required.scripts.each(function(script){
+				if (this.scriptsState[script]) loaded.push(script);
+			}, this);
+			if (required.onStep){
+				required.onStep({
+					percent: loaded.length / required.scripts.length * 100,
+					scripts: loaded
+				});
+			};
+			if (required.scripts.length != loaded.length) return;
+			required.callback();
+			this.required.erase(required);
+			this.fireEvent('requirementLoaded', [loaded, required]);
+		}, this);
+	}
+
+};
+
+$extend(Depender, new Events);
+$extend(Depender, new Options);
+$extend(Depender, new Log);
+
+Depender._setOptions = Depender.setOptions;
+Depender.setOptions = function(){
+	Depender._setOptions.apply(Depender, arguments);
+	if (this.options.log) Depender.enableLog();
+	return this;
+};
+
+
+/*
+---
+
 script: Class.Refactor.js
 
 description: Extends a class onto itself with new property, preserving any items attached to the class's namespace.
@@ -324,6 +655,67 @@ Class.Occlude = new Class({
 /*
 ---
 
+script: Chain.Wait.js
+
+description: value, Adds a method to inject pauses between chained events.
+
+license: MIT-style license.
+
+authors:
+- Aaron Newton
+
+requires: 
+- core:1.2.4/Chain 
+- core:1.2.4/Element
+- core:1.2.4/Fx
+- /MooTools.More
+
+provides: [Chain.Wait]
+
+...
+*/
+
+(function(){
+
+	var wait = {
+		wait: function(duration){
+			return this.chain(function(){
+				this.callChain.delay($pick(duration, 500), this);
+			}.bind(this));
+		}
+	};
+
+	Chain.implement(wait);
+
+	if (window.Fx){
+		Fx.implement(wait);
+		['Css', 'Tween', 'Elements'].each(function(cls){
+			if (Fx[cls]) Fx[cls].implement(wait);
+		});
+	}
+
+	Element.implement({
+		chains: function(effects){
+			$splat($pick(effects, ['tween', 'morph', 'reveal'])).each(function(effect){
+				effect = this.get(effect);
+				if (!effect) return;
+				effect.setOptions({
+					link:'chain'
+				});
+			}, this);
+			return this;
+		},
+		pauseFx: function(duration, effect){
+			this.chains(effect).get($pick(effect, 'tween')).wait(duration);
+			return this;
+		}
+	});
+
+})();
+
+/*
+---
+
 script: Array.Extras.js
 
 description: Extends the Array native object to include useful methods to work with arrays.
@@ -366,6 +758,15 @@ Array.implement({
 
 	unique: function(){
 		return [].combine(this);
+	},
+
+	shuffle: function(){
+		for (var i = this.length; i && --i;){
+			var temp = this[i], r = Math.floor(Math.random() * ( i + 1 ));
+			this[i] = this[r];
+			this[r] = temp;
+		}
+		return this;
 	}
 
 });
@@ -792,7 +1193,7 @@ var build = function(format){
 			bits = bits.slice(1).associate(parsed);
 			var date = new Date().clearTime();
 			if ('d' in bits) handle.call(date, 'd', 1);
-			if ('m' in bits) handle.call(date, 'm', 1);
+			if ('m' in bits || 'b' in bits || 'B' in bits) handle.call(date, 'm', 1);
 			for (var key in bits) handle.call(date, key, bits[key]);
 			return date;
 		}
@@ -1191,7 +1592,7 @@ var URI = new Class({
 		/*base: false*/
 	},
 
-	regex: /^(?:(\w+):)?(?:\/\/(?:(?:([^:@]*):?([^:@]*))?@)?([^:\/?#]*)(?::(\d*))?)?(\.\.?$|(?:[^?#\/]*\/)*)([^?#]*)(?:\?([^#]*))?(?:#(.*))?/,
+	regex: /^(?:(\w+):)?(?:\/\/(?:(?:([^:@\/]*):?([^:@\/]*))?@)?([^:\/?#]*)(?::(\d*))?)?(\.\.?$|(?:[^?#\/]*\/)*)([^?#]*)(?:\?([^#]*))?(?:#(.*))?/,
 	parts: ['scheme', 'user', 'password', 'host', 'port', 'directory', 'file', 'query', 'fragment'],
 	schemes: {http: 80, https: 443, ftp: 21, rtsp: 554, mms: 1755, file: 0},
 
@@ -1284,8 +1685,9 @@ var URI = new Class({
 
 	setData: function(values, merge, part){
 		if (typeof values == 'string'){
-			values = this.getData();
-			values[arguments[0]] = arguments[1];
+			data = this.getData();
+			data[arguments[0]] = arguments[1];
+			values = data;
 		} else if (merge) {
 			values = $merge(this.getData(), values);
 		}
@@ -1563,7 +1965,8 @@ provides: [Element.Delegation]
 
 ...
 */
-(function(){
+
+(function(addEvent, removeEvent){
 	
 	var match = /(.*?):relay\(([^)]+)\)$/,
 		combinators = /[+>~\s]/,
@@ -1590,9 +1993,6 @@ provides: [Element.Delegation]
 			return null;
 		};
 
-	var oldAddEvent = Element.prototype.addEvent,
-		oldRemoveEvent = Element.prototype.removeEvent;
-		
 	Element.implement({
 
 		addEvent: function(type, fn){
@@ -1605,10 +2005,10 @@ provides: [Element.Delegation]
 						if (el) this.fireEvent(type, [e, el], 0, el);
 					}.bind(this);
 					monitors[type] = monitor;
-					oldAddEvent.call(this, splitted.event, monitor);
+					addEvent.call(this, splitted.event, monitor);
 				}
 			}
-			return oldAddEvent.apply(this, arguments);
+			return addEvent.apply(this, arguments);
 		},
 
 		removeEvent: function(type, fn){
@@ -1617,19 +2017,18 @@ provides: [Element.Delegation]
 				var events = this.retrieve('events');
 				if (!events || !events[type] || (fn && !events[type].keys.contains(fn))) return this;
 
-				if (fn) oldRemoveEvent.apply(this, [type, fn]);
-				else oldRemoveEvent.apply(this, type);
+				if (fn) removeEvent.apply(this, [type, fn]);
+				else removeEvent.apply(this, type);
 
 				events = this.retrieve('events');
-				if (events && events[type] && events[type].length == 0){
+				if (events && events[type] && events[type].keys.length == 0){
 					var monitors = this.retrieve('$moo:delegateMonitors', {});
-					oldRemoveEvent.apply(this, [splitted.event, monitors[type]]);
+					removeEvent.apply(this, [splitted.event, monitors[type]]);
 					delete monitors[type];
 				}
 				return this;
 			}
-
-			return oldRemoveEvent.apply(this, arguments);
+			return removeEvent.apply(this, arguments);
 		},
 
 		fireEvent: function(type, args, delay, bind){
@@ -1643,7 +2042,7 @@ provides: [Element.Delegation]
 
 	});
 
-})();
+})(Element.prototype.addEvent, Element.prototype.removeEvent);
 
 /*
 ---
@@ -1993,10 +2392,6 @@ Element.implement({
 				calc = rel == document.body ? window.getScroll() : rel.getPosition(),
 				top = calc.y, left = calc.x;
 
-		var scrolls = rel.getScrolls();
-		top += scrolls.y;
-		left += scrolls.x;
-
 		var dim = this.getDimensions({computeSize: true, styles:['padding', 'border','margin']});
 		var pos = {},
 				prefY = options.offset.y,
@@ -2136,15 +2531,15 @@ Element.implement({
 	hide: function(){
 		var d;
 		try {
-			// IE fails here if the element is not in the dom
-			if ((d = this.getStyle('display')) == 'none') d = null;
+			//IE fails here if the element is not in the dom
+			d = this.getStyle('display');
 		} catch(e){}
-		
-		return this.store('originalDisplay', d || 'block').setStyle('display', 'none');
+		return this.store('originalDisplay', d || '').setStyle('display', 'none');
 	},
 
 	show: function(display){
-		return this.setStyle('display', display || this.retrieve('originalDisplay') || 'block');
+		display = display || this.retrieve('originalDisplay') || 'block';
+		return this.setStyle('display', (display == 'none') ? 'block' : display);
 	},
 
 	swapClass: function(remove, add){
@@ -2226,19 +2621,18 @@ if (!window.Form) window.Form = {};
 
 		makeRequest: function(){
 			this.request = new Request.HTML($merge({
-					url: this.element.get('action'),
 					update: this.update,
 					emulation: false,
 					spinnerTarget: this.element,
 					method: this.element.get('method') || 'post'
 			}, this.options.requestOptions)).addEvents({
 				success: function(text, xml){
-					['success', 'complete'].each(function(evt){
+					['complete', 'success'].each(function(evt){
 						this.fireEvent(evt, [this.update, text, xml]);
 					}, this);
 				}.bind(this),
 				failure: function(xhr){
-					this.fireEvent('failure', xhr);
+					this.fireEvent('complete').fireEvent('failure', xhr);
 				}.bind(this),
 				exception: function(){
 					this.fireEvent('failure', xhr);
@@ -2270,7 +2664,8 @@ if (!window.Form) window.Form = {};
 		},
 
 		onFormValidate: function(valid, form, e) {
-			if (valid || !fv.options.stopOnFailure) {
+			var fv = this.element.retrieve('validator');
+			if (valid || (fv && !fv.options.stopOnFailure)) {
 				if (e && e.stop) e.stop();
 				this.send();
 			}
@@ -2280,7 +2675,6 @@ if (!window.Form) window.Form = {};
 			if (this.element.retrieve('validator')) {
 				//form validator was created after Form.Request
 				this.detach();
-				this.addFormEvent();
 				return;
 			}
 			e.stop();
@@ -2292,8 +2686,8 @@ if (!window.Form) window.Form = {};
 			var data = $H(this.options.extraData).toQueryString();
 			if (str) str += "&" + data;
 			else str = data;
-			this.fireEvent('send', [this.element, str]);
-			this.request.send({data: str});
+			this.fireEvent('send', [this.element, str.parseQueryString()]);
+			this.request.send({data: str, url: this.element.get("action")});
 			return this;
 		}
 
@@ -3247,7 +3641,7 @@ Form.Validator.addAllThese([
 
 	['validate-cc-num', {
 		errorMsg: function(element){
-			var ccNum = element.get('value').ccNum.replace(/[^0-9]/g, '');
+			var ccNum = element.get('value').replace(/[^0-9]/g, '');
 			return Form.Validator.getMsg('creditcard').substitute({length: ccNum.length});
 		},
 		test: function(element){
@@ -3444,10 +3838,12 @@ var OverText = new Class({
 			this.text.hide();
 			this.fireEvent('textHide', [this.text, this.element]);
 			this.pollingPaused = true;
-			try {
-				if (!suppressFocus) this.element.fireEvent('focus');
-				this.element.focus();
-			} catch(e){} //IE barfs if you call focus on hidden elements
+			if (!suppressFocus){
+				try {
+					this.element.fireEvent('focus');
+					this.element.focus();
+				} catch(e){} //IE barfs if you call focus on hidden elements
+			}
 		}
 		return this;
 	},
@@ -3605,7 +4001,7 @@ provides: [Fx.Accordion]
 ...
 */
 
-var Accordion = Fx.Accordion = new Class({
+Fx.Accordion = new Class({
 
 	Extends: Fx.Elements,
 
@@ -3627,10 +4023,14 @@ var Accordion = Fx.Accordion = new Class({
 	},
 
 	initialize: function(){
-		var params = Array.link(arguments, {'container': Element.type, 'options': Object.type, 'togglers': $defined, 'elements': $defined});
+		var params = Array.link(arguments, {
+			'container': Element.type, //deprecated
+			'options': Object.type,
+			'togglers': $defined,
+			'elements': $defined
+		});
 		this.parent(params.elements, params.options);
 		this.togglers = $$(params.togglers);
-		this.container = document.id(params.container);
 		this.previous = -1;
 		this.internalChain = new Chain();
 		if (this.options.alwaysHide) this.options.wait = true;
@@ -3654,7 +4054,8 @@ var Accordion = Fx.Accordion = new Class({
 				for (var fx in this.effects) el.setStyle(fx, 0);
 			}
 		}, this);
-		if ($chk(this.options.display)) this.display(this.options.display, this.options.initialDisplayFx);
+		if ($chk(this.options.display) || this.options.initialDisplayFx === false) this.display(this.options.display, this.options.initialDisplayFx);
+		if (this.options.fixedHeight !== false) this.options.returnHeightToAuto = false;
 		this.addEvent('complete', this.internalChain.callChain.bind(this.internalChain));
 	},
 
@@ -3720,6 +4121,37 @@ var Accordion = Fx.Accordion = new Class({
 			};
 		}.bind(this));
 		return useFx ? this.start(obj) : this.set(obj);
+	}
+
+});
+
+/*
+	Compatibility with 1.2.0
+*/
+var Accordion = new Class({
+
+	Extends: Fx.Accordion,
+
+	initialize: function(){
+		this.parent.apply(this, arguments);
+		var params = Array.link(arguments, {'container': Element.type});
+		this.container = params.container;
+	},
+
+	addSection: function(toggler, element, pos){
+		toggler = document.id(toggler);
+		element = document.id(element);
+		var test = this.togglers.contains(toggler);
+		var len = this.togglers.length;
+		if (len && (!test || pos)){
+			pos = $pick(pos, len - 1);
+			toggler.inject(this.togglers[pos], 'before');
+			element.inject(toggler, 'after');
+		} else if (this.container && !test){
+			toggler.inject(this.container);
+			element.inject(this.container);
+		}
+		return this.parent.apply(this, arguments);
 	}
 
 });
@@ -3842,7 +4274,7 @@ Fx.Reveal = new Class({
 						styles: this.options.styles,
 						mode: this.options.mode
 					});
-					this.element.setStyle('display', 'block');
+					this.element.setStyle('display', this.options.display);
 					if (this.options.transitionOpacity) startStyles.opacity = 1;
 					var zero = {};
 					$each(startStyles, function(style, name){
@@ -4209,12 +4641,14 @@ Fx.Slide = new Class({
 
 	options: {
 		mode: 'vertical',
+		wrapper: false,
 		hideOverflow: true
 	},
 
 	initialize: function(element, options){
 		this.addEvent('complete', function(){
 			this.open = (this.wrapper['offset' + this.layout.capitalize()] != 0);
+			if (this.open) this.wrapper.setStyle('height', '');
 			if (this.open && Browser.Engine.webkit419) this.element.dispose().inject(this.wrapper);
 		}, true);
 		this.element = this.subject = document.id(element);
@@ -4222,6 +4656,7 @@ Fx.Slide = new Class({
 		var wrapper = this.element.retrieve('wrapper');
 		var styles = this.element.getStyles('margin', 'position', 'overflow');
 		if (this.options.hideOverflow) styles = $extend(styles, {overflow: 'hidden'});
+		if (this.options.wrapper) wrapper = document.id(this.options.wrapper).setStyles(styles);
 		this.wrapper = wrapper || new Element('div', {
 			styles: styles
 		}).wraps(this.element);
@@ -4781,7 +5216,7 @@ Drag.Move = new Class({
 		if (this.container && $type(this.container) != 'element')
 			this.container = document.id(this.container.getDocument().body);
 		
-		var styles = element.getStyles('left', 'right', 'position');
+		var styles = element.getStyles('left', 'top', 'position');
 		if (styles.left == 'auto' || styles.top == 'auto')
 			element.setPosition(element.getPosition(element.getOffsetParent()));
 		
@@ -5191,12 +5626,20 @@ var Sortables = new Class({
 	getClone: function(event, element){
 		if (!this.options.clone) return new Element('div').inject(document.body);
 		if ($type(this.options.clone) == 'function') return this.options.clone.call(this, event, element, this.list);
-		return element.clone(true).setStyles({
+		var clone = element.clone(true).setStyles({
 			margin: '0px',
 			position: 'absolute',
 			visibility: 'hidden',
 			'width': element.getStyle('width')
-		}).inject(this.list).setPosition(element.getPosition(element.getOffsetParent()));
+		});
+		//prevent the duplicated radio inputs from unchecking the real one
+		if (clone.get('html').test('radio')) {
+			clone.getElements('input[type=radio]').each(function(input, i) {
+				input.set('name', 'clone_' + i);
+			});
+		}
+		
+		return clone.inject(this.list).setPosition(element.getPosition(element.getOffsetParent()));
 	},
 
 	getDroppables: function(){
@@ -5406,15 +5849,15 @@ Request.JSONP = new Class({
 		if (src.length > 2083) this.log('JSONP '+ src +' will fail in Internet Explorer, which enforces a 2083 bytes length limit on URIs');
 
 		var script = new Element('script', {type: 'text/javascript', src: src});
-		Request.JSONP.request_map['request_' + index] = function(data){ this.success(data, script); }.bind(this);
+		Request.JSONP.request_map['request_' + index] = function(){ this.success(arguments, script); }.bind(this);
 		return script.inject(this.options.injectScript);
 	},
 
-	success: function(data, script){
+	success: function(args, script){
 		if (script) script.destroy();
 		this.running = false;
-		this.log('JSONP successfully retrieved: ', data);
-		this.fireEvent('complete', [data]).fireEvent('success', [data]).callChain();
+		this.log('JSONP successfully retrieved: ', args);
+		this.fireEvent('complete', args).fireEvent('success', args).callChain();
 	}
 
 });
@@ -5709,7 +6152,9 @@ var Asset = {
 			document: document,
 			check: $lambda(true)
 		}, properties);
-
+		
+		if (properties.onLoad) properties.onload = properties.onLoad;
+		
 		var script = new Element('script', {src: source, type: 'text/javascript'});
 
 		var load = properties.onload.bind(script), 
@@ -5754,6 +6199,8 @@ var Asset = {
 		var element = document.id(image) || new Element('img');
 		['load', 'abort', 'error'].each(function(name){
 			var type = 'on' + name;
+			var cap = name.capitalize();
+			if (properties['on' + cap]) properties[type] = properties['on' + cap];
 			var event = properties[type];
 			delete properties[type];
 			image[type] = function(){
@@ -5799,6 +6246,281 @@ var Asset = {
 	}
 
 };
+
+/*
+---
+
+script: Color.js
+
+description: Class for creating and manipulating colors in JavaScript. Supports HSB -> RGB Conversions and vice versa.
+
+license: MIT-style license
+
+authors:
+- Valerio Proietti
+
+requires:
+- core:1.2.4/Array
+- core:1.2.4/String
+- core:1.2.4/Number
+- core:1.2.4/Hash
+- core:1.2.4/Function
+- core:1.2.4/$util
+
+provides: [Color]
+
+...
+*/
+
+var Color = new Native({
+
+	initialize: function(color, type){
+		if (arguments.length >= 3){
+			type = 'rgb'; color = Array.slice(arguments, 0, 3);
+		} else if (typeof color == 'string'){
+			if (color.match(/rgb/)) color = color.rgbToHex().hexToRgb(true);
+			else if (color.match(/hsb/)) color = color.hsbToRgb();
+			else color = color.hexToRgb(true);
+		}
+		type = type || 'rgb';
+		switch (type){
+			case 'hsb':
+				var old = color;
+				color = color.hsbToRgb();
+				color.hsb = old;
+			break;
+			case 'hex': color = color.hexToRgb(true); break;
+		}
+		color.rgb = color.slice(0, 3);
+		color.hsb = color.hsb || color.rgbToHsb();
+		color.hex = color.rgbToHex();
+		return $extend(color, this);
+	}
+
+});
+
+Color.implement({
+
+	mix: function(){
+		var colors = Array.slice(arguments);
+		var alpha = ($type(colors.getLast()) == 'number') ? colors.pop() : 50;
+		var rgb = this.slice();
+		colors.each(function(color){
+			color = new Color(color);
+			for (var i = 0; i < 3; i++) rgb[i] = Math.round((rgb[i] / 100 * (100 - alpha)) + (color[i] / 100 * alpha));
+		});
+		return new Color(rgb, 'rgb');
+	},
+
+	invert: function(){
+		return new Color(this.map(function(value){
+			return 255 - value;
+		}));
+	},
+
+	setHue: function(value){
+		return new Color([value, this.hsb[1], this.hsb[2]], 'hsb');
+	},
+
+	setSaturation: function(percent){
+		return new Color([this.hsb[0], percent, this.hsb[2]], 'hsb');
+	},
+
+	setBrightness: function(percent){
+		return new Color([this.hsb[0], this.hsb[1], percent], 'hsb');
+	}
+
+});
+
+var $RGB = function(r, g, b){
+	return new Color([r, g, b], 'rgb');
+};
+
+var $HSB = function(h, s, b){
+	return new Color([h, s, b], 'hsb');
+};
+
+var $HEX = function(hex){
+	return new Color(hex, 'hex');
+};
+
+Array.implement({
+
+	rgbToHsb: function(){
+		var red = this[0],
+				green = this[1],
+				blue = this[2],
+				hue = 0;
+		var max = Math.max(red, green, blue),
+				min = Math.min(red, green, blue);
+		var delta = max - min;
+		var brightness = max / 255,
+				saturation = (max != 0) ? delta / max : 0;
+		if(saturation != 0) {
+			var rr = (max - red) / delta;
+			var gr = (max - green) / delta;
+			var br = (max - blue) / delta;
+			if (red == max) hue = br - gr;
+			else if (green == max) hue = 2 + rr - br;
+			else hue = 4 + gr - rr;
+			hue /= 6;
+			if (hue < 0) hue++;
+		}
+		return [Math.round(hue * 360), Math.round(saturation * 100), Math.round(brightness * 100)];
+	},
+
+	hsbToRgb: function(){
+		var br = Math.round(this[2] / 100 * 255);
+		if (this[1] == 0){
+			return [br, br, br];
+		} else {
+			var hue = this[0] % 360;
+			var f = hue % 60;
+			var p = Math.round((this[2] * (100 - this[1])) / 10000 * 255);
+			var q = Math.round((this[2] * (6000 - this[1] * f)) / 600000 * 255);
+			var t = Math.round((this[2] * (6000 - this[1] * (60 - f))) / 600000 * 255);
+			switch (Math.floor(hue / 60)){
+				case 0: return [br, t, p];
+				case 1: return [q, br, p];
+				case 2: return [p, br, t];
+				case 3: return [p, q, br];
+				case 4: return [t, p, br];
+				case 5: return [br, p, q];
+			}
+		}
+		return false;
+	}
+
+});
+
+String.implement({
+
+	rgbToHsb: function(){
+		var rgb = this.match(/\d{1,3}/g);
+		return (rgb) ? rgb.rgbToHsb() : null;
+	},
+
+	hsbToRgb: function(){
+		var hsb = this.match(/\d{1,3}/g);
+		return (hsb) ? hsb.hsbToRgb() : null;
+	}
+
+});
+
+
+/*
+---
+
+script: Group.js
+
+description: Class for monitoring collections of events
+
+license: MIT-style license
+
+authors:
+- Valerio Proietti
+
+requires:
+- core:1.2.4/Events
+- /MooTools.More
+
+provides: [Group]
+
+...
+*/
+
+var Group = new Class({
+
+	initialize: function(){
+		this.instances = Array.flatten(arguments);
+		this.events = {};
+		this.checker = {};
+	},
+
+	addEvent: function(type, fn){
+		this.checker[type] = this.checker[type] || {};
+		this.events[type] = this.events[type] || [];
+		if (this.events[type].contains(fn)) return false;
+		else this.events[type].push(fn);
+		this.instances.each(function(instance, i){
+			instance.addEvent(type, this.check.bind(this, [type, instance, i]));
+		}, this);
+		return this;
+	},
+
+	check: function(type, instance, i){
+		this.checker[type][i] = true;
+		var every = this.instances.every(function(current, j){
+			return this.checker[type][j] || false;
+		}, this);
+		if (!every) return;
+		this.checker[type] = {};
+		this.events[type].each(function(event){
+			event.call(this, this.instances, instance);
+		}, this);
+	}
+
+});
+
+
+/*
+---
+
+script: Hash.Cookie.js
+
+description: Class for creating, reading, and deleting Cookies in JSON format.
+
+license: MIT-style license
+
+authors:
+- Valerio Proietti
+- Aaron Newton
+
+requires:
+- core:1.2.4/Cookie
+- core:1.2.4/JSON
+- /MooTools.More
+
+provides: [Hash.Cookie]
+
+...
+*/
+
+Hash.Cookie = new Class({
+
+	Extends: Cookie,
+
+	options: {
+		autoSave: true
+	},
+
+	initialize: function(name, options){
+		this.parent(name, options);
+		this.load();
+	},
+
+	save: function(){
+		var value = JSON.encode(this.hash);
+		if (!value || value.length > 4096) return false; //cookie would be truncated!
+		if (value == '{}') this.dispose();
+		else this.write(value);
+		return true;
+	},
+
+	load: function(){
+		this.hash = new Hash(JSON.decode(this.read(), true));
+		return this;
+	}
+
+});
+
+Hash.each(Hash.prototype, function(method, name){
+	if (typeof method == 'function') Hash.Cookie.implement(name, function(){
+		var value = method.apply(this.hash, arguments);
+		if (this.options.autoSave) this.save();
+		return value;
+	});
+});
 
 /*
 ---
@@ -5877,7 +6599,7 @@ var IframeShim = new Class({
 				this[this.options.display ? 'show' : 'hide']();
 				this.fireEvent('inject');
 			}).bind(this);
-			if (IframeShim.ready) window.addEvent('load', inject);
+			if (!IframeShim.ready) window.addEvent('load', inject);
 			else inject();
 		} else {
 			this.position = this.hide = this.show = this.dispose = $lambda(this);
@@ -5931,6 +6653,995 @@ window.addEvent('load', function(){
 /*
 ---
 
+script: HtmlTable.js
+
+description: Builds table elements with methods to add rows.
+
+license: MIT-style license
+
+authors:
+- Aaron Newton
+
+requires:
+- core:1.2.4/Options
+- core:1.2.4/Events
+- /Class.Occlude
+
+provides: [HtmlTable]
+
+...
+*/
+
+var HtmlTable = new Class({
+
+	Implements: [Options, Events, Class.Occlude],
+
+	options: {
+		properties: {
+			cellpadding: 0,
+			cellspacing: 0,
+			border: 0
+		},
+		rows: [],
+		headers: [],
+		footers: []
+	},
+
+	property: 'HtmlTable',
+
+	initialize: function(){
+		var params = Array.link(arguments, {options: Object.type, table: Element.type});
+		this.setOptions(params.options);
+		this.element = params.table || new Element('table', this.options.properties);
+		if (this.occlude()) return this.occluded;
+		this.build();
+	},
+
+	build: function(){
+		this.element.store('HtmlTable', this);
+
+		this.body = document.id(this.element.tBodies[0]) || new Element('tbody').inject(this.element);
+		$$(this.body.rows);
+
+		if (this.options.headers.length) this.setHeaders(this.options.headers);
+		else this.thead = document.id(this.element.tHead);
+		if (this.thead) this.head = document.id(this.thead.rows[0]);
+
+		if (this.options.footers.length) this.setFooters(this.options.footers);
+		this.tfoot = document.id(this.element.tFoot);
+		if (this.tfoot) this.foot = document.id(this.thead.rows[0]);
+
+		this.options.rows.each(function(row){
+			this.push(row);
+		}, this);
+
+		['adopt', 'inject', 'wraps', 'grab', 'replaces', 'dispose'].each(function(method){
+				this[method] = this.element[method].bind(this.element);
+		}, this);
+	},
+
+	toElement: function(){
+		return this.element;
+	},
+
+	empty: function(){
+		this.body.empty();
+		return this;
+	},
+
+	set: function(what, items) {
+		var target = (what == 'headers') ? 'tHead' : 'tFoot';
+		this[target.toLowerCase()] = (document.id(this.element[target]) || new Element(target.toLowerCase()).inject(this.element, 'top')).empty();
+		var data = this.push(items, {}, this[target.toLowerCase()], what == 'headers' ? 'th' : 'td');
+		if (what == 'headers') this.head = document.id(this.thead.rows[0]);
+		else this.foot = document.id(this.thead.rows[0]);
+		return data;
+	},
+
+	setHeaders: function(headers){
+		this.set('headers', headers);
+		return this;
+	},
+
+	setFooters: function(footers){
+		this.set('footers', footers);
+		return this;
+	},
+
+	push: function(row, rowProperties, target, tag){
+		var tds = row.map(function(data){
+			var td = new Element(tag || 'td', data.properties),
+				type = data.content || data || '',
+				element = document.id(type);
+			if($type(type) != 'string' && element) td.adopt(element);
+			else td.set('html', type);
+
+			return td;
+		});
+
+		return {
+			tr: new Element('tr', rowProperties).inject(target || this.body).adopt(tds),
+			tds: tds
+		};
+	}
+
+});
+
+
+/*
+---
+
+script: HtmlTable.Zebra.js
+
+description: Builds a stripy table with methods to add rows.
+
+license: MIT-style license
+
+authors:
+- Harald Kirschner
+- Aaron Newton
+
+requires:
+- /HtmlTable
+- /Class.refactor
+
+provides: [HtmlTable.Zebra]
+
+...
+*/
+
+HtmlTable = Class.refactor(HtmlTable, {
+
+	options: {
+		classZebra: 'table-tr-odd',
+		zebra: true
+	},
+
+	initialize: function(){
+		this.previous.apply(this, arguments);
+		if (this.occluded) return this.occluded;
+		if (this.options.zebra) this.updateZebras();
+	},
+
+	updateZebras: function(){
+		Array.each(this.body.rows, this.zebra, this);
+	},
+
+	zebra: function(row, i){
+		return row[((i % 2) ? 'remove' : 'add')+'Class'](this.options.classZebra);
+	},
+
+	push: function(){
+		var pushed = this.previous.apply(this, arguments);
+		if (this.options.zebra) this.updateZebras();
+		return pushed;
+	}
+
+});
+
+/*
+---
+
+script: HtmlTable.Sort.js
+
+description: Builds a stripy, sortable table with methods to add rows.
+
+license: MIT-style license
+
+authors:
+- Harald Kirschner
+- Aaron Newton
+
+requires:
+- core:1.2.4/Hash
+- /HtmlTable
+- /Class.refactor
+- /Element.Delegation
+- /Date
+
+provides: [HtmlTable.Sort]
+
+...
+*/
+
+HtmlTable = Class.refactor(HtmlTable, {
+
+	options: {/*
+		onSort: $empty, */
+		sortIndex: 0,
+		sortReverse: false,
+		parsers: [],
+		defaultParser: 'string',
+		classSortable: 'table-sortable',
+		classHeadSort: 'table-th-sort',
+		classHeadSortRev: 'table-th-sort-rev',
+		classNoSort: 'table-th-nosort',
+		classGroupHead: 'table-tr-group-head',
+		classGroup: 'table-tr-group',
+		classCellSort: 'table-td-sort',
+		classSortSpan: 'table-th-sort-span',
+		sortable: false
+	},
+
+	initialize: function () {
+		this.previous.apply(this, arguments);
+		if (this.occluded) return this.occluded;
+		this.sorted = {index: null, dir: 1};
+		this.bound = {
+			headClick: this.headClick.bind(this)
+		};
+		this.sortSpans = new Elements();
+		if (this.options.sortable) {
+			this.enableSort();
+			if (this.options.sortIndex != null) this.sort(this.options.sortIndex, this.options.sortReverse);
+		}
+	},
+
+	attachSorts: function(attach){
+		this.element.removeEvents('click:relay(th)');
+		this.element[$pick(attach, true) ? 'addEvent' : 'removeEvent']('click:relay(th)', this.bound.headClick);
+	},
+
+	setHeaders: function(){
+		this.previous.apply(this, arguments);
+		if (this.sortEnabled) this.detectParsers();
+	},
+	
+	detectParsers: function(force){
+		if (!this.head) return;
+		var parsers = this.options.parsers, 
+				rows = this.body.rows;
+
+		// auto-detect
+		this.parsers = $$(this.head.cells).map(function(cell, index) {
+			if (!force && (cell.hasClass(this.options.classNoSort) || cell.retrieve('htmltable-parser'))) return cell.retrieve('htmltable-parser');
+			var thDiv = new Element('div');
+			$each(cell.childNodes, function(node) {
+				thDiv.adopt(node);
+			});
+			thDiv.inject(cell);
+			var sortSpan = new Element('span', {'html': '&#160;', 'class': this.options.classSortSpan}).inject(thDiv, 'top');
+			
+			this.sortSpans.push(sortSpan);
+
+			var parser = parsers[index], 
+					cancel;
+			switch ($type(parser)) {
+				case 'function': parser = {convert: parser}; cancel = true; break;
+				case 'string': parser = parser; cancel = true; break;
+			}
+			if (!cancel) {
+				HtmlTable.Parsers.some(function(current) {
+					var match = current.match;
+					if (!match) return false;
+					for (var i = 0, j = rows.length; i < j; i++) {
+						var text = $(rows[i].cells[index]).get('html').clean();
+						if (text && match.test(text)) {
+							parser = current;
+							return true;
+						}
+					}
+				});
+			}
+
+			if (!parser) parser = this.options.defaultParser;
+			cell.store('htmltable-parser', parser);
+			return parser;
+		}, this);
+	},
+
+	headClick: function(event, el) {
+		if (!this.head || el.hasClass(this.options.classNoSort)) return;
+		var index = Array.indexOf(this.head.cells, el);
+		this.sort(index);
+		return false;
+	},
+
+	sort: function(index, reverse, pre) {
+		if (!this.head) return;
+		pre = !!(pre);
+		var classCellSort = this.options.classCellSort;
+		var classGroup = this.options.classGroup, 
+				classGroupHead = this.options.classGroupHead;
+
+		if (!pre) {
+			if (index != null) {
+				if (this.sorted.index == index) {
+					this.sorted.reverse = !(this.sorted.reverse);
+				} else {
+					if (this.sorted.index != null) {
+						this.sorted.reverse = false;
+						this.head.cells[this.sorted.index].removeClass(this.options.classHeadSort).removeClass(this.options.classHeadSortRev);
+					} else {
+						this.sorted.reverse = true;
+					}
+					this.sorted.index = index;
+				}
+			} else {
+				index = this.sorted.index;
+			}
+
+			if (reverse != null) this.sorted.reverse = reverse;
+
+			var head = document.id(this.head.cells[index]);
+			if (head) {
+				head.addClass(this.options.classHeadSort);
+				if (this.sorted.reverse) head.addClass(this.options.classHeadSortRev);
+				else head.removeClass(this.options.classHeadSortRev);
+			}
+
+			this.body.getElements('td').removeClass(this.options.classCellSort);
+		}
+
+		var parser = this.parsers[index];
+		if ($type(parser) == 'string') parser = HtmlTable.Parsers.get(parser);
+		if (!parser) return;
+
+		if (!Browser.Engine.trident) {
+			var rel = this.body.getParent();
+			this.body.dispose();
+		}
+
+		var data = Array.map(this.body.rows, function(row, i) {
+			var value = parser.convert.call(document.id(row.cells[index]));
+
+			return {
+				position: i,
+				value: value,
+				toString:  function() {
+					return value.toString();
+				}
+			};
+		}, this);
+		data.reverse(true);
+
+		data.sort(function(a, b){
+			if (a.value === b.value) return 0;
+			return a.value > b.value ? 1 : -1;
+		});
+
+		if (!this.sorted.reverse) data.reverse(true);
+
+		var i = data.length, body = this.body;
+		var j, position, entry, group;
+
+		while (i) {
+			var item = data[--i];
+			position = item.position;
+			var row = body.rows[position];
+			if (row.disabled) continue;
+
+			if (!pre) {
+				if (group === item.value) {
+					row.removeClass(classGroupHead).addClass(classGroup);
+				} else {
+					group = item.value;
+					row.removeClass(classGroup).addClass(classGroupHead);
+				}
+				if (this.zebra) this.zebra(row, i);
+
+				row.cells[index].addClass(classCellSort);
+			}
+
+			body.appendChild(row);
+			for (j = 0; j < i; j++) {
+				if (data[j].position > position) data[j].position--;
+			}
+		};
+		data = null;
+		if (rel) rel.grab(body);
+
+		return this.fireEvent('sort', [body, index]);
+	},
+
+	reSort: function(){
+		if (this.sortEnabled) this.sort.call(this, this.sorted.index, this.sorted.reverse);
+		return this;
+	},
+
+	enableSort: function(){
+		this.element.addClass(this.options.classSortable);
+		this.attachSorts(true);
+		this.detectParsers();
+		this.sortEnabled = true;
+		return this;
+	},
+
+	disableSort: function(){
+		this.element.removeClass(this.options.classSortable);
+		this.attachSorts(false);
+		this.sortSpans.each(function(span) { span.destroy(); });
+		this.sortSpans.empty();
+		this.sortEnabled = false;
+		return this;
+	}
+
+});
+
+HtmlTable.Parsers = new Hash({
+
+	'date': {
+		match: /^\d{2}[-\/ ]\d{2}[-\/ ]\d{2,4}$/,
+		convert: function() {
+			return Date.parse(this.get('text')).format('db');
+		},
+		type: 'date'
+	},
+	'input-checked': {
+		match: / type="(radio|checkbox)" /,
+		convert: function() {
+			return this.getElement('input').checked;
+		}
+	},
+	'input-value': {
+		match: /<input/,
+		convert: function() {
+			return this.getElement('input').value;
+		}
+	},
+	'number': {
+		match: /^\d+[^\d.,]*$/,
+		convert: function() {
+			return this.get('text').toInt();
+		},
+		number: true
+	},
+	'numberLax': {
+		match: /^[^\d]+\d+$/,
+		convert: function() {
+			return this.get('text').replace(/[^-?^0-9]/, '').toInt();
+		},
+		number: true
+	},
+	'float': {
+		match: /^[\d]+\.[\d]+/,
+		convert: function() {
+			return this.get('text').replace(/[^-?^\d.]/, '').toFloat();
+		},
+		number: true
+	},
+	'floatLax': {
+		match: /^[^\d]+[\d]+\.[\d]+$/,
+		convert: function() {
+			return this.get('text').replace(/[^-?^\d.]/, '');
+		},
+		number: true
+	},
+	'string': {
+		match: null,
+		convert: function() {
+			return this.get('text');
+		}
+	},
+	'title': {
+		match: null,
+		convert: function() {
+			return this.title;
+		}
+	}
+
+});
+
+
+
+/*
+---
+
+script: HtmlTable.Select.js
+
+description: Builds a stripy, sortable table with methods to add rows. Rows can be selected with the mouse or keyboard navigation.
+
+license: MIT-style license
+
+authors:
+- Harald Kirschner
+- Aaron Newton
+
+requires:
+- /Keyboard
+- /HtmlTable
+- /Class.refactor
+- /Element.Delegation
+
+provides: [HtmlTable.Select]
+
+...
+*/
+
+HtmlTable = Class.refactor(HtmlTable, {
+
+	options: {
+		/*onRowFocus: $empty,
+		onRowUnfocus: $empty,*/
+		useKeyboard: true,
+		classRowSelected: 'table-tr-selected',
+		classRowHovered: 'table-tr-hovered',
+		classSelectable: 'table-selectable',
+		allowMultiSelect: true,
+		selectable: false
+	},
+
+	initialize: function(){
+		this.previous.apply(this, arguments);
+		if (this.occluded) return this.occluded;
+		this.selectedRows = new Elements();
+		this.bound = {
+			mouseleave: this.mouseleave.bind(this),
+			focusRow: this.focusRow.bind(this)
+		};
+		if (this.options.selectable) this.enableSelect();
+	},
+
+	enableSelect: function(){
+		this.selectEnabled = true;
+		this.attachSelects();
+		this.element.addClass(this.options.classSelectable);
+	},
+
+	disableSelect: function(){
+		this.selectEnabled = false;
+		this.attach(false);
+		this.element.removeClass(this.options.classSelectable);
+	},
+
+	attachSelects: function(attach){
+		attach = $pick(attach, true);
+		var method = attach ? 'addEvents' : 'removeEvents';
+		this.element[method]({
+			mouseleave: this.bound.mouseleave
+		});
+		this.body[method]({
+			'click:relay(tr)': this.bound.focusRow
+		});
+		if (this.options.useKeyboard || this.keyboard){
+			if (!this.keyboard) this.keyboard = new Keyboard({
+				events: {
+					down: function(e) {
+						e.preventDefault();
+						this.shiftFocus(1);
+					}.bind(this),
+					up: function(e) {
+						e.preventDefault();
+						this.shiftFocus(-1);
+					}.bind(this),
+					enter: function(e) {
+						e.preventDefault();
+						if (this.hover) this.focusRow(this.hover);
+					}.bind(this)
+				},
+				active: true
+			});
+			this.keyboard[attach ? 'activate' : 'deactivate']();
+		}
+		this.updateSelects();
+	},
+
+	mouseleave: function(){
+		if (this.hover) this.leaveRow(this.hover);
+	},
+
+	focus: function(){
+		if (this.keyboard) this.keyboard.activate();
+	},
+
+	blur: function(){
+		if (this.keyboard) this.keyboard.deactivate();
+	},
+
+	push: function(){
+		var ret = this.previous.apply(this, arguments);
+		this.updateSelects();
+		return ret;
+	},
+
+	updateSelects: function(){
+		Array.each(this.body.rows, function(row){
+			var binders = row.retrieve('binders');
+			if ((binders && this.selectEnabled) || (!binders && !this.selectEnabled)) return;
+			if (!binders){
+				binders = {
+					mouseenter: this.enterRow.bind(this, [row]),
+					mouseleave: this.leaveRow.bind(this, [row])
+				};
+				row.store('binders', binders).addEvents(binders);
+			} else {
+				row.removeEvents(binders);
+			}
+		}, this);
+	},
+
+	enterRow: function(row){
+		if (this.hover) this.hover = this.leaveRow(this.hover);
+		this.hover = row.addClass(this.options.classRowHovered);
+	},
+
+	shiftFocus: function(offset){
+		if (!this.hover) return this.enterRow(this.body.rows[0]);
+		var to = Array.indexOf(this.body.rows, this.hover) + offset;
+		if (to < 0) to = 0;
+		if (to >= this.body.rows.length) to = this.body.rows.length - 1;
+		if (this.hover == this.body.rows[to]) return this;
+		this.enterRow(this.body.rows[to]);
+	},
+
+	leaveRow: function(row){
+		row.removeClass(this.options.classRowHovered);
+	},
+
+	focusRow: function(){
+		var row = arguments[1] || arguments[0]; //delegation passes the event first
+		if (!this.body.getChildren().contains(row)) return;
+		var unfocus = function(row){
+			this.selectedRows.erase(row);
+			row.removeClass(this.options.classRowSelected);
+			this.fireEvent('rowUnfocus', [row, this.selectedRows]);
+		}.bind(this);
+		if (!this.options.allowMultiSelect) this.selectedRows.each(unfocus);
+		if (!this.selectedRows.contains(row)) {
+			this.selectedRows.push(row);
+			row.addClass(this.options.classRowSelected);
+			this.fireEvent('rowFocus', [row, this.selectedRows]);
+		} else {
+			unfocus(row);
+		}
+		return false;
+	},
+
+	selectAll: function(status){
+		status = $pick(status, true);
+		if (!this.options.allowMultiSelect && status) return;
+		if (!status) this.selectedRows.removeClass(this.options.classRowSelected).empty();
+		else this.selectedRows.combine(this.body.rows).addClass(this.options.classRowSelected);
+		return this;
+	},
+
+	selectNone: function(){
+		return this.selectAll(false);
+	}
+
+});
+
+
+/*
+---
+
+script: Keyboard.js
+
+description: KeyboardEvents used to intercept events on a class for keyboard and format modifiers in a specific order so as to make alt+shift+c the same as shift+alt+c.
+
+license: MIT-style license
+
+authors:
+- Perrin Westrich
+- Aaron Newton
+- Scott Kyle
+
+requires:
+- core:1.2.4/Events
+- core:1.2.4/Options
+- core:1.2.4/Element.Event
+- /Log
+
+provides: [Keyboard]
+
+...
+*/
+
+(function(){
+	
+	var Keyboard = this.Keyboard = new Class({
+
+		Extends: Events,
+
+		Implements: [Options, Log],
+
+		options: {
+			/*
+			onActivate: $empty,
+			onDeactivate: $empty,
+			*/
+			defaultEventType: 'keydown',
+			active: false,
+			events: {},
+			nonParsedEvents: ['activate', 'deactivate', 'onactivate', 'ondeactivate', 'changed', 'onchanged']
+		},
+
+		initialize: function(options){
+			this.setOptions(options);
+			this.setup();
+		}, 
+		setup: function(){
+			this.addEvents(this.options.events);
+			//if this is the root manager, nothing manages it
+			if (Keyboard.manager && !this.manager) Keyboard.manager.manage(this);
+			if (this.options.active) this.activate();
+		},
+
+		handle: function(event, type){
+			//Keyboard.stop(event) prevents key propagation
+			if (event.preventKeyboardPropagation) return;
+			
+			var bubbles = !!this.manager;
+			if (bubbles && this.activeKB){
+				this.activeKB.handle(event, type);
+				if (event.preventKeyboardPropagation) return;
+			}
+			this.fireEvent(type, event);
+			
+			if (!bubbles && this.activeKB) this.activeKB.handle(event, type);
+		},
+
+		addEvent: function(type, fn, internal){
+			return this.parent(Keyboard.parse(type, this.options.defaultEventType, this.options.nonParsedEvents), fn, internal);
+		},
+
+		removeEvent: function(type, fn){
+			return this.parent(Keyboard.parse(type, this.options.defaultEventType, this.options.nonParsedEvents), fn);
+		},
+
+		toggleActive: function(){
+			return this[this.active ? 'deactivate' : 'activate']();
+		},
+
+		activate: function(instance){
+			if (instance) {
+				//if we're stealing focus, store the last keyboard to have it so the relenquish command works
+				if (instance != this.activeKB) this.previous = this.activeKB;
+				//if we're enabling a child, assign it so that events are now passed to it
+				this.activeKB = instance.fireEvent('activate');
+				Keyboard.manager.fireEvent('changed');
+			} else if (this.manager) {
+				//else we're enabling ourselves, we must ask our parent to do it for us
+				this.manager.activate(this);
+			}
+			return this;
+		},
+
+		deactivate: function(instance){
+			if (instance) {
+				if(instance === this.activeKB) {
+					this.activeKB = null;
+					instance.fireEvent('deactivate');
+					Keyboard.manager.fireEvent('changed');
+				}
+			}
+			else if (this.manager) {
+				this.manager.deactivate(this);
+			}
+			return this;
+		},
+
+		relenquish: function(){
+			if (this.previous) this.activate(this.previous);
+		},
+
+		//management logic
+		manage: function(instance){
+			if (instance.manager) instance.manager.drop(instance);
+			this.instances.push(instance);
+			instance.manager = this;
+			if (!this.activeKB) this.activate(instance);
+			else this._disable(instance);
+		},
+
+		_disable: function(instance){
+			if (this.activeKB == instance) this.activeKB = null;
+		},
+
+		drop: function(instance){
+			this._disable(instance);
+			this.instances.erase(instance);
+		},
+
+		instances: [],
+
+		trace: function(){
+			Keyboard.trace(this);
+		},
+
+		each: function(fn){
+			Keyboard.each(this, fn);
+		}
+
+	});
+	
+	var parsed = {};
+	var modifiers = ['shift', 'control', 'alt', 'meta'];
+	var regex = /^(?:shift|control|ctrl|alt|meta)$/;
+	
+	Keyboard.parse = function(type, eventType, ignore){
+		if (ignore && ignore.contains(type.toLowerCase())) return type;
+		
+		type = type.toLowerCase().replace(/^(keyup|keydown):/, function($0, $1){
+			eventType = $1;
+			return '';
+		});
+
+		if (!parsed[type]){
+			var key, mods = {};
+			type.split('+').each(function(part){
+				if (regex.test(part)) mods[part] = true;
+				else key = part;
+			});
+
+			mods.control = mods.control || mods.ctrl; // allow both control and ctrl
+			
+			var keys = [];
+			modifiers.each(function(mod){
+				if (mods[mod]) keys.push(mod);
+			});
+			
+			if (key) keys.push(key);
+			parsed[type] = keys.join('+');
+		}
+
+		return eventType + ':' + parsed[type];
+	};
+
+	Keyboard.each = function(keyboard, fn){
+		var current = keyboard || Keyboard.manager;
+		while (current){
+			fn.run(current);
+			current = current.activeKB;
+		}
+	};
+
+	Keyboard.stop = function(event){
+		event.preventKeyboardPropagation = true;
+	};
+
+	Keyboard.manager = new Keyboard({
+		active: true
+	});
+	
+	Keyboard.trace = function(keyboard){
+		keyboard = keyboard || Keyboard.manager;
+		keyboard.enableLog();
+		keyboard.log('the following items have focus: ');
+		Keyboard.each(keyboard, function(current){
+			keyboard.log(document.id(current.widget) || current.wiget || current);
+		});
+	};
+	
+	var handler = function(event){
+		var keys = [];
+		modifiers.each(function(mod){
+			if (event[mod]) keys.push(mod);
+		});
+		
+		if (!regex.test(event.key)) keys.push(event.key);
+		Keyboard.manager.handle(event, event.type + ':' + keys.join('+'));
+	};
+	
+	document.addEvents({
+		'keyup': handler,
+		'keydown': handler
+	});
+
+	Event.Keys.extend({
+		'shift': 16,
+		'control': 17,
+		'alt': 18,
+		'capslock': 20,
+		'pageup': 33,
+		'pagedown': 34,
+		'end': 35,
+		'home': 36,
+		'numlock': 144,
+		'scrolllock': 145,
+		';': 186,
+		'=': 187,
+		',': 188,
+		'-': Browser.Engine.Gecko ? 109 : 189,
+		'.': 190,
+		'/': 191,
+		'`': 192,
+		'[': 219,
+		'\\': 220,
+		']': 221,
+		"'": 222
+	});
+
+})();
+
+
+/*
+---
+
+script: Keyboard.js
+
+description: Enhances Keyboard by adding the ability to name and describe keyboard shortcuts, and the ability to grab shortcuts by name and bind the shortcut to different keys.
+
+license: MIT-style license
+
+authors:
+- Perrin Westrich
+
+requires:
+- core:1.2.4/Function
+- /Keyboard.Extras
+
+provides: [Keyboard.Extras]
+
+...
+*/
+Keyboard.prototype.options.nonParsedEvents.combine(['rebound', 'onrebound']);
+
+Keyboard.implement({
+
+	/*
+		shortcut should be in the format of:
+		{
+			'keys': 'shift+s', // the default to add as an event.
+			'description': 'blah blah blah', // a brief description of the functionality.
+			'handler': function(){} // the event handler to run when keys are pressed.
+		}
+	*/
+	addShortcut: function(name, shortcut) {
+		this.shortcuts = this.shortcuts || [];
+		this.shortcutIndex = this.shortcutIndex || {};
+		
+		shortcut.getKeyboard = $lambda(this);
+		shortcut.name = name;
+		this.shortcutIndex[name] = shortcut;
+		this.shortcuts.push(shortcut);
+		if(shortcut.keys) this.addEvent(shortcut.keys, shortcut.handler);
+		return this;
+	},
+
+	addShortcuts: function(obj){
+		for(var name in obj) this.addShortcut(name, obj[name]);
+		return this;
+	},
+
+	getShortcuts: function(){
+		return this.shortcuts || [];
+	},
+
+	getShortcut: function(name){
+		return (this.shortcutIndex || {})[name];
+	}
+
+});
+
+Keyboard.rebind = function(newKeys, shortcuts){
+	$splat(shortcuts).each(function(shortcut){
+		shortcut.getKeyboard().removeEvent(shortcut.keys, shortcut.handler);
+		shortcut.getKeyboard().addEvent(newKeys, shortcut.handler);
+		shortcut.keys = newKeys;
+		shortcut.getKeyboard().fireEvent('rebound');
+	});
+};
+
+
+Keyboard.getActiveShortcuts = function(keyboard) {
+	var activeKBS = [], activeSCS = [];
+	Keyboard.each(keyboard, [].push.bind(activeKBS));
+	activeKBS.each(function(kb){ activeSCS.extend(kb.getShortcuts()); });
+	return activeSCS;
+};
+
+Keyboard.getShortcut = function(name, keyboard, opts){
+	opts = opts || {};
+	var shortcuts = opts.many ? [] : null,
+		set = opts.many ? function(kb){
+				var shortcut = kb.getShortcut(name);
+				if(shortcut) shortcuts.push(shortcut);
+			} : function(kb) { 
+				if(!shortcuts) shortcuts = kb.getShortcut(name);
+			};
+	Keyboard.each(keyboard, set);
+	return shortcuts;
+};
+
+Keyboard.getShortcuts = function(name, keyboard) {
+	return Keyboard.getShortcut(name, keyboard, { many: true });
+};
+
+
+/*
+---
+
 script: Mask.js
 
 description: Creates a mask element to cover another.
@@ -5957,7 +7668,7 @@ var Mask = new Class({
 
 	Implements: [Options, Events],
 
-	Binds: ['resize'],
+	Binds: ['position'],
 
 	options: {
 		// onShow: $empty,
@@ -5974,12 +7685,13 @@ var Mask = new Class({
 		style: {},
 		'class': 'mask',
 		maskMargins: false,
-		useIframeShim: true
+		useIframeShim: true,
+		iframeShimOptions: {}
 	},
 
 	initialize: function(target, options){
-		this.target = document.id(target) || document.body;
-		this.target.store('mask', this);
+		this.target = document.id(target) || document.id(document.body);
+		this.target.store('Mask', this);
 		this.setOptions(options);
 		this.render();
 		this.inject();
@@ -6011,7 +7723,7 @@ var Mask = new Class({
 		target = target || this.options.inject ? this.options.inject.target : '' || this.target;
 		this.element.inject(target, where);
 		if (this.options.useIframeShim) {
-			this.shim = new IframeShim(this.element);
+			this.shim = new IframeShim(this.element, this.options.iframeShimOptions);
 			this.addEvents({
 				show: this.shim.show.bind(this.shim),
 				hide: this.shim.hide.bind(this.shim),
@@ -6051,8 +7763,7 @@ var Mask = new Class({
 
 	show: function(){
 		if (!this.hidden) return this;
-		this.target.addEvent('resize', this.resize);
-		if (this.target != document.body) document.id(document.body).addEvent('resize', this.resize);
+		window.addEvent('resize', this.position);
 		this.position();
 		this.showMask.apply(this, arguments);
 		return this;
@@ -6066,7 +7777,7 @@ var Mask = new Class({
 
 	hide: function(){
 		if (this.hidden) return this;
-		this.target.removeEvent('resize', this.resize);
+		window.removeEvent('resize', this.position);
 		this.hideMask.apply(this, arguments);
 		if (this.options.destroyOnHide) return this.destroy();
 		return this;
@@ -6122,6 +7833,293 @@ Element.implement({
 	}
 
 });
+
+/*
+---
+
+script: Scroller.js
+
+description: Class which scrolls the contents of any Element (including the window) when the mouse reaches the Element's boundaries.
+
+license: MIT-style license
+
+authors:
+- Valerio Proietti
+
+requires:
+- core:1.2.4/Events
+- core:1.2.4/Options
+- core:1.2.4/Element.Event
+- core:1.2.4/Element.Dimensions
+
+provides: [Scroller]
+
+...
+*/
+
+var Scroller = new Class({
+
+	Implements: [Events, Options],
+
+	options: {
+		area: 20,
+		velocity: 1,
+		onChange: function(x, y){
+			this.element.scrollTo(x, y);
+		},
+		fps: 50
+	},
+
+	initialize: function(element, options){
+		this.setOptions(options);
+		this.element = document.id(element);
+		this.docBody = document.id(this.element.getDocument().body);
+		this.listener = ($type(this.element) != 'element') ?  this.docBody : this.element;
+		this.timer = null;
+		this.bound = {
+			attach: this.attach.bind(this),
+			detach: this.detach.bind(this),
+			getCoords: this.getCoords.bind(this)
+		};
+	},
+
+	start: function(){
+		this.listener.addEvents({
+			mouseover: this.bound.attach,
+			mouseout: this.bound.detach
+		});
+	},
+
+	stop: function(){
+		this.listener.removeEvents({
+			mouseover: this.bound.attach,
+			mouseout: this.bound.detach
+		});
+		this.detach();
+		this.timer = $clear(this.timer);
+	},
+
+	attach: function(){
+		this.listener.addEvent('mousemove', this.bound.getCoords);
+	},
+
+	detach: function(){
+		this.listener.removeEvent('mousemove', this.bound.getCoords);
+		this.timer = $clear(this.timer);
+	},
+
+	getCoords: function(event){
+		this.page = (this.listener.get('tag') == 'body') ? event.client : event.page;
+		if (!this.timer) this.timer = this.scroll.periodical(Math.round(1000 / this.options.fps), this);
+	},
+
+	scroll: function(){
+		var size = this.element.getSize(), 
+			scroll = this.element.getScroll(), 
+			pos = this.element != this.docBody ? this.element.getOffsets() : {x: 0, y:0}, 
+			scrollSize = this.element.getScrollSize(), 
+			change = {x: 0, y: 0};
+		for (var z in this.page){
+			if (this.page[z] < (this.options.area + pos[z]) && scroll[z] != 0) {
+				change[z] = (this.page[z] - this.options.area - pos[z]) * this.options.velocity;
+			} else if (this.page[z] + this.options.area > (size[z] + pos[z]) && scroll[z] + size[z] != scrollSize[z]) {
+				change[z] = (this.page[z] - size[z] + this.options.area - pos[z]) * this.options.velocity;
+			}
+		}
+		if (change.y || change.x) this.fireEvent('change', [scroll.x + change.x, scroll.y + change.y]);
+	}
+
+});
+
+/*
+---
+
+script: Tips.js
+
+description: Class for creating nice tips that follow the mouse cursor when hovering an element.
+
+license: MIT-style license
+
+authors:
+- Valerio Proietti
+- Christoph Pojer
+
+requires:
+- core:1.2.4/Options
+- core:1.2.4/Events
+- core:1.2.4/Element.Event
+- core:1.2.4/Element.Style
+- core:1.2.4/Element.Dimensions
+- /MooTools.More
+
+provides: [Tips]
+
+...
+*/
+
+(function(){
+
+var read = function(option, element){
+	return (option) ? ($type(option) == 'function' ? option(element) : element.get(option)) : '';
+};
+
+this.Tips = new Class({
+
+	Implements: [Events, Options],
+
+	options: {
+		/*
+		onAttach: $empty(element),
+		onDetach: $empty(element),
+		*/
+		onShow: function(){
+			this.tip.setStyle('display', 'block');
+		},
+		onHide: function(){
+			this.tip.setStyle('display', 'none');
+		},
+		title: 'title',
+		text: function(element){
+			return element.get('rel') || element.get('href');
+		},
+		showDelay: 100,
+		hideDelay: 100,
+		className: 'tip-wrap',
+		offset: {x: 16, y: 16},
+		windowPadding: {x:0, y:0},
+		fixed: false
+	},
+
+	initialize: function(){
+		var params = Array.link(arguments, {options: Object.type, elements: $defined});
+		this.setOptions(params.options);
+		if (params.elements) this.attach(params.elements);
+		this.container = new Element('div', {'class': 'tip'});
+	},
+
+	toElement: function(){
+		if (this.tip) return this.tip;
+
+		return this.tip = new Element('div', {
+			'class': this.options.className,
+			styles: {
+				position: 'absolute',
+				top: 0,
+				left: 0
+			}
+		}).adopt(
+			new Element('div', {'class': 'tip-top'}),
+			this.container,
+			new Element('div', {'class': 'tip-bottom'})
+		).inject(document.body);
+	},
+
+	attach: function(elements){
+		$$(elements).each(function(element){
+			var title = read(this.options.title, element),
+				text = read(this.options.text, element);
+			
+			element.erase('title').store('tip:native', title).retrieve('tip:title', title);
+			element.retrieve('tip:text', text);
+			this.fireEvent('attach', [element]);
+			
+			var events = ['enter', 'leave'];
+			if (!this.options.fixed) events.push('move');
+			
+			events.each(function(value){
+				var event = element.retrieve('tip:' + value);
+				if (!event) event = this['element' + value.capitalize()].bindWithEvent(this, element);
+				
+				element.store('tip:' + value, event).addEvent('mouse' + value, event);
+			}, this);
+		}, this);
+		
+		return this;
+	},
+
+	detach: function(elements){
+		$$(elements).each(function(element){
+			['enter', 'leave', 'move'].each(function(value){
+				element.removeEvent('mouse' + value, element.retrieve('tip:' + value)).eliminate('tip:' + value);
+			});
+			
+			this.fireEvent('detach', [element]);
+			
+			if (this.options.title == 'title'){ // This is necessary to check if we can revert the title
+				var original = element.retrieve('tip:native');
+				if (original) element.set('title', original);
+			}
+		}, this);
+		
+		return this;
+	},
+
+	elementEnter: function(event, element){
+		this.container.empty();
+		
+		['title', 'text'].each(function(value){
+			var content = element.retrieve('tip:' + value);
+			if (content) this.fill(new Element('div', {'class': 'tip-' + value}).inject(this.container), content);
+		}, this);
+		
+		$clear(this.timer);
+		this.timer = (function(){
+			this.show(this, element);
+			this.position((this.options.fixed) ? {page: element.getPosition()} : event);
+		}).delay(this.options.showDelay, this);
+	},
+
+	elementLeave: function(event, element){
+		$clear(this.timer);
+		this.timer = this.hide.delay(this.options.hideDelay, this, element);
+		this.fireForParent(event, element);
+	},
+
+	fireForParent: function(event, element){
+		element = element.getParent();
+		if (!element || element == document.body) return;
+		if (element.retrieve('tip:enter')) element.fireEvent('mouseenter', event);
+		else this.fireForParent(event, element);
+	},
+
+	elementMove: function(event, element){
+		this.position(event);
+	},
+
+	position: function(event){
+		if (!this.tip) document.id(this);
+
+		var size = window.getSize(), scroll = window.getScroll(),
+			tip = {x: this.tip.offsetWidth, y: this.tip.offsetHeight},
+			props = {x: 'left', y: 'top'},
+			obj = {};
+		
+		for (var z in props){
+			obj[props[z]] = event.page[z] + this.options.offset[z];
+			if ((obj[props[z]] + tip[z] - scroll[z]) > size[z] - this.options.windowPadding[z]) obj[props[z]] = event.page[z] - this.options.offset[z] - tip[z];
+		}
+		
+		this.tip.setStyles(obj);
+	},
+
+	fill: function(element, contents){
+		if(typeof contents == 'string') element.set('html', contents);
+		else element.adopt(contents);
+	},
+
+	show: function(element){
+		if (!this.tip) document.id(this);
+		this.fireEvent('show', [this.tip, element]);
+	},
+
+	hide: function(element){
+		if (!this.tip) document.id(this);
+		this.fireEvent('hide', [this.tip, element]);
+	}
+
+});
+
+})();
 
 /*
 ---
@@ -6395,7 +8393,7 @@ MooTools.lang.set('en-US', 'Date', {
 
 script: Form.Validator.English.js
 
-description: Date messages for English.
+description: Form Validator messages for English.
 
 license: MIT-style license
 
@@ -6447,33 +8445,3 @@ MooTools.lang.set('en-US', 'Form.Validator', {
 	creditcard: 'The credit card number entered is invalid. Please check the number and try again. {length} digits entered.'
 
 });
-
-/*
----
-
-script: Date.English.GB.js
-
-description: Date messages for British English.
-
-license: MIT-style license
-
-authors:
-- Aaron Newton
-
-requires:
-- /Lang
-- /Date
-
-provides: [Date.English.GB]
-
-...
-*/
-
-MooTools.lang.set('en-GB', 'Date', {
-
-	dateOrder: ['date', 'month', 'year'],
-	
-	shortDate: '%d/%m/%Y',
-	shortTime: '%H:%M'
-
-}).set('cascade', ['en-US']);

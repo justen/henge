@@ -62,7 +62,6 @@ namespace Henge.Data
 				this.configuration = Fluently.Configure()
 					.Database(this.GetConfiguration(storageType, connectionString))
 					.Mappings(m => m.AutoMappings.Add(map))
-					//.Mappings(m => m.FluentMappings.AddFromAssemblyOf<Entity>().Conventions.Setup(c => c.Add<HengeForeignKeyConvention>()))
 					.ExposeConfiguration(c => c.Properties.Add("hbm2ddl.keywords", "none"))
 					.ExposeConfiguration(x => x.SetProperty("current_session_context_class", context))
 					.BuildConfiguration();
@@ -169,15 +168,6 @@ namespace Henge.Data
 			
 			return null;			
 		}
-		
-		
-		public ITransaction Transaction
-		{
-			get
-			{
-				return this.GetSession().BeginTransaction();
-			}
-		}		
 
 		
 		public IQueryable<T> Query<T>() where T : Entity
@@ -234,20 +224,11 @@ namespace Henge.Data
 		}
 		
 		
-		public ICriteria CreateCriteria<T>() where T : Entity
+		/*public ICriteria CreateCriteria<T>() where T : Entity
 		{
 			ISession session = this.GetSession();
 			
 			return (session != null) ? session.CreateCriteria<T>() : null;
-		}
-		
-		
-		/*public INHibernateQueryable Linq<T>() where T : Entity
-		{
-			ISession session = this.GetSession();
-
-			//return (session != null) ? session.Linq<T>() : null;
-			return null;
 		}*/
 		
 		

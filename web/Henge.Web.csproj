@@ -55,6 +55,7 @@
     <Folder Include="Content\styles\" />
     <Folder Include="Views\CreateCharacter\" />
     <Folder Include="Views\Game\" />
+    <Folder Include="Content\interface\library\widget\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
@@ -110,5 +111,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Content\interface\library\interface.js" />
+    <None Include="Content\interface\library\log.js" />
+    <None Include="Content\interface\styles\interface.css" />
+    <None Include="Content\interface\library\widget\bar.js" />
+    <None Include="Content\interface\library\widget\avatar.js" />
   </ItemGroup>
 </Project>

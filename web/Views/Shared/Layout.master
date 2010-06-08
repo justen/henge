@@ -12,30 +12,28 @@
 		<script type="text/javascript" src="<%= Url.Content("~/Content/scripts/mootools.js") %>"></script>
 		<script type="text/javascript" src="<%= Url.Content("~/Content/scripts/mootools-more.js") %>"></script>
 		<script type="text/javascript">var root = "<%= Url.Content("~/") %>";</script>
+		
+		<link rel="shortcut icon" href="<%= Url.Content("~/Content/images/favicon.ico") %>" />
+		<link rel="icon" href="<%= Url.Content("~/Content/images/favicon.ico") %>" />
 	</head>
 	<body>
 		<div id="header">
-			<h1>Henge</h1>
-			<div class="status">
-				<%= (ViewData["User"] == null) ? "Not logged in" : "Logged in as " + ViewData["User"] %>
+			<div id="status">
+				<% if (ViewData["Character"] != null) { %>
+				<div class="status-text"><%= ViewData["Character"] %> <a href="<%= Url.Action("DisconnectAvatar", "User") %>">[Disconnect]</a></div>
+				<% } %>
+			</div>
+			<img src="<%= Url.Content("~/Content/images/henge_small.png") %>" alt="Henge Logo" />
+			<div id="main-menu">
+				<ul>
+					<li><a href="<%= Url.Action("", "") %>">Map</a></li>
+					<li><a href="<%= Url.Action("Account", "User") %>">Account</a></li>
+					<li><a href="<%= Url.Action("Logout", "User") %>">Logout</a></li>
+				</ul>
 			</div>
 		</div>
 
-		<div id="tabs">
-			<ul id="menu">
-			<% if (ViewData["User"] == null) { %>
-				<li><a href="<%= Url.Action("", "User") %>">Login</a></li>
-			<% } else { %>
-				<li><a href="<%= Url.Action("Account", "User") %>">Account</a></li>				
-				<% if (HttpContext.Current.User.IsInRole("Admin")) { %>
-				<li><a href="<%= Url.Action("", "Administration") %>">Administration</a></li>
-				<% } %>
-				<li><a href="<%= Url.Action("Logout", "User") %>">Logout</a></li>
-			<% } %>
-			</ul>
-		</div>
-
-		<% if (ViewData["Message"] != null)  { %>
+		<!-- <% if (ViewData["Message"] != null)  { %>
 		<div class="message<%= (bool)ViewData["Error"] ? " error" : "" %>">
 			<%= Html.Encode(ViewData["Message"]) %>
 		</div>
@@ -44,7 +42,7 @@
 		<div class="message<%= (bool)TempData["Error"] ? " error" : "" %>">
 			<%= Html.Encode(TempData["Message"]) %>
 		</div>
-		<% } %>
+		<% } %> -->
 		
 		<div id="content">
 			<asp:ContentPlaceHolder ID="MainContent" runat="server"></asp:ContentPlaceHolder>
