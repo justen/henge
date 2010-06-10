@@ -6,8 +6,8 @@ namespace Henge.Data.Entities
 {
 	public class Avatar : Actor
 	{
-	    public List<Npc> Pets 			{ get; set; }
-	    public List<LogEntry> Log		{ get; set; }
+	    public IList<Npc> Pets 			{ get; set; }
+	    public IList<LogEntry> Log		{ get; set; }
 	    public User User				{ get; set; }
 		
 		public Avatar()

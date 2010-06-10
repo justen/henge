@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
+
 
 namespace Henge.Data.Entities
 {
@@ -7,28 +9,31 @@ namespace Henge.Data.Entities
 	/// the UI (which is a function of the viewer). Name, description, gui, colourscheme, etc.
 	public class Appearance : ObjectEntity
 	{
+		// Apparent type of this object ("Field")
+		public string Type				{ get; set; }
+		// Apparent detailed description of this object
+	    public string Description 		{ get; set; }
+		// Apparent brief description of this object
+	    public string ShortDescription 	{ get; set; }
+	    
+	    // This is going to store Other Stuff depending upon what type of entity this is
+	    // (for example, icons, colourschemes, etc) - dictionary is (Parameter, Payload)
+	    public IDictionary<string, string> Parameters { get; set; }
+	
+	    // The conditions that must be met in order to "see" this appearance
+	    public IList<Condition> Conditions { get; set; }
+		
+		
 		public Appearance()
 		{
-			this.Parameters = new Dictionary<string, string>();
-			this.Prerequisites = new Dictionary<string, Prerequisite>();
+			this.Parameters	= new Dictionary<string, string>();
+			this.Conditions	= new List<Condition>();
 		}
 		
-	    //put all the render junk in here. Somehow.
-	    public int Priority 			{get; set;}
-		// apparent name of this object ("USS Enterprise")
-	    public string Name 				{get; set;}
-		// apparent type of this object ("Starship")
-		public string Type				{get; set;}
-		// apparent detailed description of this object
-	    public string Description 		{get; set;}
-		// apparent brief description of this object
-	    public string ShortDescription 	{get; set;}
-	    
-	    //this is going to store Other Stuff depending upon what type of entity this is
-	    //(for example, icons, colourschemes, etc) - dictionary is (Parameter, payload)
-	    public Dictionary<string, string> Parameters 	{get; set;}
-	
-	    //The conditions that must be met in order to "see" this appearance Dictionary is (AttributeName, Prerequisite)
-	    public Dictionary<string, Prerequisite> Prerequisites 		{get; set;}
+		
+		public bool Valid(IDictionary<string, long> attributes)
+		{
+			return this.Conditions.Count(c => attributes.ContainsKey(c.Attribute) ? c.Valid(attributes[c.Attribute]) : false) == this.Conditions.Count;
+		}
 	}
 }

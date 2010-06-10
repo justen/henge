@@ -36,7 +36,6 @@ namespace Henge.Data.Entities
 	
 	public class Map : ObjectEntity
 	{
-	    //public IList<Location> Locations 	{ get; set; }
 		public IDictionary<Coordinates, Location> Locations	{ get; set; }
 	    public string Name									{ get; set; }
 		

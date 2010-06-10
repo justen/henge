@@ -8,7 +8,7 @@ namespace Henge.Rules
 	public interface IRule
 	{
 		string Interaction	{ get; }
-		double Priority(HengeEntity subject);
+		double Priority(Component subject);
 		Interaction Apply(Interaction interaction);
 	}
 }

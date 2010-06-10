@@ -60,16 +60,16 @@ namespace Henge.Data
 				var all = from Entity a in container select a;
 				foreach (var e in all) container.Delete(e);
 				 
-				Appearance ap				= new Appearance { Priority = 1, Name = "Nondescript Wasteland", Description = "looks like the Creator simply couldn''t be bothered to do anything with it. It is totally unremarkable in every way", ShortDescription = "a thoroughly boring spot" };
-				EntityType type 			= new EntityType { Type = "Nondescript Wasteland", BaseAppearance = ap};
-				Appearance apa				= new Appearance { Priority = 1, Name = "Oz", Description = "looks like you're not in Kansas any more", ShortDescription = "somewhat magical" };
-				EntityType typea			= new EntityType { Type = "Magical Land Of Wonder", BaseAppearance = apa};
+				Appearance ap				= new Appearance { Type = "Nondescript Wasteland", Description = "looks like the Creator simply couldn''t be bothered to do anything with it. It is totally unremarkable in every way", ShortDescription = "a thoroughly boring spot" };
+				ComponentType type 			= new ComponentType(ap) { Id = "Nondescript Wasteland" };
+				Appearance apa				= new Appearance { Type = "Oz", Description = "looks like you're not in Kansas any more", ShortDescription = "somewhat magical" };
+				ComponentType typea			= new ComponentType(apa) { Id = "Magical Land Of Wonder" };
 				Henge.Data.Entities.User u	= new Henge.Data.Entities.User { Name = "test", Password = "A94A8FE5CCB19BA61C4C0873D391E987982FBBD3", Clan = "Test" };
 				Map m 						= new Map { Name = "Main" };
 				Location l					= new Location (0, 0, 0) { Map = m, Type = typea };
-				Appearance avatarAppearance = new Appearance {Priority = 1, Name = "Person", ShortDescription = "another person", Description = "another person"};
-				EntityType avatar			= new EntityType { Type = "avatar", BaseAppearance = avatarAppearance};
-				Avatar av					= new Avatar { Name = "Og", User = u, Location = l, Type = avatar, IndividualAppearance = new Appearance { Name = "Og" } };
+				Appearance avatarAppearance = new Appearance {Type = "Person", ShortDescription = "another person", Description = "another person"};
+				ComponentType avatar		= new ComponentType(avatarAppearance) { Id = "avatar" };
+				Avatar av					= new Avatar { Name = "Og", User = u, Location = l, Type = avatar };
 				
 				u.Avatars.Add(av);
 				m.Locations.Add(l.Coordinates, l);

@@ -11,7 +11,8 @@ namespace Henge.Data.Entities
 		//numeric value of the modifier (if required)
 		public long Value {get; set;}
 		//Expiration conditions - <Thing To Check, Condition We're Checking For>
-		public Dictionary<string, string> Expiration {get; set;}
+		public IDictionary<string, string> Expiration {get; set;}
+		
 		
 		public Modifier()
 		{

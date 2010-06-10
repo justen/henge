@@ -25,7 +25,7 @@ namespace Henge.Engine
 		}
 		
 
-		public Interaction Interact(Actor protagonist, HengeEntity antagonist, string interaction)
+		public Interaction Interact(Actor protagonist, Component antagonist, string interaction)
 		{
 			return this.rulebook.Section(interaction).ApplyRules(new Interaction { Antagonist = antagonist, Protagonist = protagonist });
 		}

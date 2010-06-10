@@ -4,9 +4,11 @@ using System.Collections.Generic;
 
 namespace Henge.Data.Entities
 {
-	public class Group : HengeEntity
+	public class Group : Component
 	{
-		public Dictionary<String, GroupRole> Membership	{get; set;}
+		public IDictionary<String, GroupRole> Membership { get; set; }
+		
+		
 		public Group()
 		{
 			this.Membership = new Dictionary<string, GroupRole>();

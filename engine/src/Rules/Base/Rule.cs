@@ -21,7 +21,7 @@ namespace Henge.Rules
 		}
 		
 		
-		public virtual double Priority(HengeEntity subject)
+		public virtual double Priority(Component subject)
 		{
 			return 0;
 		}

@@ -1,15 +1,17 @@
 using System;
 using System.Collections.Generic;
 
+
 namespace Henge.Data.Entities
 {
-	public class Edifice : MapEntity
+	public class Edifice : MapComponent
 	{
-	    //use this if the Edifice is to act as a portal between two maps
-	    private Location InnerLocation 		{get; set;}
-	    //Things inhabiting the Edifice itself (as distinct from having passed
-	    //into the map it links to)
-	    private List<Actor> Inhabitants	{get; set;}
+	    // Use this if the Edifice is to act as a portal between two maps
+	    private Location Portal { get; set; }
+		
+	    // Things inhabiting the Edifice itself (as distinct from having passed into the map it links to)
+	    private IList<Actor> Inhabitants	{ get; set; }
+		
 		
 		public Edifice()
 		{

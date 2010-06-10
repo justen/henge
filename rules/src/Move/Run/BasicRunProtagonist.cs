@@ -36,7 +36,7 @@ namespace Henge.Rules.Protagonist.Move.Run
 		}
 		
 		
-		public override double Priority (HengeEntity subject)
+		public override double Priority (Component subject)
 		{
 			return (subject is Actor) ? 1 : -1;
 		}

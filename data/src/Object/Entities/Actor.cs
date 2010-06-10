@@ -4,13 +4,14 @@ using System.Collections.Generic;
 
 namespace Henge.Data.Entities
 {
-	public abstract class Actor : MapEntity
+	public abstract class Actor : MapComponent
 	{
+		public IList<Item> Inventory { get; set; }
+		
+		
 		public Actor()
 		{
 			this.Inventory = new List<Item>();
-		}
-		
-	    public List<Item> Inventory 	{ get; set; }
+		}    
 	}
 }

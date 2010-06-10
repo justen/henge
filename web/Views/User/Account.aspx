@@ -33,7 +33,7 @@
 			<% foreach (var avatar in Model.Avatars) { %>
 				<tr>
 					<form method="post" action="<%= Url.Action("ConnectAvatar") %>" >
-						<td><%= avatar.IndividualAppearance.Name %></td>
+						<td><%= avatar.Name %></td>
 						<td>
 							<input type="hidden" name="index" id="index" value="<%= i %>"/>
 							<input type="submit" name="submit" id="submit" value="Connect"/>

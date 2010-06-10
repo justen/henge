@@ -89,20 +89,20 @@
     <Compile Include="src\Object\Entities\Avatar.cs" />
     <Compile Include="src\Object\Entities\Edifice.cs" />
     <Compile Include="src\Object\Entities\ObjectEntity.cs" />
-    <Compile Include="src\Object\Entities\EntityType.cs" />
     <Compile Include="src\Object\Entities\Group.cs" />
     <Compile Include="src\Object\Entities\GroupRole.cs" />
-    <Compile Include="src\Object\Entities\HengeEntity.cs" />
     <Compile Include="src\Object\Entities\Item.cs" />
     <Compile Include="src\Object\Entities\Location.cs" />
     <Compile Include="src\Object\Entities\Map.cs" />
-    <Compile Include="src\Object\Entities\MapEntity.cs" />
     <Compile Include="src\Object\Entities\Modifier.cs" />
     <Compile Include="src\Object\Entities\Npc.cs" />
-    <Compile Include="src\Object\Entities\PhysicalEntity.cs" />
-    <Compile Include="src\Object\Entities\Prerequisite.cs" />
     <Compile Include="src\Object\Entities\Region.cs" />
     <Compile Include="src\Object\Entities\User.cs" />
+    <Compile Include="src\Object\Entities\ComponentType.cs" />
+    <Compile Include="src\Object\Entities\Component.cs" />
+    <Compile Include="src\Object\Entities\MapComponent.cs" />
+    <Compile Include="src\Object\Entities\PhysicalComponent.cs" />
+    <Compile Include="src\Object\Entities\Condition.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />

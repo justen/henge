@@ -28,7 +28,7 @@ namespace Henge.Rules
 			if (!this.BestRule(this.antagonist, interaction.Antagonist).Apply(interaction).Finished)
 			{
 				//Now that the AntagonistRule has populated the Interaction with interferers we can work through each of them in turn
-				foreach (HengeEntity interferer in interaction.Interferers)
+				foreach (Component interferer in interaction.Interferers)
 				{
 					interaction.Subject = interferer;
 					
@@ -50,7 +50,7 @@ namespace Henge.Rules
 		}
 		
 		
-		private IRule BestRule(List<IRule> rules, HengeEntity subject)
+		private IRule BestRule(List<IRule> rules, Component subject)
 		{
 			IRule result		= null;
 			double priority 	= -1;

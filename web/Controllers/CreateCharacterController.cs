@@ -25,10 +25,10 @@ namespace Henge.Web.Controllers
 			if ( (from a in this.db.Query<Avatar>() where a.Name == name select true).Count() == 0 )
 			{
 				Location location	= this.db.Get<Location>(x => x.Coordinates.X == 0 && x.Coordinates.Y == 0);
-				Avatar avatar		= new Avatar {Name = name, Type = db.Get<EntityType>(x => x.Type == "avatar"), IndividualAppearance = new Appearance { Name = name }, User  = this.user,  Location = location};
+				Avatar avatar		= new Avatar {Name = name, Type = db.Get<ComponentType>(x => x.Id == "avatar"), User  = this.user,  Location = location};
 				this.user.Avatars.Add(avatar);
 				location.Inhabitants.Add(avatar);
-	
+
 				return RedirectToAction("Account", "User");
 			}
 			else
