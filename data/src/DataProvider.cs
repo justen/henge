@@ -77,6 +77,13 @@ namespace Henge.Data
 		}
 		
 		
+		// Getting by ID is only valid for a relational database
+		public T Get<T>(object id) where T : RelationalEntity
+		{
+			return this.relationalProvider.Get<T>(id);
+		}
+		
+		
 		public T Get<T>(System.Linq.Expressions.Expression<Func<T, bool>> expression) where T : Entity
 		{
 			return (typeof(T).IsSubclassOf(objectEntityType)) ? this.objectProvider.Get<T>(expression) : this.relationalProvider.Get<T>(expression);

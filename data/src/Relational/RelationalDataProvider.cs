@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Collections.Generic;
 
 using NHibernate;
-//using NHibernate.Linq;
+using NHibernate.Linq;
 using NHibernate.Cfg;
 using NHibernate.Context;
 using FluentNHibernate.Cfg;
@@ -172,21 +172,33 @@ namespace Henge.Data
 		
 		public IQueryable<T> Query<T>() where T : Entity
 		{
-			//ISession session = this.GetSession();
+			ISession session = this.GetSession();
 			
+			// This is what should be used with NHibernate 3.0
 			//return (session != null) ? session.Query<T>() : null;
 			
-			throw new NotImplementedException();
+			// This is what we have to use with NHibernate 2.1 and the additional Linq provider
+			return (session != null) ? session.Linq<T>() : null;
+		}
+		
+		
+		public T Get<T>(object id) where T : Entity
+		{
+			ISession session = this.GetSession();
+			
+			return (session != null) ? session.Get<T>(id) : null;
 		}
 		
 		
 		public T Get<T>(System.Linq.Expressions.Expression<Func<T, bool>> expression) where T : Entity
 		{
-			//ISession session = this.GetSession();
+			ISession session = this.GetSession();
 			
+			// This is what should be used with NHibernate 3.0
 			//return (session != null) ? session.Query<T>().SingleOrDefault(expression) : null;
 			
-			throw new NotImplementedException();
+			// This is what we have to use with NHibernate 2.1 and the additional Linq provider
+			return (session != null) ? session.Linq<T>().SingleOrDefault(expression) : null;
 		}
 		
 	
