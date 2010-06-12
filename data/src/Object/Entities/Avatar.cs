@@ -10,6 +10,9 @@ namespace Henge.Data.Entities
 	    public IList<LogEntry> Log		{ get; set; }
 	    public User User				{ get; set; }
 		
+		//not sure if we need this but if we want to track avatars through generations...
+		public Avatar Parent			{ get; set; }
+		
 		public Avatar()
 		{
 			this.Pets = new List<Npc>();
