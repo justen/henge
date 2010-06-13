@@ -5,7 +5,7 @@ using Henge.Data.Entities;
 
 namespace Henge.Rules.Protagonist.Move.Run
 {
-	public class BasicRun : HengeProtagonist
+	public class BasicRun : ProtagonistRule
 	{
 		public BasicRun()
 		{

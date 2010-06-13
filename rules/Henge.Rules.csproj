@@ -33,7 +33,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\Move\Run\BasicRunProtagonist.cs" />
-    <Compile Include="src\HengeProtagonist.cs" />
     <Compile Include="src\Constants.cs" />
   </ItemGroup>
   <ItemGroup>
