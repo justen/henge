@@ -7,7 +7,7 @@ var giBar = new Class(
 {
 	initialize: function(container, label)
 	{
-		this.outer	= new Element('div', { class: 'bar' });
+		this.outer	= new Element('div', { 'class': 'bar' });
 		this.label	= new Element('label', { text: label });
 		this.bar	= new Element('div');
 		

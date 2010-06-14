@@ -8,7 +8,7 @@ var giIcon = new Class(
 	initialize: function(container, image)
 	{
 		this.icon = new Element('div', {
-			class: 		'icon',
+			'class': 	'icon',
 			opacity:	0.5,
 		});
 		
