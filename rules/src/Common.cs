@@ -9,59 +9,40 @@ namespace Henge.Rules
 	static class Common
 	{
 		//maximum skill level
-		public static long skillMax = 1000;
-		// seconds per fast tick
-		public static long fastTick = 5;
+		public static double skillMax = 1.0;
+		//maximum energy gain per second
+		public static double maxEnergyGain = 1.0;
+		//maximum energy
+		public static double maxEnergy = 10.0; 
 		
-				//attempt to use the specified amount of energy of the actor. Return false if the actor didn't have enough energy.
+		//attempt to use the specified amount of energy of the actor. Return false if the actor didn't have enough energy.
 		//if overdraw = true, the actor can use more energy than it has BUT cannot use any energy if it is already negative
-		public static bool UseEnergy(Actor actor, long energy, bool overdraw)
+		public static bool UseEnergy(Actor actor, long amount)
 		{
-			Common.FastTick(actor);
-			if (overdraw || ( energy <= actor.Attributes["energy"] ))
+			Trait energy = Common.GetEnergy(actor);
+			if  ( energy.Value > 0 )  
 			{
-				if ( actor.Attributes["energy"]>0)
+				Trait strength  = actor.Traits["strength"];
+				if ( amount <= strength.Value * energy.Maximum) 
 				{
-					actor.Attributes["energy"] -= energy;
+					energy.Value -= amount;
 					return true;
 				}
 			}
 			return false;
 		}
 		
-		//charge up the actor with the specified amount of energy. Returns the amount of energy actually added to the actor
-		public static void FastTick(Actor actor)
-		{
-			if (actor.Attributes.ContainsKey("maxEnergy")==false)
-			{
-				actor.Attributes.Add("maxEnergy", 0);	
-			}
-			if (actor.Attributes.ContainsKey("energy")==false)
-			{
-				actor.Attributes.Add("energy", 0);
-			}
-			else
-			{
-				//check whether the actor is actually capable of gaining energy
-				if (actor.Attributes.ContainsKey("fitness") && (actor.Attributes["fitness"]>0))
-				{
-					TimeSpan ts = DateTime.Now - actor.LastModified;
-					long ticks = ((long)ts.TotalSeconds/Common.fastTick);
-					if (ticks>0)
-					{
-						actor.LastModified.AddSeconds(ticks * Common.fastTick);
-						actor.Attributes["energy"] +=  ticks * (actor.Attributes["fitness"] /Common.skillMax);
-						if (actor.Attributes["energy"] > actor.Attributes["maxEnergy"]) actor.Attributes["energy"] = actor.Attributes["maxEnergy"];
-					}
-				}
-			}
-		}
-		
 		//returns the current energy level of the actor
-		public static long GetEnergy (Actor actor)
+		public static Trait GetEnergy (Actor actor)
 		{
-			Common.FastTick(actor);
-			return actor.Attributes["energy"];
+			Trait energy = actor.Traits["energy"];
+			//check whether the actor is actually capable of gaining energy
+			if ( actor.Skills.ContainsKey("fitness") && (actor.Skills["fitness"]>0) )
+			{
+				TimeSpan ts = DateTime.Now - actor.LastModified;
+				energy.Transfer(actor.Traits["reserve"], Common.maxEnergyGain * actor.Skills["fitness"] * ts.Seconds);
+			}
+			return energy;
 		}
 	}
 }

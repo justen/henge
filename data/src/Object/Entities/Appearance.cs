@@ -31,9 +31,9 @@ namespace Henge.Data.Entities
 		}
 		
 		
-		public bool Valid(IDictionary<string, long> attributes)
+		public bool Valid(IDictionary<string, Trait> traits)
 		{
-			return this.Conditions.Count(c => attributes.ContainsKey(c.Attribute) ? c.Valid(attributes[c.Attribute]) : false) == this.Conditions.Count;
+			return this.Conditions.Count(c => traits.ContainsKey(c.Trait) ? c.Valid(traits[c.Trait]) : false) == this.Conditions.Count;
 		}
 	}
 }

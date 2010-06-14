@@ -9,7 +9,7 @@ namespace Henge.Data.Entities
 	{
 		public String Name 								{ get; set; }
 		public ComponentType Type						{ get; set; }
-	    public IDictionary<string, long> Attributes 	{ get; set; }
+	    public IDictionary<string, Trait> Traits 		{ get; set; }
 		public DateTime LastModified					{ get; set; }
 		public DateTime Created							{ get; set; }
 		
@@ -21,7 +21,7 @@ namespace Henge.Data.Entities
 		{
 			this.Created = DateTime.Now;
 			this.LastModified = DateTime.Now;
-			this.Attributes = new Dictionary<string, long>();
+			this.Traits = new Dictionary<string, Trait>();
 		}
 		
 		
@@ -33,7 +33,7 @@ namespace Henge.Data.Entities
 		
 		public Appearance Inspect(Component inspector)
 		{
-			return this.Type.Appearance.LastOrDefault(a => a.Valid(inspector.Attributes));
+			return this.Type.Appearance.LastOrDefault(a => a.Valid(inspector.Traits));
 		}
 	}
 }
