@@ -73,7 +73,7 @@ var giTile = new Class(
 				border: '1px solid #000',
 				'background-color': colour
 			});
-			//this.tile.set('text', data.Name);
+			this.tile.set('title', data.Name);
 		}
 	},
 	
