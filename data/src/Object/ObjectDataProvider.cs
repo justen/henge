@@ -175,7 +175,7 @@ namespace Henge.Data
 		{
 			IObjectContainer container = this.GetContainer();
 			
-			return (container == null) ? null : (from T item in container select item).AsQueryable();
+			return (container == null) ? null : container.AsQueryable<T>(); //(from T item in container select item).AsQueryable();
 		}
 		
 		
@@ -183,7 +183,7 @@ namespace Henge.Data
 		{
 			IObjectContainer container = this.GetContainer();
 			
-			return (container == null) ? null : (from T item in container select item).AsQueryable().SingleOrDefault(expression);
+			return (container == null) ? null : container.AsQueryable<T>().SingleOrDefault(expression); //(from T item in container select item).AsQueryable().SingleOrDefault(expression);
 		}
 
 		

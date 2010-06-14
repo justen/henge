@@ -19,7 +19,7 @@ var giTile = new Class(
 
 
 		this.tile = new Element('div', {
-			class:	'tile',
+			'class': 'tile',
 			styles: {
 				left:		this.x * TILE_SIZE,
 				top:		this.y * TILE_SIZE,
