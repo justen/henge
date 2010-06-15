@@ -23,7 +23,15 @@ namespace Henge.Rules
 		
 		public Section Section(string interaction)
 		{
-			return this.rules.ContainsKey(interaction) ? this.rules[interaction] : null;
+			Section result = this.rules.ContainsKey(interaction) ? this.rules[interaction] : null;
+			int trimFrom = interaction.LastIndexOf('.');
+			while ((result == null) && (trimFrom > 0))
+			{
+				interaction = interaction.Remove(trimFrom);
+				result = this.rules.ContainsKey(interaction) ? this.rules[interaction] : null;
+				trimFrom = interaction.LastIndexOf('.');
+			}
+			return result;
 		}
 	}
 }
