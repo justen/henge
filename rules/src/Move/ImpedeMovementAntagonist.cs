@@ -4,14 +4,14 @@ using System;
 using System.Collections.Generic;
 using Henge.Data.Entities;
 
-namespace Henge.Rules.Antagonist.Move.Run
+namespace Henge.Rules.Antagonist.Move
 {
 
 
-	public class BasicRunAntagonist : AntagonistRule
+	public class ImpedeMovement : AntagonistRule
 	{
 
-		public BasicRunAntagonist ()
+		public ImpedeMovement ()
 		{
 		}
 		
