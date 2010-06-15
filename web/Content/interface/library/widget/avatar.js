@@ -12,7 +12,7 @@ var giAvatar = new Class(
 			opacity:	0.5,
 		});
 		
-		this.offset = TILE_SIZE / 2 - 21;
+		this.offset = TILE_SIZE / 2 - 24;
 		
 		image.clone().inject(this.icon);
 		this.icon.inject(container);
