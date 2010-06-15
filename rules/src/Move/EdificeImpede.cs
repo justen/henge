@@ -2,7 +2,7 @@ using System;
 using Henge.Data.Entities;
 
 
-namespace Henge.Rules.Interference.Move.Run
+namespace Henge.Rules.Interference.Move
 {
 	public class EdificeImpede : InterferenceRule
 	{
