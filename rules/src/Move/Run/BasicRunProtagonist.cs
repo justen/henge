@@ -21,15 +21,17 @@ namespace Henge.Rules.Protagonist.Move.Run
 			 */
 			if (!interaction.Finished)
 			{
-				if ((interaction.Antagonist is Location) && (interaction.Protagonist.Location.Map == ((Location)interaction.Antagonist).Map))
+
+				if (  this.CalculateDistance(interaction.Protagonist.Location, (Location)interaction.Antagonist) < 2 )
 				{
-					if ( this.CalculateDistance(interaction.Protagonist.Location, (Location)interaction.Antagonist) <= this.CheckSpeed(interaction.Protagonist, interaction))
+					if (Common.UseEnergy(interaction.Protagonist, (double)interaction.Transaction["impedance"]))
 					{
 						this.ApplyInteraction(interaction, interaction.Protagonist, (Location)interaction.Antagonist);
+						//now everything that was trying to impede progress is going to have to take damage I suppose...?
 					}
-					else interaction.Failure("Out of range", true);
 				}
-				else interaction.Failure("Invalid destination", true);
+				else interaction.Failure("Out of range", true);
+
 			}
 	
 			return interaction;
@@ -44,35 +46,12 @@ namespace Henge.Rules.Protagonist.Move.Run
 		
 		private double CalculateDistance(Location source, Location destination)
 		{
-			int deltaX = source.Coordinates.X - destination.Coordinates.X;
-			int deltaY = source.Coordinates.Y - destination.Coordinates.Y;
-			int deltaZ = source.Coordinates.Z - destination.Coordinates.Z;
+			double deltaX = source.Coordinates.X - destination.Coordinates.X;
+			double deltaY = source.Coordinates.Y - destination.Coordinates.Y;
+			// currently can't run in z, so don't bother calculating it.
+			// int deltaZ = source.Coordinates.Z - destination.Coordinates.Z;
 			
-			return Math.Sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
-		}
-		
-		
-		private double CheckSpeed(Actor actor, Interaction interaction)
-		{
-			//find whatever attributes in an actor which determine how fast it can move
-			//apply and interaction data that could affect it
-			//and then return the speed
-			if (true)//actor.HasStat("speed"))
-			{
-				double boost = 0;
-				double slow = 0;
-				if (interaction.Transaction.ContainsKey("boostSpeed")) boost = (double)interaction.Transaction["boostSpeed"];
-				if (interaction.Transaction.ContainsKey("reduceSpeed")) slow = (double)interaction.Transaction["reduceSpeed"];
-				return 1.5;//actor.GetStat("speed") + boost - slow;
-			}
-			else return -1;
-		}
-		
-		
-		private string TestInteraction(Interaction interaction, Actor actor)
-		{
-			//no charge for this interaction at present, so it's always going to be doable
-			return null;
+			return deltaX * deltaX + deltaY * deltaY;
 		}
 		
 		

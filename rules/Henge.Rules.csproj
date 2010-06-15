@@ -34,6 +34,9 @@
   <ItemGroup>
     <Compile Include="src\Move\Run\BasicRunProtagonist.cs" />
     <Compile Include="src\Common.cs" />
+    <Compile Include="src\Move\Run\BasicRunAntagonist.cs" />
+    <Compile Include="src\Move\Run\EdificeImpede.cs" />
+    <Compile Include="src\Move\Run\ActorImpede.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\data\Henge.Data.csproj">
