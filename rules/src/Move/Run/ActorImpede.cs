@@ -36,10 +36,19 @@ namespace Henge.Rules.Interference.Move.Run
 				{
 					if (Common.SkillCheck(this.subject, "defend", 2.0 * (double)interaction.Transaction["aggressorStrength"] - strength))
 					{
-						if ( Common.UseEnergy(this.subject, (double)interaction.Transaction["aggressorStrength"]) )
+						if ( Common.UseEnergy(this.subject, (double)interaction.Transaction["aggressorStrength"] *  (double)interaction.Transaction["aggressorEnergy"]) )
 						{
 							double impedance = this.subject.Traits.ContainsKey("weight") ? this.subject.Traits["weight"].Value : Common.ActorBaseWeight;
 							interaction.Transaction["impedance"] = (double)interaction.Transaction["impedance"] + impedance * Common.WeightToImpedance;	
+						}
+					}
+					else
+					{
+						//brute force & ignorance time...
+						if ( Common.UseEnergy(this.subject, 2.0 * (double)interaction.Transaction["aggressorStrength"] *  (double)interaction.Transaction["aggressorEnergy"]) )
+						{
+							double impedance = this.subject.Traits.ContainsKey("weight") ? this.subject.Traits["weight"].Value : Common.ActorBaseWeight;
+							interaction.Transaction["impedance"] = (double)interaction.Transaction["impedance"] + impedance * Common.WeightToImpedance * 0.5;	
 						}
 					}
 				}
