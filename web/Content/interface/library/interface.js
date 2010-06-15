@@ -32,7 +32,6 @@ var giInterface = new Class(
 		if (data.Valid)
 		{
 			map.canvas.setLocation(data.X, data.Y);
-			$('description').set('text', 'You are standing at ' + data.X + ', ' + data.Y);
 		}
 		else alert(data.Message);
 	},
