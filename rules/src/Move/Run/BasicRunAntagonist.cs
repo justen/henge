@@ -35,10 +35,10 @@ namespace Henge.Rules.Antagonist.Move.Run
 				int dY = interaction.Protagonist.Location.Coordinates.Y - ((Location)interaction.Antagonist).Coordinates.Y;
 				char[] impede = new char[2];
 				int i = 0;
-				if (dX > 0) impede[i++] = 's';
-				if (dX < 0) impede[i++] = 'n';
-				if (dY > 0) impede[i++] = 'e';
-				if (dY < 0) impede[i++] = 'w';
+				if (dY > 0) impede[i++] = 's';
+				if (dY < 0) impede[i++] = 'n';
+				if (dX > 0) impede[i++] = 'e';
+				if (dX < 0) impede[i++] = 'w';
 				
 				foreach (Edifice structure in ((Location)interaction.Antagonist).Structures)
 				{
