@@ -63,8 +63,8 @@ var giTile = new Class(
 		
 		if (this.type != -1)
 		{
-			this.locationIcon 	= new giIcon(this.tile, library.icons[0]);
-			this.peopleIcon 	= new giIcon(this.tile, library.icons[1]);
+			//this.locationIcon 	= new giIcon(this.tile, library.icons[0]);
+			//this.peopleIcon 	= new giIcon(this.tile, library.icons[1]);
 			this.animalsIcon 	= new giIcon(this.tile, library.icons[2]);
 			this.structuresIcon = new giIcon(this.tile, library.icons[3]);
 			
