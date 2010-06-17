@@ -5,7 +5,7 @@ using Henge.Data.Entities;
 
 namespace Henge.Rules.Protagonist.Move.Run
 {
-	/*public class BasicRun : ProtagonistRule
+	public class BasicRun : ProtagonistRule
 	{
 		public BasicRun()
 		{
@@ -21,17 +21,22 @@ namespace Henge.Rules.Protagonist.Move.Run
 			//
 			if (!interaction.Finished)
 			{
-
-				if (this.CalculateDistance(interaction.Protagonist.Location, (Location)interaction.Antagonist) < 2)
+				Actor protagonist = interaction.Protagonist as Actor;
+				Location antagonist	= interaction.Antagonist as Location;
+				
+				if (protagonist != null && antagonist != null)
 				{
-					if (Common.UseEnergy(interaction.Protagonist, (double)interaction.Transaction["impedance"]))
-					{
-						this.ApplyInteraction(interaction, interaction.Protagonist, (Location)interaction.Antagonist);
-						//now everything that was trying to impede progress is going to have to take damage I suppose...?
-					}
-				}
-				else interaction.Failure("Out of range", true);
 
+					if (this.CalculateDistance(protagonist.Location, antagonist) < 2)
+					{
+						if (Common.UseEnergy(protagonist, (double)interaction.Transaction["impedance"]))
+						{
+							this.ApplyInteraction(interaction, protagonist, antagonist);
+							//now everything that was trying to impede progress is going to have to take damage I suppose...?
+						}
+					}
+					else interaction.Failure("Out of range", true);
+				}
 			}
 	
 			return interaction;
@@ -61,20 +66,40 @@ namespace Henge.Rules.Protagonist.Move.Run
 			// it's not going to be used.
 			if (actor is Avatar)
 			{
-				actor.Location.Inhabitants.Remove((Avatar)actor);
-				actor.Location = target;
-				actor.Location.Inhabitants.Add((Avatar)actor);
+				Avatar avatar = actor as Avatar;
+				
+				interaction.Deltas.Add((success) =>
+				{
+					//if (success)
+					//{
+						avatar.Location.Inhabitants.Remove(avatar);
+						avatar.Location = target;
+						avatar.Location.Inhabitants.Add(avatar);
+					//}
+					return true;
+				});
+					
 				interaction.Success("Moved");	
 			}
 			else if (actor is Npc)
 			{
-				actor.Location.Fauna.Remove((Npc)actor);
-				actor.Location = target;
-				actor.Location.Fauna.Add((Npc)actor);
+				Npc npc = actor as Npc;
+				
+				interaction.Deltas.Add((success) =>
+				{
+					//if (success)
+					//{
+						npc.Location.Fauna.Remove(npc);
+						npc.Location = target;
+						npc.Location.Fauna.Add(npc);
+					//}
+					return true;
+				});
+					
 				interaction.Success("Moved");	
 			}
 			else interaction.Failure("Antagonist cannot move", true);
 		}
 		
-	}*/
+	}
 }

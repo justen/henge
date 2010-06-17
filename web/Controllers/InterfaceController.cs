@@ -31,7 +31,7 @@ namespace Henge.Web.Controllers
 				
 				if (location != null) 
 				{
-					Interaction result = Interactor.Instance.Interact(this.avatar, location, "Move.Run");
+					IInteraction result = Interactor.Instance.Interact(this.db, this.avatar, location, "Move.Run");
 					
 					if (result.Succeeded)
 					{

@@ -19,23 +19,25 @@ namespace Henge.Rules
 	// This will be the transaction buffer for a single interaction
 	public class Interaction : IInteraction
 	{
-		public IList<Delta> Interferers					{ get; set; }
-		public Delta Subject							{ get; set; }
-		public Delta Antagonist							{ get; set; }
-		public Delta Protagonist						{ get; set; }
+		public IList<Component> Interferers				{ get; set; }
+		public Component Subject						{ get; set; }
+		public Component Antagonist						{ get; set; }
+		public Actor Protagonist						{ get; set; }
 		public string Conclusion						{ get; private set; }
 		public bool Finished							{ get; private set; }
 		public bool Succeeded							{ get; private set; }
 		public bool Illegal								{ get; private set; }
 		public Dictionary<string, object> Transaction 	{ get; private set; }
+		public IList<Func<bool, bool>> Deltas 			{ get; private set; }
 		
 		
-		public Interaction (Component protagonist, Component antagonist)
+		public Interaction (Actor protagonist, Component antagonist)
 		{
 			this.Transaction 	= new Dictionary<string, object>();
-			this.Interferers	= new List<Delta>();
-			this.Protagonist	= new Delta(protagonist);
-			this.Antagonist		= new Delta(antagonist);
+			this.Deltas			= new List<Func<bool, bool>>();
+			this.Interferers	= new List<Component>();
+			this.Protagonist	= protagonist;
+			this.Antagonist		= antagonist;
 		}		
 		
 		

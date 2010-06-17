@@ -5,7 +5,7 @@ using Henge.Data.Entities;
 
 namespace Henge.Rules.Interference.Move
 {
-	/*public class ActorImpede : InterferenceRule
+	public class ActorImpede : InterferenceRule
 	{
 		public override double Priority (Component subject)
 		{
@@ -52,5 +52,5 @@ namespace Henge.Rules.Interference.Move
 			return interaction;
 			
 		}
-	}*/
+	}
 }

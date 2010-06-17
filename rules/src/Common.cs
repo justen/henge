@@ -1,34 +1,35 @@
-
 using System;
+using System.Linq;
+using System.Collections.Generic;
+
 using Henge.Data.Entities;
+
 
 namespace Henge.Rules
 {
-
-
 	static class Common
 	{
-		//maximum skill level
+		// Maximum skill level
 		public const double SkillMax = 1.0;
-		//maximum energy gain per second
+		// Maximum energy gain per second
 		public const double MaxEnergyGain = 1.0;
-		//maximum energy
+		// Maximum energy
 		public const double MaxEnergy = 10.0; 
-		//skill gain rate
+		// Skill gain rate
 		public const double SkillAcquisition = 0.01;
-		//How close you need to be to passing a (failed) skill check to get a little bit of skill anyway
+		// How close you need to be to passing a (failed) skill check to get a little bit of skill anyway
 		public const double AlmostPassed = 0.01;
-		//How much skill you get for passing a barely-failed skill check
+		// How much skill you get for passing a barely-failed skill check
 		public const double CommiserationPrize = 0.001;
-		//Value of a newly-granted child skill
+		// Value of a newly-granted child skill
 		public const double SkillGrantDefault = 0.1;
-		//base impedance (for movement)
+		// Base impedance (for movement)
 		public const double Impedance = 1.0;
-		//Default skill for use when absence of a skill shouldn't be 0.
+		// Default skill for use when absence of a skill shouldn't be 0.
 		public const double DefaultSkill = 0.1;
-		//Base weight for actors unless otherwise specified
+		// Base weight for actors unless otherwise specified
 		public const double ActorBaseWeight = 70.0;
-		//Weight-to-impedance transform
+		// Weight-to-impedance transform
 		public const double WeightToImpedance = 0.00143;
 
 		
@@ -39,16 +40,18 @@ namespace Henge.Rules
 		public static bool SkillCheck(Actor actor, string name, double difficulty)
 		{
 			bool result = false;
-			if ( difficulty<0 ) difficulty = 0;
-			if ( actor.Skills.ContainsKey(name) )
+			
+			if (difficulty < 0 ) difficulty = 0;
+			
+			if (actor.Skills.ContainsKey(name) )
 			{
 				Skill skill = actor.Skills[name];
+				
 				if (skill.Value >= difficulty)
 				{
-					if (skill.Value == 0) skill.Value = Common.SkillAcquisition * Common.AlmostPassed;
-					else 
+					if (skill.Value > 0)
 					{
-						if (skill.Add(Common.SkillAcquisition * difficulty/(skill.Value))==1.0)
+						if (skill.Add(Common.SkillAcquisition * difficulty / skill.Value) == 1.0)
 						{
 							foreach (string newSkill in skill.Children)
 							{
@@ -59,11 +62,14 @@ namespace Henge.Rules
 							}
 						}
 					}
+ 					else skill.Value = Common.SkillAcquisition * Common.AlmostPassed;
+					
 					result = true;	
 				}
 				else
 				{
 					double miss = difficulty - skill.Value;
+					
 					if (miss < Common.AlmostPassed)
 					{
 						skill.Add(Common.CommiserationPrize * (Common.AlmostPassed-miss)/Common.AlmostPassed );
@@ -94,10 +100,12 @@ namespace Henge.Rules
 		public static Trait GetEnergy (Actor actor)
 		{
 			Trait energy = actor.Traits["energy"];
-			//check whether the actor is actually capable of gaining energy
-			if ( actor.Skills.ContainsKey("fitness") && (actor.Skills["fitness"].Value>0) )
+			
+			// Check whether the actor is actually capable of gaining energy
+			if (actor.Skills.ContainsKey("fitness") && actor.Skills["fitness"].Value > 0)
 			{
 				TimeSpan ts = DateTime.Now - actor.LastModified;
+				
 				energy.Transfer(actor.Traits["reserve"], Common.MaxEnergyGain * actor.Skills["fitness"].Value * ts.Seconds);
 			}
 			return energy;

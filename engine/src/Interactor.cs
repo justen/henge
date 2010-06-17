@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 
 using Henge.Rules;
+using Henge.Data;
 using Henge.Data.Entities;
 
 
@@ -25,32 +26,34 @@ namespace Henge.Engine
 		}
 		
 
-		public Interaction Interact(Actor protagonist, Component antagonist, string interactionType)
+		public IInteraction Interact(DataProvider db, Actor protagonist, Component antagonist, string interactionType)
 		{
 			Interaction interaction = this.rulebook.Section(interactionType).ApplyRules(new Interaction(protagonist, antagonist));
 			
-			//try
-			//{
-			
-			if (interaction.Antagonist.ApplyDeltas(interaction.Succeeded))
+			if (interaction.Finished && !interaction.Illegal)
 			{
-				bool result = true;
-				foreach (Delta interferer in interaction.Interferers)
-				{
-					result = interferer.ApplyDeltas(interaction.Succeeded);
-					if (!result) break;
-				}
+				// while not failing to commit
+				// {
+					foreach (var delta in interaction.Deltas)
+					{
+						if (!delta(interaction.Succeeded)) break;
+					}
 				
-				if (result) interaction.Protagonist.ApplyDeltas(interaction.Succeeded);
+					//try
+					//{
+						db.Flush();	
+					//}
+					//catch // ----- Db4o commit exception?
+					//{
+						
+					//}
+				//}		
 			}
-				
-			//}
-			//catch // ----- Db4o commit exception?
-			//{
-				
-			//}
-			
-			//return this.rulebook.Section(interaction).ApplyRules(new Interaction { Antagonist = antagonist, Protagonist = protagonist });
+			else
+			{
+				// Log something?
+			}
+
 			return interaction;
 		}
 	}

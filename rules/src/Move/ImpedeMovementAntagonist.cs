@@ -7,7 +7,7 @@ using Henge.Data.Entities;
 
 namespace Henge.Rules.Antagonist.Move
 {
-	/*public class ImpedeMovement : AntagonistRule
+	public class ImpedeMovement : AntagonistRule
 	{
 		public override double Priority(Component subject)
 		{
@@ -18,16 +18,17 @@ namespace Henge.Rules.Antagonist.Move
 		public override Interaction Apply(Interaction interaction)
 		{	
 			Location antagonist = interaction.Antagonist as Location;
+			Actor protagonist	= interaction.Protagonist as Actor;
 			
-			if (antagonist != null && interaction.Protagonist.Location.Map == antagonist.Map)
+			if (antagonist != null && protagonist != null && protagonist.Location.Map == antagonist.Map)
 			{
-				double impedance = interaction.Antagonist.Traits.ContainsKey("impedance") ? interaction.Antagonist.Traits["impedance"].Value : Common.Impedance;
+				double impedance = antagonist.Traits.ContainsKey("impedance") ? antagonist.Traits["impedance"].Value : Common.Impedance;
 				interaction.Transaction.Add("impedance", impedance);
-				interaction.Transaction.Add("aggressorStrength", interaction.Protagonist.Skills["strength"].Value);
-				interaction.Transaction.Add("aggressorEnergy", interaction.Protagonist.Traits["energy"].Value);
+				interaction.Transaction.Add("aggressorStrength", protagonist.Skills["strength"].Value);
+				interaction.Transaction.Add("aggressorEnergy", protagonist.Traits["energy"].Value);
 
-				int dx			= interaction.Protagonist.Location.Coordinates.X - antagonist.Coordinates.X;
-				int dy 			= interaction.Protagonist.Location.Coordinates.Y - antagonist.Coordinates.Y;
+				int dx			= protagonist.Location.Coordinates.X - antagonist.Coordinates.X;
+				int dy 			= protagonist.Location.Coordinates.Y - antagonist.Coordinates.Y;
 				char [] impede 	= new char [] {
 					(dx > 0) ? 'e' : (dx < 0) ? 'w' : '-',
 					(dy > 0) ? 's' : (dy < 0) ? 'n' : '-'
@@ -65,5 +66,5 @@ namespace Henge.Rules.Antagonist.Move
 			
 			return interaction;
 		}
-	}*/
+	}
 }

@@ -7,7 +7,7 @@ using Henge.Data.Entities;
 
 namespace Henge.Rules
 {
-	public class Delta
+	/*public class Delta
 	{
 		public Component Component { get; set; }
 		
@@ -30,5 +30,5 @@ namespace Henge.Rules
 			
 			return true;
 		}
-	}
+	}*/
 }
