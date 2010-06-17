@@ -10,9 +10,9 @@ namespace Henge.Rules
 	// This will be the transaction buffer for a single interaction
 	public class Interaction
 	{
-		public IList<Component> Interferers			{ get; set; }
+		public IList<Component> Interferers				{ get; set; }
 		public Component Subject						{ get; set; }
-		public Component Antagonist					{ get; set; }
+		public Component Antagonist						{ get; set; }
 		public Actor Protagonist						{ get; set; }
 		public string Conclusion						{ get; private set; }
 		public bool Finished							{ get; private set; }

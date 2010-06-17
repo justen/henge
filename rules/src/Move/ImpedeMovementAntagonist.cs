@@ -1,20 +1,14 @@
-
 using System;
-
+using System.Linq;
 using System.Collections.Generic;
+
 using Henge.Data.Entities;
+
 
 namespace Henge.Rules.Antagonist.Move
 {
-
-
 	public class ImpedeMovement : AntagonistRule
 	{
-
-		public ImpedeMovement ()
-		{
-		}
-		
 		public override double Priority(Component subject)
 		{
 			return (subject is Location) ? 1 : -1;
@@ -23,40 +17,52 @@ namespace Henge.Rules.Antagonist.Move
 		
 		public override Interaction Apply(Interaction interaction)
 		{	
-			if ((interaction.Antagonist is Location)&& (interaction.Protagonist.Location.Map == ((Location)interaction.Antagonist).Map))
+			Location antagonist = interaction.Antagonist as Location;
+			
+			if (antagonist != null && interaction.Protagonist.Location.Map == antagonist.Map)
 			{
-	
 				double impedance = interaction.Antagonist.Traits.ContainsKey("impedance") ? interaction.Antagonist.Traits["impedance"].Value : Common.Impedance;
 				interaction.Transaction.Add("impedance", impedance);
-				interaction.Transaction.Add("aggressorStrength", interaction.Protagonist.Skills["strength"]);
-				interaction.Transaction.Add("aggressorEnergy", interaction.Protagonist.Traits["energy"]);
+				interaction.Transaction.Add("aggressorStrength", interaction.Protagonist.Skills["strength"].Value);
+				interaction.Transaction.Add("aggressorEnergy", interaction.Protagonist.Traits["energy"].Value);
+
+				int dx			= interaction.Protagonist.Location.Coordinates.X - antagonist.Coordinates.X;
+				int dy 			= interaction.Protagonist.Location.Coordinates.Y - antagonist.Coordinates.Y;
+				char [] impede 	= new char [] {
+					(dx > 0) ? 'e' : (dx < 0) ? 'w' : '-',
+					(dy > 0) ? 's' : (dy < 0) ? 'n' : '-'
+				};
 				
-				int dX = interaction.Protagonist.Location.Coordinates.X - ((Location)interaction.Antagonist).Coordinates.X;
-				int dY = interaction.Protagonist.Location.Coordinates.Y - ((Location)interaction.Antagonist).Coordinates.Y;
-				char[] impede = new char[2];
-				int i = 0;
-				if (dY > 0) impede[i++] = 's';
-				if (dY < 0) impede[i++] = 'n';
-				if (dX > 0) impede[i++] = 'e';
-				if (dX < 0) impede[i++] = 'w';
+				antagonist.Structures
+					.Where(c => c.Traits.ContainsKey("impede") && c.Traits["impede"].Flavour.IndexOfAny(impede) > -1).ToList()
+					.ForEach(c => interaction.Interferers.Add(c));
 				
-				foreach (Edifice structure in ((Location)interaction.Antagonist).Structures)
+				antagonist.Fauna
+					.Where(c => c.Traits.ContainsKey("impede") && c.Traits["impede"].Flavour.IndexOfAny(impede) > -1).ToList()
+					.ForEach(c => interaction.Interferers.Add(c));
+				
+				antagonist.Inhabitants
+					.Where(c => c.Traits.ContainsKey("impede") && c.Traits["impede"].Flavour.IndexOfAny(impede) > -1).ToList()
+					.ForEach(c => interaction.Interferers.Add(c));
+				
+				/*foreach (Edifice structure in antagonist.Structures)
 				{
 					if ( structure.Traits.ContainsKey("impede") && structure.Traits["impede"].Flavour.IndexOfAny(impede) > -1 ) interaction.Interferers.Add(structure);					
 				}
 				
-				foreach (Npc animal in ((Location)interaction.Antagonist).Fauna)
+				foreach (Npc animal in antagonist.Fauna)
 				{
 					if ( animal.Traits.ContainsKey("impede") && animal.Traits["impede"].Flavour.IndexOfAny(impede) > -1 ) interaction.Interferers.Add(animal);	
 				}
 				
-				foreach (Avatar avatar in ((Location)interaction.Antagonist).Inhabitants)
+				foreach (Avatar avatar in antagonist.Inhabitants)
 				{
 					if ( avatar.Traits.ContainsKey("impede") && avatar.Traits["impede"].Flavour.IndexOfAny(impede) > -1 ) interaction.Interferers.Add(avatar);	
-				}
+				}*/
 				
 			}
 			else interaction.Failure("Invalid destination", true);
+			
 			return interaction;
 		}
 	}

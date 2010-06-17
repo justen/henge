@@ -22,7 +22,7 @@ namespace Henge.Rules.Protagonist.Move.Run
 			if (!interaction.Finished)
 			{
 
-				if (  this.CalculateDistance(interaction.Protagonist.Location, (Location)interaction.Antagonist) < 2 )
+				if (this.CalculateDistance(interaction.Protagonist.Location, (Location)interaction.Antagonist) < 2)
 				{
 					if (Common.UseEnergy(interaction.Protagonist, (double)interaction.Transaction["impedance"]))
 					{
@@ -57,8 +57,8 @@ namespace Henge.Rules.Protagonist.Move.Run
 		
 		private void ApplyInteraction (Interaction interaction, Actor actor, Location target)
 		{
-			//we would apply any charges built up in interaction here, but there are none at present so
-			//it's not going to be used.
+			// We would apply any charges built up in interaction here, but there are none at present so
+			// it's not going to be used.
 			if (actor is Avatar)
 			{
 				actor.Location.Inhabitants.Remove((Avatar)actor);
