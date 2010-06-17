@@ -5,7 +5,7 @@ using Henge.Data.Entities;
 
 namespace Henge.Rules.Protagonist.Move.Run
 {
-	public class BasicRun : ProtagonistRule
+	/*public class BasicRun : ProtagonistRule
 	{
 		public BasicRun()
 		{
@@ -14,11 +14,11 @@ namespace Henge.Rules.Protagonist.Move.Run
 		
 		public override Interaction Apply(Interaction interaction)
 		{
-			//structure of this rule is
-			/*
-			 *  IF (ConditionsMet(protagonist, antagonists, interaction))
-			 *  THEN ApplyChanges (protagonist, antagonists, interaction)
-			 */
+			// structure of this rule is
+			//
+			//  IF (ConditionsMet(protagonist, antagonists, interaction))
+			//  THEN ApplyChanges (protagonist, antagonists, interaction)
+			//
 			if (!interaction.Finished)
 			{
 
@@ -76,5 +76,5 @@ namespace Henge.Rules.Protagonist.Move.Run
 			else interaction.Failure("Antagonist cannot move", true);
 		}
 		
-	}
+	}*/
 }

@@ -7,7 +7,7 @@ using Henge.Data.Entities;
 
 namespace Henge.Rules.Antagonist.Move
 {
-	public class ImpedeMovement : AntagonistRule
+	/*public class ImpedeMovement : AntagonistRule
 	{
 		public override double Priority(Component subject)
 		{
@@ -45,25 +45,25 @@ namespace Henge.Rules.Antagonist.Move
 					.Where(c => c.Traits.ContainsKey("impede") && c.Traits["impede"].Flavour.IndexOfAny(impede) > -1).ToList()
 					.ForEach(c => interaction.Interferers.Add(c));
 				
-				/*foreach (Edifice structure in antagonist.Structures)
-				{
-					if ( structure.Traits.ContainsKey("impede") && structure.Traits["impede"].Flavour.IndexOfAny(impede) > -1 ) interaction.Interferers.Add(structure);					
-				}
-				
-				foreach (Npc animal in antagonist.Fauna)
-				{
-					if ( animal.Traits.ContainsKey("impede") && animal.Traits["impede"].Flavour.IndexOfAny(impede) > -1 ) interaction.Interferers.Add(animal);	
-				}
-				
-				foreach (Avatar avatar in antagonist.Inhabitants)
-				{
-					if ( avatar.Traits.ContainsKey("impede") && avatar.Traits["impede"].Flavour.IndexOfAny(impede) > -1 ) interaction.Interferers.Add(avatar);	
-				}*/
+				//foreach (Edifice structure in antagonist.Structures)
+				//{
+				//	if ( structure.Traits.ContainsKey("impede") && structure.Traits["impede"].Flavour.IndexOfAny(impede) > -1 ) interaction.Interferers.Add(structure);					
+				//}
+				//
+				//foreach (Npc animal in antagonist.Fauna)
+				//{
+				//	if ( animal.Traits.ContainsKey("impede") && animal.Traits["impede"].Flavour.IndexOfAny(impede) > -1 ) interaction.Interferers.Add(animal);	
+				//}
+				//
+				//foreach (Avatar avatar in antagonist.Inhabitants)
+				//{
+				//	if ( avatar.Traits.ContainsKey("impede") && avatar.Traits["impede"].Flavour.IndexOfAny(impede) > -1 ) interaction.Interferers.Add(avatar);	
+				//}
 				
 			}
 			else interaction.Failure("Invalid destination", true);
 			
 			return interaction;
 		}
-	}
+	}*/
 }

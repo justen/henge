@@ -25,9 +25,33 @@ namespace Henge.Engine
 		}
 		
 
-		public Interaction Interact(Actor protagonist, Component antagonist, string interaction)
+		public Interaction Interact(Actor protagonist, Component antagonist, string interactionType)
 		{
-			return this.rulebook.Section(interaction).ApplyRules(new Interaction { Antagonist = antagonist, Protagonist = protagonist });
+			Interaction interaction = this.rulebook.Section(interactionType).ApplyRules(new Interaction(protagonist, antagonist));
+			
+			//try
+			//{
+			
+			if (interaction.Antagonist.ApplyDeltas(interaction.Succeeded))
+			{
+				bool result = true;
+				foreach (Delta interferer in interaction.Interferers)
+				{
+					result = interferer.ApplyDeltas(interaction.Succeeded);
+					if (!result) break;
+				}
+				
+				if (result) interaction.Protagonist.ApplyDeltas(interaction.Succeeded);
+			}
+				
+			//}
+			//catch // ----- Db4o commit exception?
+			//{
+				
+			//}
+			
+			//return this.rulebook.Section(interaction).ApplyRules(new Interaction { Antagonist = antagonist, Protagonist = protagonist });
+			return interaction;
 		}
 	}
 }

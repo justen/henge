@@ -31,6 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\AssemblyInfo.cs" />
@@ -44,6 +45,7 @@
     <Compile Include="src\Rules\Loader.cs" />
     <Compile Include="src\Rules\Rulebook.cs" />
     <Compile Include="src\Rules\Section.cs" />
+    <Compile Include="src\Rules\Delta.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />

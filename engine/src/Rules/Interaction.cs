@@ -7,13 +7,22 @@ using Henge.Data.Entities;
 
 namespace Henge.Rules
 {
-	// This will be the transaction buffer for a single interaction
-	public class Interaction
+	public interface IInteraction
 	{
-		public IList<Component> Interferers				{ get; set; }
-		public Component Subject						{ get; set; }
-		public Component Antagonist						{ get; set; }
-		public Actor Protagonist						{ get; set; }
+		string Conclusion	{ get; }
+		bool Finished		{ get; }
+		bool Succeeded		{ get; }
+		bool Illegal		{ get; }
+		
+	}
+	
+	// This will be the transaction buffer for a single interaction
+	public class Interaction : IInteraction
+	{
+		public IList<Delta> Interferers					{ get; set; }
+		public Delta Subject							{ get; set; }
+		public Delta Antagonist							{ get; set; }
+		public Delta Protagonist						{ get; set; }
 		public string Conclusion						{ get; private set; }
 		public bool Finished							{ get; private set; }
 		public bool Succeeded							{ get; private set; }
@@ -21,10 +30,12 @@ namespace Henge.Rules
 		public Dictionary<string, object> Transaction 	{ get; private set; }
 		
 		
-		public Interaction ()
+		public Interaction (Component protagonist, Component antagonist)
 		{
 			this.Transaction 	= new Dictionary<string, object>();
-			this.Interferers	= new List<Component>();
+			this.Interferers	= new List<Delta>();
+			this.Protagonist	= new Delta(protagonist);
+			this.Antagonist		= new Delta(antagonist);
 		}		
 		
 		
