@@ -9,6 +9,6 @@ namespace Henge.Rules
 	{
 		string Interaction	{ get; }
 		double Priority(Component subject);
-		Interaction Apply(Interaction interaction);
+		IInteraction Apply(IInteraction interaction);
 	}
 }

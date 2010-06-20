@@ -28,30 +28,35 @@ namespace Henge.Engine
 
 		public IInteraction Interact(DataProvider db, Actor protagonist, Component antagonist, string interactionType)
 		{
-			Interaction interaction = this.rulebook.Section(interactionType).ApplyRules(new Interaction(protagonist, antagonist));
+			IInteraction interaction = this.rulebook.CreateInteraction(protagonist, antagonist);
 			
-			if (interaction.Finished && !interaction.Illegal)
+			if (interaction != null)
 			{
-				// while not failing to commit
-				// {
-					foreach (var delta in interaction.Deltas)
-					{
-						if (!delta(interaction.Succeeded)) break;
-					}
-				
-					//try
-					//{
-						db.Flush();	
-					//}
-					//catch // ----- Db4o commit exception?
-					//{
-						
-					//}
-				//}		
-			}
-			else
-			{
-				// Log something?
+				this.rulebook.Section(interactionType).ApplyRules(interaction);
+			
+				if (interaction.Finished && !interaction.Illegal)
+				{
+					// while not failing to commit
+					// {
+						foreach (var delta in interaction.Deltas)
+						{
+							if (!delta(interaction.Succeeded)) break;
+						}
+					
+						//try
+						//{
+							db.Flush();	
+						//}
+						//catch // ----- Db4o commit exception?
+						//{
+							
+						//}
+					//}		
+				}
+				else
+				{
+					// Log something?
+				}
 			}
 
 			return interaction;

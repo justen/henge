@@ -27,7 +27,7 @@ namespace Henge.Rules
 		}
 		
 		
-		public virtual Interaction Apply(Interaction interaction)
+		public virtual IInteraction Apply(IInteraction interaction)
 		{	
 			return interaction;
 		}

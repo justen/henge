@@ -5,7 +5,7 @@ using Henge.Data.Entities;
 
 namespace Henge.Rules.Interference.Move
 {
-	public class EdificeImpede : InterferenceRule
+	public class EdificeImpede : HengeRule, IInterferer
 	{
 		public override double Priority(Component subject)
 		{
@@ -13,12 +13,11 @@ namespace Henge.Rules.Interference.Move
 		}
 
 		
-		public override Interaction Apply(Interaction interaction)
+		protected override HengeInteraction Apply(HengeInteraction interaction)
 		{
-			// Basic impedance rule for any impeding structure - just use the impedance value in "impede"
-			double impedance = (double)interaction.Transaction["impedance"] + interaction.Subject.Traits["impede"].Value;
+			// Basic impedance rule for any impeding structure - just use the impedance value in "Impede"	
+			interaction.Impedance += interaction.Subject.Traits["Impede"].Value;
 			
-			interaction.Transaction["impedance"] = impedance;
 			return interaction;
 			
 		}

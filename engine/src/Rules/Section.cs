@@ -15,15 +15,16 @@ namespace Henge.Rules
 		public Section(IRule rule)
 		{
 			// Add the default rules
-			this.Add(new AntagonistRule());
-			this.Add(new ProtagonistRule());
-			this.Add(new InterferenceRule());
+			// Not sure about defaults now?
+			//this.Add(new AntagonistRule());
+			//this.Add(new ProtagonistRule());
+			//this.Add(new InterferenceRule());
 			
 			this.Add(rule);
 		}
 		
 		
-		public Interaction ApplyRules(Interaction interaction)
+		public IInteraction ApplyRules(IInteraction interaction)
 		{
 			if (!this.BestRule(this.antagonist, interaction.Antagonist).Apply(interaction).Finished)
 			{
@@ -44,9 +45,9 @@ namespace Henge.Rules
 		
 		public void Add(IRule rule)
 		{
-			if (rule is AntagonistRule) 		this.antagonist.Add(rule);
-			else if (rule is ProtagonistRule) 	this.protagonist.Add(rule);
-			else if (rule is InterferenceRule)	this.interference.Add(rule);
+			if (rule is IAntagonist) 		this.antagonist.Add(rule);
+			else if (rule is IProtagonist) 	this.protagonist.Add(rule);
+			else if (rule is IInterferer)	this.interference.Add(rule);
 		}
 		
 		

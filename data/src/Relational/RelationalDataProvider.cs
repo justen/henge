@@ -218,14 +218,14 @@ namespace Henge.Data
 		}
 		
 		
-		public bool Delete(IList<RelationalEntity> entities)
+		public bool Delete<T>(IList<T> entities) where T : Entity
 		{
 			ISession session = this.GetSession();
 			
 			if (session != null && entities != null)
 			{
 				ITransaction tx = session.BeginTransaction();
-					foreach (Entity entity in entities) session.Delete(entity);
+					foreach (T entity in entities) session.Delete(entity);
 				tx.Commit();
 				session.Flush();
 				

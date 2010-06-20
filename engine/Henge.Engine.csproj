@@ -36,20 +36,21 @@
   <ItemGroup>
     <Compile Include="src\AssemblyInfo.cs" />
     <Compile Include="src\Interactor.cs" />
-    <Compile Include="src\Rules\Base\AntagonistRule.cs" />
-    <Compile Include="src\Rules\Base\InterferenceRule.cs" />
-    <Compile Include="src\Rules\Base\ProtagonistRule.cs" />
-    <Compile Include="src\Rules\Base\Rule.cs" />
     <Compile Include="src\Interfaces\IRule.cs" />
     <Compile Include="src\Rules\Interaction.cs" />
     <Compile Include="src\Rules\Loader.cs" />
     <Compile Include="src\Rules\Rulebook.cs" />
     <Compile Include="src\Rules\Section.cs" />
-    <Compile Include="src\Rules\Delta.cs" />
+    <Compile Include="src\Interfaces\IInteraction.cs" />
+    <Compile Include="src\Interfaces\IProtagonist.cs" />
+    <Compile Include="src\Interfaces\IAntagonist.cs" />
+    <Compile Include="src\Interfaces\IInterferer.cs" />
+    <Compile Include="src\Rules\Rule.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />
     <Folder Include="src\Rules\" />
+    <Folder Include="src\Rules\Base\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

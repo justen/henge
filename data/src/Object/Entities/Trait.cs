@@ -11,7 +11,7 @@ namespace Henge.Data.Entities
 		public virtual string Flavour	{get; set;}
 	
 	
-		public double Transfer (Trait source, double amount)
+		/*public double Transfer (Trait source, double amount)
 		{
 			if (this.Value + amount > this.Maximum)
 			{
@@ -51,6 +51,6 @@ namespace Henge.Data.Entities
 				this.Value-=amount;
 			}
 			return amount;
-		}
+		}*/
 	}
 }

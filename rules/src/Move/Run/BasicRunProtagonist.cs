@@ -1,18 +1,20 @@
 using System;
 using System.Collections.Generic;
+
 using Henge.Data.Entities;
 
 
 namespace Henge.Rules.Protagonist.Move.Run
 {
-	public class BasicRun : ProtagonistRule
+	public class BasicRun : HengeRule, IProtagonist
 	{
-		public BasicRun()
+		public override double Priority (Component subject)
 		{
+			return (subject is Actor) ? 1 : -1;
 		}
 		
 		
-		public override Interaction Apply(Interaction interaction)
+		protected override HengeInteraction Apply(HengeInteraction interaction)
 		{
 			// structure of this rule is
 			//
@@ -21,17 +23,15 @@ namespace Henge.Rules.Protagonist.Move.Run
 			//
 			if (!interaction.Finished)
 			{
-				Actor protagonist = interaction.Protagonist as Actor;
 				Location antagonist	= interaction.Antagonist as Location;
 				
-				if (protagonist != null && antagonist != null)
+				if (interaction.Protagonist != null && antagonist != null)
 				{
-
-					if (this.CalculateDistance(protagonist.Location, antagonist) < 2)
+					if (this.CalculateDistance(interaction.Protagonist.Location, antagonist) < 2)
 					{
-						if (Common.UseEnergy(protagonist, (double)interaction.Transaction["impedance"]))
+						if (interaction.UseEnergy(interaction.Impedance))
 						{
-							this.ApplyInteraction(interaction, protagonist, antagonist);
+							this.ApplyInteraction(interaction, interaction.Protagonist, antagonist);
 							//now everything that was trying to impede progress is going to have to take damage I suppose...?
 						}
 					}
@@ -40,13 +40,7 @@ namespace Henge.Rules.Protagonist.Move.Run
 			}
 	
 			return interaction;
-		}
-		
-		
-		public override double Priority (Component subject)
-		{
-			return (subject is Actor) ? 1 : -1;
-		}
+		}	
 		
 		
 		private double CalculateDistance(Location source, Location destination)
@@ -60,7 +54,7 @@ namespace Henge.Rules.Protagonist.Move.Run
 		}
 		
 		
-		private void ApplyInteraction (Interaction interaction, Actor actor, Location target)
+		private void ApplyInteraction (HengeInteraction interaction, Actor actor, Location target)
 		{
 			// We would apply any charges built up in interaction here, but there are none at present so
 			// it's not going to be used.
@@ -68,8 +62,7 @@ namespace Henge.Rules.Protagonist.Move.Run
 			{
 				Avatar avatar = actor as Avatar;
 				
-				interaction.Deltas.Add((success) =>
-				{
+				interaction.Deltas.Add((success) => {
 					//if (success)
 					//{
 						avatar.Location.Inhabitants.Remove(avatar);
@@ -85,8 +78,7 @@ namespace Henge.Rules.Protagonist.Move.Run
 			{
 				Npc npc = actor as Npc;
 				
-				interaction.Deltas.Add((success) =>
-				{
+				interaction.Deltas.Add((success) => {
 					//if (success)
 					//{
 						npc.Location.Fauna.Remove(npc);
@@ -99,7 +91,6 @@ namespace Henge.Rules.Protagonist.Move.Run
 				interaction.Success("Moved");	
 			}
 			else interaction.Failure("Antagonist cannot move", true);
-		}
-		
+		}	
 	}
 }

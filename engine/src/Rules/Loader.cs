@@ -14,6 +14,7 @@ namespace Henge.Rules
 			string path			= Path.Combine(applicationPath, "rules");
 			DirectoryInfo info	= new DirectoryInfo(path);
 			List<IRule> rules	= new List<IRule>();
+			Type interaction	= null;
 
 			foreach(FileInfo file in info.GetFiles("*.dll"))
 			{
@@ -23,19 +24,24 @@ namespace Henge.Rules
 
                     if (asm != null)
 					{
-						foreach(Type type in asm.GetExportedTypes())
+						foreach (Type type in asm.GetExportedTypes())
 						{
-							if (type.GetInterface("Henge.Rules.IRule") != null)
+							if (type.GetInterface("Henge.Rules.IRule") != null && !type.IsAbstract)
 							{
 								IRule rule = (IRule)Activator.CreateInstance(type);
 								if (rule != null) rules.Add((IRule)rule);
+							}
+							
+							if (type.GetInterface("Henge.Rules.IInteraction") != null)
+							{
+								interaction = type;
 							}
 						}
 					}
 				}
 			}
 			
-            return new Rulebook(rules);
+            return new Rulebook(rules, interaction);
         }
 	}
 }

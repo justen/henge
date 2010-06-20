@@ -65,15 +65,15 @@ namespace Henge.Data
 		}
 		
 		
-		public bool Delete(IList<Entity> entities)
+		public bool Delete<T>(IList<T> entities) where T : Entity
 		{
-			return (entities is IList<ObjectEntity>) ? this.objectProvider.Delete(entities as IList<ObjectEntity>) : this.relationalProvider.Delete(entities as IList<RelationalEntity>);
+			return typeof(T).IsSubclassOf(objectEntityType) ? this.objectProvider.Delete(entities) : this.relationalProvider.Delete(entities);
 		}
 		
 		
 		public IQueryable<T> Query<T>() where T : Entity
 		{
-			return (typeof(T).IsSubclassOf(objectEntityType)) ? this.objectProvider.Query<T>() : this.relationalProvider.Query<T>();
+			return typeof(T).IsSubclassOf(objectEntityType) ? this.objectProvider.Query<T>() : this.relationalProvider.Query<T>();
 		}
 		
 		
@@ -86,7 +86,7 @@ namespace Henge.Data
 		
 		public T Get<T>(System.Linq.Expressions.Expression<Func<T, bool>> expression) where T : Entity
 		{
-			return (typeof(T).IsSubclassOf(objectEntityType)) ? this.objectProvider.Get<T>(expression) : this.relationalProvider.Get<T>(expression);
+			return typeof(T).IsSubclassOf(objectEntityType) ? this.objectProvider.Get<T>(expression) : this.relationalProvider.Get<T>(expression);
 		}
 		
 		

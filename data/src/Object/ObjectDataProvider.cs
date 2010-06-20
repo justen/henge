@@ -71,6 +71,9 @@ namespace Henge.Data
 				ComponentType avatar		= new ComponentType(avatarAppearance) { Id = "avatar" };
 				Avatar av					= new Avatar { Name = "Og", User = u, Location = l, Type = avatar };
 				
+				av.Skills.Add("Strength", new Skill { Value = 0.5 });
+				av.Traits.Add("Energy", new Trait { Value = 10, Minimum = -10, Maximum = 10 });
+				
 				u.Avatars.Add(av);
 				m.Locations.Add(l.Coordinates, l);
 				l.Inhabitants.Add(av);
@@ -155,13 +158,13 @@ namespace Henge.Data
 		}
 		
 		
-		public bool Delete(IList<ObjectEntity> entities)
+		public bool Delete<T>(IList<T> entities) where T : Entity
 		{
 			IObjectContainer container = this.GetContainer();
 			
 			if (container != null && entities != null)
 			{
-				foreach (ObjectEntity entity in entities) container.Delete(entity);
+				foreach (T entity in entities) container.Delete(entity);
 				container.Commit();
 				
 				return true;

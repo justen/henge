@@ -5,7 +5,7 @@ using Henge.Data.Entities;
 
 namespace Henge.Rules.Interference.Move
 {
-	public class ActorImpede : InterferenceRule
+	public class ActorImpede : HengeRule, IInterferer
 	{
 		public override double Priority (Component subject)
 		{
@@ -13,37 +13,34 @@ namespace Henge.Rules.Interference.Move
 		}
 
 		
-		public override Interaction Apply(Interaction interaction)
+		protected override HengeInteraction Apply(HengeInteraction interaction)
 		{
 			Actor subject = interaction.Subject as Actor;
 			
 			if (subject != null)
 			{
-				double impedance = (double)interaction.Transaction["impedance"];
-				
 				// Only need to do this skill check if the protagonist hasn't already been stopped
-				if (impedance < (double)interaction.Transaction["aggressorEnergy"]) 
+				if (interaction.Impedance < interaction.Energy) 
 				{
-					double strength = subject.Skills.ContainsKey("strength") ? subject.Skills["strength"].Value : Common.DefaultSkill;
+					double strength = subject.Skills.ContainsKey("Strength") ? subject.Skills["Strength"].Value : Constants.DefaultSkill;
 					
 					// Can only intervene if not exhausted
-					if (Common.GetEnergy(subject).Value > 0)
+					if (subject.Traits["Energy"].Value > 0)
 					{
-						if (Common.SkillCheck(subject, "defend", 2.0 * (double)interaction.Transaction["aggressorStrength"] - strength))
+						if (interaction.SkillCheck(subject, "Defend", 2 * interaction.Strength - strength))
 						{
-							if ( Common.UseEnergy(subject, (double)interaction.Transaction["aggressorStrength"] *  (double)interaction.Transaction["aggressorEnergy"]) )
+							if (interaction.UseEnergy(subject, interaction.Strength * interaction.Energy))
 							{
-								double weight = subject.Traits.ContainsKey("weight") ? subject.Traits["weight"].Value : Common.ActorBaseWeight;
-								interaction.Transaction["impedance"] = impedance + weight * Common.WeightToImpedance;	
+								double weight = subject.Traits.ContainsKey("Weight") ? subject.Traits["Weight"].Value : Constants.ActorBaseWeight;
+								interaction.Impedance += weight * Constants.WeightToImpedance;
 							}
 						}
 						else
 						{
-							//brute force & ignorance time...
-							if ( Common.UseEnergy(subject, 2.0 * (double)interaction.Transaction["aggressorStrength"] *  (double)interaction.Transaction["aggressorEnergy"]) )
+							if (interaction.UseEnergy(subject, 2 * interaction.Strength * interaction.Energy))
 							{
-								double weight = subject.Traits.ContainsKey("weight") ? subject.Traits["weight"].Value : Common.ActorBaseWeight;
-								interaction.Transaction["impedance"] = impedance + weight * Common.WeightToImpedance * 0.5;	
+								double weight = subject.Traits.ContainsKey("Weight") ? subject.Traits["Weight"].Value : Constants.ActorBaseWeight;
+								interaction.Impedance += weight * Constants.WeightToImpedance;
 							}
 						}
 					}
