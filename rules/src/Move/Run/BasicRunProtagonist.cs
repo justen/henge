@@ -27,13 +27,14 @@ namespace Henge.Rules.Protagonist.Move.Run
 				
 				if (interaction.Protagonist != null && antagonist != null)
 				{
-					if (this.CalculateDistance(interaction.Protagonist.Location, antagonist) < 2)
+					if (this.CalculateDistance(interaction.Protagonist.Location, antagonist) <= 2)
 					{
-						if (interaction.UseEnergy(interaction.Impedance))
+						if (interaction.ProtagonistCache.UseEnergy(interaction.Impedance))
 						{
 							this.ApplyInteraction(interaction, interaction.Protagonist, antagonist);
-							//now everything that was trying to impede progress is going to have to take damage I suppose...?
+							// Now everything that was trying to impede progress is going to have to take damage I suppose...?
 						}
+						else interaction.Failure("Out of energy", false);
 					}
 					else interaction.Failure("Out of range", true);
 				}
@@ -43,10 +44,10 @@ namespace Henge.Rules.Protagonist.Move.Run
 		}	
 		
 		
-		private double CalculateDistance(Location source, Location destination)
+		private int CalculateDistance(Location source, Location destination)
 		{
-			double deltaX = source.Coordinates.X - destination.Coordinates.X;
-			double deltaY = source.Coordinates.Y - destination.Coordinates.Y;
+			int deltaX = source.Coordinates.X - destination.Coordinates.X;
+			int deltaY = source.Coordinates.Y - destination.Coordinates.Y;
 			// currently can't run in z, so don't bother calculating it.
 			// int deltaZ = source.Coordinates.Z - destination.Coordinates.Z;
 			

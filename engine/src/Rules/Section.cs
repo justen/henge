@@ -35,7 +35,7 @@ namespace Henge.Rules
 				//Now that the AntagonistRule has populated the Interaction with interferers we can work through each of them in turn
 				foreach (Component interferer in interaction.Interferers)
 				{
-					interaction.Subject = interferer;
+					interaction.SetSubject(interferer);
 					
 					if (this.GetRule(this.interference, interferer).Apply(interaction).Finished) break;
 				}

@@ -8,7 +8,7 @@ namespace Henge.Rules
 {
 	public interface IInteraction
 	{
-		Component Subject				{ get; set; }
+		Component Subject				{ get; }
 		Component Antagonist			{ get; set; }
 		Actor Protagonist				{ get; set; }
 		IList<Func<bool, bool>> Deltas 	{ get; }
@@ -20,5 +20,7 @@ namespace Henge.Rules
 		
 		void Success(string message);
 		void Failure(string message, bool illegal);
+		
+		void SetSubject(Component subject);
 	}
 }

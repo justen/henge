@@ -10,7 +10,7 @@ namespace Henge.Rules
 	// This will be the transaction buffer for a single interaction
 	public abstract class Interaction : IInteraction
 	{
-		public Component Subject						{ get; set; }
+		public Component Subject						{ get; protected set; }
 		public Component Antagonist						{ get; set; }
 		public Actor Protagonist						{ get; set; }
 		public IList<Func<bool, bool>> Deltas 			{ get; private set; }
@@ -45,6 +45,12 @@ namespace Henge.Rules
 			this.Succeeded 	= false;
 			this.Illegal	= illegal;
 			this.Conclusion	= message;
+		}
+		
+		
+		public virtual void SetSubject(Component subject)
+		{
+			this.Subject = subject;
 		}
 	}
 }

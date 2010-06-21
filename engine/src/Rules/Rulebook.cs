@@ -36,7 +36,7 @@ namespace Henge.Rules
 				
 				if (trim > 0)
 				{
-					interaction.Remove(trim);
+					interaction = interaction.Remove(trim);
 					if (this.rules.ContainsKey(interaction)) kvp.Value.Merge(this.rules[interaction]);
 				}
 			}

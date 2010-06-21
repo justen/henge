@@ -15,37 +15,32 @@ namespace Henge.Rules.Interference.Move
 		
 		protected override HengeInteraction Apply(HengeInteraction interaction)
 		{
-			Actor subject = interaction.Subject as Actor;
-			
-			if (subject != null)
+
+			// Only need to do this skill check if the protagonist hasn't already been stopped
+			if (interaction.Impedance < interaction.ProtagonistCache.Energy) 
 			{
-				// Only need to do this skill check if the protagonist hasn't already been stopped
-				if (interaction.Impedance < interaction.Energy) 
+				double strength = interaction.SubjectCache.Strength;
+				
+				// Can only intervene if not exhausted
+				if (interaction.SubjectCache.Energy > 0)
 				{
-					double strength = subject.Skills.ContainsKey("Strength") ? subject.Skills["Strength"].Value : Constants.DefaultSkill;
-					
-					// Can only intervene if not exhausted
-					if (subject.Traits["Energy"].Value > 0)
+					if (interaction.SubjectCache.SkillCheck("Defend", 2 * interaction.ProtagonistCache.Strength - strength))
 					{
-						if (interaction.SkillCheck(subject, "Defend", 2 * interaction.Strength - strength))
+						if (interaction.SubjectCache.UseEnergy(interaction.ProtagonistCache.Strength * interaction.ProtagonistCache.Energy))
 						{
-							if (interaction.UseEnergy(subject, interaction.Strength * interaction.Energy))
-							{
-								double weight = subject.Traits.ContainsKey("Weight") ? subject.Traits["Weight"].Value : Constants.ActorBaseWeight;
-								interaction.Impedance += weight * Constants.WeightToImpedance;
-							}
+							interaction.Impedance += interaction.SubjectCache.Weight * Constants.WeightToImpedance;
 						}
-						else
+					}
+					else
+					{
+						if (interaction.SubjectCache.UseEnergy(2 * interaction.ProtagonistCache.Strength * interaction.ProtagonistCache.Energy))
 						{
-							if (interaction.UseEnergy(subject, 2 * interaction.Strength * interaction.Energy))
-							{
-								double weight = subject.Traits.ContainsKey("Weight") ? subject.Traits["Weight"].Value : Constants.ActorBaseWeight;
-								interaction.Impedance += weight * Constants.WeightToImpedance;
-							}
+							interaction.Impedance += interaction.SubjectCache.Weight * Constants.WeightToImpedance;
 						}
 					}
 				}
 			}
+
 			return interaction;
 			
 		}
