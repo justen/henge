@@ -69,7 +69,6 @@ namespace Henge.Rules
 			{
 				this.Deltas.Add((success) => {
 					energy.Value -= amount;
-					subject.LastModified = DateTime.Now;
 					return true;
 				});
 				

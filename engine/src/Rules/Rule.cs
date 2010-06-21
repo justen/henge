@@ -21,10 +21,7 @@ namespace Henge.Rules
 		}
 		
 		
-		public virtual double Priority(Component subject)
-		{
-			return 0;
-		}
+		public abstract bool Valid(Component subject);
 		
 		
 		public virtual IInteraction Apply(IInteraction interaction)

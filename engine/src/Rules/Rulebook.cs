@@ -9,7 +9,7 @@ namespace Henge.Rules
 	public class Rulebook
 	{
 		private Type interactionType = null;
-		private Dictionary<string, Section> rules = new Dictionary<string, Section>();
+		private SortedDictionary<string, Section> rules = new SortedDictionary<string, Section>();
 		
 		
 		public Rulebook(List<IRule> rules, Type interactionType)
@@ -23,6 +23,23 @@ namespace Henge.Rules
 				if (!this.rules.ContainsKey(interaction)) 	this.rules.Add(interaction, new Section(rule));
 				else 										this.rules[interaction].Add(rule);					
 			}
+			
+			// Merge sections that descend from other sections. This means that the hierarchy does not
+			// need to be negotiated when looking up rules in a section. For example, if you have some
+			// generic "Move" rules and then you have a specific "Move.Run" rule section, the "Move.Run"
+			// will have all of the rules in "Move" added to it. Since rules are selected in list order
+			// the specific "Move.Run" rules will be checked first before moving on to the generic "Move" rules.
+			foreach (KeyValuePair<string, Section> kvp in this.rules)
+			{
+				string interaction 	= kvp.Key;
+				int trim 			= interaction.LastIndexOf('.');
+				
+				if (trim > 0)
+				{
+					interaction.Remove(trim);
+					if (this.rules.ContainsKey(interaction)) kvp.Value.Merge(this.rules[interaction]);
+				}
+			}
 		}
 		
 		
@@ -34,17 +51,7 @@ namespace Henge.Rules
 		
 		public Section Section(string interaction)
 		{
-			Section result	= this.rules.ContainsKey(interaction) ? this.rules[interaction] : null;
-			int trimFrom	= interaction.LastIndexOf('.');
-			
-			while (result == null && trimFrom > 0)
-			{
-				interaction = interaction.Remove(trimFrom);
-				result		= this.rules.ContainsKey(interaction) ? this.rules[interaction] : null;
-				trimFrom 	= interaction.LastIndexOf('.');
-			}
-			
-			return result;
+			return this.rules.ContainsKey(interaction) ? this.rules[interaction] : null;
 		}
 	}
 }

@@ -9,9 +9,9 @@ namespace Henge.Rules.Antagonist.Move
 {
 	public class ImpedeMovement : HengeRule, IAntagonist
 	{
-		public override double Priority(Component subject)
+		public override bool Valid(Component subject)
 		{
-			return (subject is Location) ? 1 : -1;
+			return subject is Location;
 		}
 		
 		

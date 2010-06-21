@@ -7,9 +7,9 @@ namespace Henge.Rules.Interference.Move
 {
 	public class EdificeImpede : HengeRule, IInterferer
 	{
-		public override double Priority(Component subject)
+		public override bool Valid(Component subject)
 		{
-			return (subject is Edifice) ? 1 : -1;
+			return subject is Edifice;
 		}
 
 		

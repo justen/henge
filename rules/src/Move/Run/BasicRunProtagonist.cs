@@ -8,9 +8,9 @@ namespace Henge.Rules.Protagonist.Move.Run
 {
 	public class BasicRun : HengeRule, IProtagonist
 	{
-		public override double Priority (Component subject)
+		public override bool Valid (Component subject)
 		{
-			return (subject is Actor) ? 1 : -1;
+			return subject is Actor;
 		}
 		
 		

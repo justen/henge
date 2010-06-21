@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
+
 using Henge.Data.Entities;
 
 
@@ -14,29 +16,31 @@ namespace Henge.Rules
 		
 		public Section(IRule rule)
 		{
-			// Add the default rules
-			// Not sure about defaults now?
-			//this.Add(new AntagonistRule());
-			//this.Add(new ProtagonistRule());
-			//this.Add(new InterferenceRule());
-			
 			this.Add(rule);
+		}
+		
+		
+		public void Merge(Section section)
+		{
+			this.antagonist.AddRange(section.antagonist);
+			this.protagonist.AddRange(section.protagonist);
+			this.interference.AddRange(section.interference);
 		}
 		
 		
 		public IInteraction ApplyRules(IInteraction interaction)
 		{
-			if (!this.BestRule(this.antagonist, interaction.Antagonist).Apply(interaction).Finished)
+			if (!this.GetRule(this.antagonist, interaction.Antagonist).Apply(interaction).Finished)
 			{
 				//Now that the AntagonistRule has populated the Interaction with interferers we can work through each of them in turn
 				foreach (Component interferer in interaction.Interferers)
 				{
 					interaction.Subject = interferer;
 					
-					if (this.BestRule(this.interference, interferer).Apply(interaction).Finished) break;
+					if (this.GetRule(this.interference, interferer).Apply(interaction).Finished) break;
 				}
 				//...and then apply the final rule and apply the results.
-				if (!interaction.Finished) this.BestRule(this.protagonist, interaction.Protagonist).Apply(interaction);
+				if (!interaction.Finished) this.GetRule(this.protagonist, interaction.Protagonist).Apply(interaction);
 			}
 			
 			return interaction;
@@ -51,24 +55,9 @@ namespace Henge.Rules
 		}
 		
 		
-		private IRule BestRule(List<IRule> rules, Component subject)
+		private IRule GetRule(List<IRule> rules, Component subject)
 		{
-			IRule result		= null;
-			double priority 	= -1;
-			double maxPriority	= -1;
-			
-			foreach (IRule candidate in rules)
-			{
-				priority = candidate.Priority(subject);
-				
-				if (priority > maxPriority)
-				{
-					maxPriority	= priority;
-					result 		= candidate;
-				}
-			}
-			
-			return result;
+			return rules.FirstOrDefault(r => r.Valid(subject));
 		}
 	}
 }
