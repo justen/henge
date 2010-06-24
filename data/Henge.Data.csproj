@@ -98,7 +98,6 @@
     <Compile Include="src\Object\Entities\Item.cs" />
     <Compile Include="src\Object\Entities\Location.cs" />
     <Compile Include="src\Object\Entities\Map.cs" />
-    <Compile Include="src\Object\Entities\Modifier.cs" />
     <Compile Include="src\Object\Entities\Npc.cs" />
     <Compile Include="src\Object\Entities\Region.cs" />
     <Compile Include="src\Object\Entities\User.cs" />
