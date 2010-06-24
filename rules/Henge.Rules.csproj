@@ -30,6 +30,9 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="src\" />
+    <Folder Include="src\Defend\" />
+    <Folder Include="src\Move\" />
+    <Folder Include="src\Defend\Guard\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\Move\Run\BasicRunProtagonist.cs" />
@@ -40,6 +43,8 @@
     <Compile Include="src\HengeInteraction.cs" />
     <Compile Include="src\HengeRule.cs" />
     <Compile Include="src\PropertyCache.cs" />
+    <Compile Include="src\Defend\Guard\GuardProtagonist.cs" />
+    <Compile Include="src\Defend\Guard\GuardAntagonist.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\data\Henge.Data.csproj">

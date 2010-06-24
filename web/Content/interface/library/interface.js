@@ -26,6 +26,10 @@ var giInterface = new Class(
 		request.move(dx, dy);
 	},
 	
+	defend: function(dx, dy, duration)
+	{
+		request.defend(dx, dy, duration);
+	},
 	
 	handleMove: function(data)
 	{
@@ -36,6 +40,11 @@ var giInterface = new Class(
 		}
 		else alert(data.Message);
 	},
+	
+	showMessage: function(data)
+	{
+		alert(data.Message);
+	}
 
 
 });

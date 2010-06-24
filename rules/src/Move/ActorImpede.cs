@@ -18,26 +18,30 @@ namespace Henge.Rules.Interference.Move
 			//check to see if the impede trait has expired on this subject:
 			if (interaction.TraitCheck(interaction.Subject, "impede"))
 			{
-				// Only need to do this skill check if the protagonist hasn't already been stopped
-				if (interaction.Impedance < interaction.ProtagonistCache.Energy) 
+				//Check the actor is actually trying to defend whatever we're interested in
+				if (interaction.Subject.Traits["impede"].Subject == interaction.Antagonist )
 				{
-					double strength = interaction.SubjectCache.Strength;
-					
-					// Can only intervene if not exhausted
-					if (interaction.SubjectCache.Energy > 0)
+					// Only need to do this skill check if the protagonist hasn't already been stopped
+					if (interaction.Impedance < interaction.ProtagonistCache.Energy) 
 					{
-						if (interaction.SubjectCache.SkillCheck("Defend", 2 * interaction.ProtagonistCache.Strength - strength))
+						double strength = interaction.SubjectCache.Strength;
+						
+						// Can only intervene if not exhausted
+						if (interaction.SubjectCache.Energy > 0)
 						{
-							if (interaction.SubjectCache.UseEnergy(interaction.ProtagonistCache.Strength * interaction.ProtagonistCache.Energy))
+							if (interaction.SubjectCache.SkillCheck("Defend", 2 * interaction.ProtagonistCache.Strength - strength))
 							{
-								interaction.Impedance += interaction.SubjectCache.Weight * Constants.WeightToImpedance;
+								if (interaction.SubjectCache.UseEnergy(interaction.ProtagonistCache.Strength * interaction.ProtagonistCache.Energy))
+								{
+									interaction.Impedance += interaction.SubjectCache.Weight * Constants.WeightToImpedance;
+								}
 							}
-						}
-						else
-						{
-							if (interaction.SubjectCache.UseEnergy(2 * interaction.ProtagonistCache.Strength * interaction.ProtagonistCache.Energy))
+							else
 							{
-								interaction.Impedance += interaction.SubjectCache.Weight * Constants.WeightToImpedance;
+								if (interaction.SubjectCache.UseEnergy(2 * interaction.ProtagonistCache.Strength * interaction.ProtagonistCache.Energy))
+								{
+									interaction.Impedance += interaction.SubjectCache.Weight * Constants.WeightToImpedance;
+								}
 							}
 						}
 					}

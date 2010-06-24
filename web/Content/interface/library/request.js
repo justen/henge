@@ -10,6 +10,15 @@ var giRequest = new Class(
 		this.queue = new Request.Queue({ concurrent: 4 });
 	},
 
+	defend: function(dx, dy, duration)
+	{
+		new Request.JSON({
+			url:		root + 'Interface/DefendLocation',
+			data:		'dx=' + dx + '&dy=' + dy + '&duration=' + duration,
+			onSuccess:	function(data) { interface.showMessage(data) }
+		}).send();
+	},
+
 
 	move: function(dx, dy)
 	{

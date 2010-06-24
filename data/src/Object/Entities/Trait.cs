@@ -10,6 +10,7 @@ namespace Henge.Data.Entities
 	    public virtual double Value					{get; set;}
 		public virtual string Flavour				{get; set;}
 		public virtual Nullable<DateTime> Expiry	{get; set;}
+		public virtual Component Subject			{get; set;}
 		
 		public Trait()
 		{

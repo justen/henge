@@ -26,9 +26,9 @@ namespace Henge.Engine
 		}
 		
 
-		public IInteraction Interact(DataProvider db, Actor protagonist, Component antagonist, string interactionType)
+		public IInteraction Interact(DataProvider db, Actor protagonist, Component antagonist, string interactionType, Dictionary<string, object> arguments)
 		{
-			IInteraction interaction = this.rulebook.CreateInteraction(protagonist, antagonist);
+			IInteraction interaction = this.rulebook.CreateInteraction(protagonist, antagonist, arguments);
 			
 			if (interaction != null)
 			{

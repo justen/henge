@@ -25,7 +25,7 @@
 
 	<table>
 		<tr>
-			<td><button onclick="interface.move(-1, -1);" tabindex="1">NW</button></td>
+			<td><button onclick="interface.defend(-1, -1, 0);" tabindex="1">NW</button></td>
 			<td><button onclick="interface.move(0, -1);" tabindex="2">N</button></td>
 			<td><button onclick="interface.move(1, -1);" tabindex="3">NE</button></td>
 		</tr>

@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
 using Henge.Data.Entities;
 
@@ -15,7 +16,7 @@ namespace Henge.Rules
 		public PropertyCache SubjectCache		{ get; private set; }
 		
 		
-		public HengeInteraction(Actor protagonist, Component antagonist) : base(protagonist, antagonist)
+		public HengeInteraction(Actor protagonist, Component antagonist, Dictionary<string, object> arguments) : base(protagonist, antagonist, arguments)
 		{
 			this.ProtagonistCache	= new PropertyCache(this.Deltas, protagonist);
 			this.AntagonistCache	= new PropertyCache(this.Deltas, antagonist);

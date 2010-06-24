@@ -43,9 +43,9 @@ namespace Henge.Rules
 		}
 		
 		
-		public IInteraction CreateInteraction(Actor protagonist, Component antagonist)
+		public IInteraction CreateInteraction(Actor protagonist, Component antagonist, Dictionary<string, object> arguments)
 		{
-			return (this.interactionType != null) ? (IInteraction)Activator.CreateInstance(this.interactionType, new object [] { protagonist, antagonist }) : null;
+			return (this.interactionType != null) ? (IInteraction)Activator.CreateInstance(this.interactionType, new object [] { protagonist, antagonist, arguments }) : null;
 		}
 		
 		

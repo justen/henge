@@ -19,14 +19,16 @@ namespace Henge.Rules
 		public bool Finished							{ get; private set; }
 		public bool Succeeded							{ get; private set; }
 		public bool Illegal								{ get; private set; }
+		public Dictionary<string, object> Arguments		{ get; private set; }
 		
 		
-		public Interaction (Actor protagonist, Component antagonist)
+		public Interaction (Actor protagonist, Component antagonist, Dictionary<string, object> arguments)
 		{
 			this.Deltas			= new List<Func<bool, bool>>();
 			this.Interferers	= new List<Component>();
 			this.Protagonist	= protagonist;
 			this.Antagonist		= antagonist;
+			this.Arguments		= arguments;
 		}		
 		
 		
