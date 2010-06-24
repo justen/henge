@@ -26,6 +26,24 @@ namespace Henge.Rules
 		{
 			this.Subject		= subject;
 			this.SubjectCache	= new PropertyCache(this.Deltas, subject);
-		}		
+		}	
+		
+		public bool TraitCheck(Component subject, string traitName)
+		{
+			bool result = false;
+			if (subject.Traits.ContainsKey(traitName))
+			{
+				Trait trait = subject.Traits[traitName];
+				if ( trait.Expiry.HasValue && trait.Expiry.Value < DateTime.Now)
+				{
+					this.Deltas.Add((success) => {
+						subject.Traits.Remove(traitName);
+						return true;
+					});
+				}
+				else result = true;
+			}
+			return result;
+		}
 	}
 }
