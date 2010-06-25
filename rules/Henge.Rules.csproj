@@ -45,6 +45,8 @@
     <Compile Include="src\PropertyCache.cs" />
     <Compile Include="src\Defend\Guard\GuardProtagonist.cs" />
     <Compile Include="src\Defend\Guard\GuardAntagonist.cs" />
+    <Compile Include="src\Spawn\Avatar\NewAvatarProtagonist.cs" />
+    <Compile Include="src\Spawn\Avatar\NewAvatarAntagonist.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\data\Henge.Data.csproj">

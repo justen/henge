@@ -5,7 +5,8 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Mvc.Ajax;
 using Henge.Data.Entities;
-
+using Henge.Engine;
+using Henge.Rules;
 
 namespace Henge.Web.Controllers
 {
@@ -26,10 +27,8 @@ namespace Henge.Web.Controllers
 			{
 				Location location	= this.db.Get<Location>(x => x.Coordinates.X == 0 && x.Coordinates.Y == 0);
 				Avatar avatar		= new Avatar {Name = name, Type = db.Get<ComponentType>(x => x.Id == "avatar"), User  = this.user,  Location = location};
-				avatar.Skills.Add("Strength", new Skill { Value = 0.5 });
-				avatar.Traits.Add("Energy", new Trait { Value = 10, Minimum = -10, Maximum = 10 });
 				this.user.Avatars.Add(avatar);
-				location.Inhabitants.Add(avatar);
+				IInteraction result = Interactor.Instance.Interact(this.db, avatar, location, "Spawn.Avatar", null);
 
 				return RedirectToAction("Account", "User");
 			}
