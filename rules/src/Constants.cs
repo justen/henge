@@ -33,5 +33,8 @@ namespace Henge.Rules
 		public const double WeightToImpedance = 0.00143;
 		// Weight-to-strength for lifting skill checks
 		public const double WeightToLiftStrength = 0.005;
+		// Standard visibility of things which aren't either hidden or deliberately conspicuous
+		// things that have a visibility of less than this may be invisible to some characters
+		public const double StandardVisibility = 1.0;
 	}
 }

@@ -56,19 +56,28 @@ namespace Henge.Rules.Protagonist.Give
 						}
 						else
 						{
-							interaction.Deltas.Add((success) => {
-								protagonist.Inventory.Remove(item);
-								protagonist.Traits["Weight"].Value -= weight;
-								item.Owner = antagonist;
-								antagonist.Inventory.Add(item);
-								return true;
-							});		
+	
 							if (antagonist is Location)
 							{
+								interaction.Deltas.Add((success) => {
+									protagonist.Inventory.Remove(item);
+									protagonist.Traits["Weight"].Value -= weight;
+									item.Owner = antagonist;
+									item.Traits["Visibility"].Value = Constants.StandardVisibility * item.Traits["Conspicuousness"].Value;
+									antagonist.Inventory.Add(item);
+									return true;
+								});	
 								interaction.Success(string.Format("You put the {0} down", itemDescription));													
 							}
 							else
 							{
+								interaction.Deltas.Add((success) => {
+									protagonist.Inventory.Remove(item);
+									protagonist.Traits["Weight"].Value -= weight;
+									item.Owner = antagonist;
+									antagonist.Inventory.Add(item);
+									return true;
+								});	
 								interaction.Success(string.Format("You place the {0} in the {1}", itemDescription, antagonist.Inspect(protagonist).ShortDescription));
 							}
 						}
