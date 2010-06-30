@@ -35,6 +35,9 @@
     <Folder Include="src\Defend\Guard\" />
     <Folder Include="src\Take\" />
     <Folder Include="src\Give\" />
+    <Folder Include="src\Give\Hide\" />
+    <Folder Include="src\Search\" />
+    <Folder Include="src\Search\Find\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\Move\Run\BasicRunProtagonist.cs" />
@@ -53,6 +56,7 @@
     <Compile Include="src\Take\TakeItemAntagonist.cs" />
     <Compile Include="src\Give\GiveItemProtagonist.cs" />
     <Compile Include="src\Give\GiveItemAntagonist.cs" />
+    <Compile Include="src\Take\TakeItemInterference.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\data\Henge.Data.csproj">

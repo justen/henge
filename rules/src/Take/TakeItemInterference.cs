@@ -1,0 +1,38 @@
+using System;
+
+using Henge.Data.Entities;
+
+namespace Henge.Rules.Interference.Take
+{
+	public class TakeItemInterference : HengeRule, IInterferer
+	{
+		public override bool Valid(Component subject)
+		{
+			//only Actors can interfere
+			return subject is Actor;
+		}
+		
+		protected override HengeInteraction Apply (HengeInteraction interaction)
+		{
+			//potentially need to do a skill check here
+			//Since this is just a basic "take", let's assume that
+			//it's a brute force attempt.
+			if (interaction.SubjectCache.SkillCheck("defend", interaction.ProtagonistCache.Strength - interaction.SubjectCache.Strength))
+			{
+				double energy = interaction.SubjectCache.Energy;
+				if (interaction.SubjectCache.UseEnergy(interaction.ProtagonistCache.Energy * interaction.ProtagonistCache.Strength))
+				{
+					//Managed to prevent the protagonist from taking anything.
+					if (interaction.Subject is Npc)
+					{
+						interaction.Failure(string.Format("{0} prevented you from taking the {1}", interaction.Subject.Inspect(interaction.Protagonist).ShortDescription, interaction.Antagonist.Inspect(interaction.Protagonist).ShortDescription), false);
+					}
+					else interaction.Failure(string.Format("{0} prevented you from taking the {1}", interaction.Subject.Name, interaction.Antagonist.Inspect(interaction.Protagonist).ShortDescription), false);
+				}
+				//Whether they overpowered us or not, this is going to cost 'em...
+				interaction.ProtagonistCache.UseEnergy(interaction.SubjectCache.Strength * energy);
+			}
+		}
+	}
+}
+
