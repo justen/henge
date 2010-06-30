@@ -73,6 +73,7 @@ namespace Henge.Data
 				
 				av.Skills.Add("Strength", new Skill { Value = 0.5 });
 				av.Traits.Add("Energy", new Trait { Value = 10, Minimum = -10, Maximum = 10 });
+				av.Traits.Add("Weight", new Trait { Value = 70, Minimum = 0 });
 				
 				u.Avatars.Add(av);
 				m.Locations.Add(l.Coordinates, l);

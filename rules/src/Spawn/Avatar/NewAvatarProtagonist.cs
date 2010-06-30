@@ -25,6 +25,7 @@ namespace Henge.Rules.Protagonist.Spawn.Avatar
 					location.Inhabitants.Add(avatar);
 					avatar.Traits.Add("Energy", new Trait { Value = 10, Minimum = -10, Maximum = 10 });
 					avatar.Skills.Add("Strength", new Skill {Value = 0.5});
+					avatar.Traits.Add("Weight", new Trait { Value = Constants.ActorBaseWeight, Minimum = 0 });
 					return true;
 				});
 			interaction.Success("Spawned");
