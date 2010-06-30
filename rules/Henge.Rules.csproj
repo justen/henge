@@ -33,6 +33,7 @@
     <Folder Include="src\Defend\" />
     <Folder Include="src\Move\" />
     <Folder Include="src\Defend\Guard\" />
+    <Folder Include="src\Take\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\Move\Run\BasicRunProtagonist.cs" />
@@ -47,6 +48,8 @@
     <Compile Include="src\Defend\Guard\GuardAntagonist.cs" />
     <Compile Include="src\Spawn\Avatar\NewAvatarProtagonist.cs" />
     <Compile Include="src\Spawn\Avatar\NewAvatarAntagonist.cs" />
+    <Compile Include="src\Take\TakeItemProtagonist.cs" />
+    <Compile Include="src\Take\TakeItemAntagonist.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\data\Henge.Data.csproj">

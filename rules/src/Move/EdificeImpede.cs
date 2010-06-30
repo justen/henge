@@ -16,7 +16,7 @@ namespace Henge.Rules.Interference.Move
 		protected override HengeInteraction Apply(HengeInteraction interaction)
 		{
 			// Basic impedance rule for any impeding structure - just use the impedance value in "Impede"	
-			interaction.Impedance += interaction.Subject.Traits["impede"].Value;
+			interaction.Impedance += interaction.Subject.Traits["Impede"].Value;
 			
 			return interaction;
 			

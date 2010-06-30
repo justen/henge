@@ -31,5 +31,7 @@ namespace Henge.Rules
 		public const double ActorBaseWeight = 70.0;
 		// Weight-to-impedance transform
 		public const double WeightToImpedance = 0.00143;
+		// Weight-to-strength for lifting skill checks
+		public const double WeightToLiftStrength = 0.005;
 	}
 }

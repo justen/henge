@@ -22,7 +22,7 @@ namespace Henge.Rules.Antagonist.Move
 			
 			if (antagonist != null && protagonist != null && protagonist.Location.Map == antagonist.Map)
 			{
-				interaction.Impedance	= antagonist.Traits.ContainsKey("impede") ? antagonist.Traits["impede"].Value : Constants.Impedance;
+				interaction.Impedance	= antagonist.Traits.ContainsKey("Impede") ? antagonist.Traits["Impede"].Value : Constants.Impedance;
 				int dx					= protagonist.Location.Coordinates.X - antagonist.Coordinates.X;
 				int dy 					= protagonist.Location.Coordinates.Y - antagonist.Coordinates.Y;
 				char [] impede 			= new char [] {
@@ -31,15 +31,15 @@ namespace Henge.Rules.Antagonist.Move
 				};
 				
 				antagonist.Structures
-					.Where(c => c.Traits.ContainsKey("impede") && c.Traits["impede"].Flavour.IndexOfAny(impede) > -1).ToList()
+					.Where(c => c.Traits.ContainsKey("Impede") && c.Traits["Impede"].Flavour.IndexOfAny(impede) > -1).ToList()
 					.ForEach(c => interaction.Interferers.Add(c));
 				
 				antagonist.Fauna
-					.Where(c => c.Traits.ContainsKey("impede") && c.Traits["impede"].Flavour.IndexOfAny(impede) > -1).ToList()
+					.Where(c => c.Traits.ContainsKey("Impede") && c.Traits["Impede"].Flavour.IndexOfAny(impede) > -1).ToList()
 					.ForEach(c => interaction.Interferers.Add(c));
 				
 				antagonist.Inhabitants
-					.Where(c => c.Traits.ContainsKey("impede") && c.Traits["impede"].Flavour.IndexOfAny(impede) > -1).ToList()
+					.Where(c => c.Traits.ContainsKey("Impede") && c.Traits["Impede"].Flavour.IndexOfAny(impede) > -1).ToList()
 					.ForEach(c => interaction.Interferers.Add(c));
 			}
 			else interaction.Failure("Invalid destination", true);

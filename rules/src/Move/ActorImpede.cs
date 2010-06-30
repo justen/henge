@@ -19,7 +19,7 @@ namespace Henge.Rules.Interference.Move
 			if (interaction.TraitCheck(interaction.Subject, "impede"))
 			{
 				//Check the actor is actually trying to defend whatever we're interested in
-				if (interaction.Subject.Traits["impede"].Subject == interaction.Antagonist )
+				if (interaction.Subject.Traits["Impede"].Subject == interaction.Antagonist )
 				{
 					// Only need to do this skill check if the protagonist hasn't already been stopped
 					if (interaction.Impedance < interaction.ProtagonistCache.Energy) 
