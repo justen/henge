@@ -15,6 +15,11 @@ namespace Henge.Rules.Protagonist.Spawn.Avatar
 			return subject is Location;
 		}
 		
+		protected override double Visibility (HengeInteraction interaction)
+		{
+			//Don't modify visibility
+			return -1;
+		}
 		
 		protected override HengeInteraction Apply(HengeInteraction interaction)
 		{

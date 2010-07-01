@@ -13,6 +13,11 @@ namespace Henge.Rules.Protagonist.Defend.Guard
 			return subject is Actor;
 		}
 		
+		protected override double Visibility (HengeInteraction interaction)
+		{
+			//Don't change visibility
+			return -1;
+		}
 		
 		protected override HengeInteraction Apply(HengeInteraction interaction)
 		{

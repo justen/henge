@@ -11,6 +11,12 @@ namespace Henge.Rules.Antagonist.Give
 			return true;
 		}
 		
+		protected override double Visibility (HengeInteraction interaction)
+		{
+			//Don't change visibility
+			return -1;
+		}
+		
 		#region implemented abstract members of Henge.Rules.HengeRule
 		protected override HengeInteraction Apply (HengeInteraction interaction)
 		{

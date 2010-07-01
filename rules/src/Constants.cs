@@ -35,6 +35,17 @@ namespace Henge.Rules
 		public const double WeightToLiftStrength = 0.005;
 		// Standard visibility of things which aren't either hidden or deliberately conspicuous
 		// things that have a visibility of less than this may be invisible to some characters
-		public const double StandardVisibility = 1.0;
+		public const double StandardVisibility = 0.5;
+		
+		public const double BaseConspicuousness = 1.0;
+		
+		private static Random rng = new Random();
+		public static double RandomNumber
+		{
+			get
+			{
+				return Constants.rng.NextDouble();
+			}
+		}
 	}
 }

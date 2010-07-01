@@ -11,6 +11,12 @@ namespace Henge.Rules.Protagonist.Take
 			return subject is Actor;
 		}
 		
+		protected override double Visibility (HengeInteraction interaction)
+		{
+			//Set our visibility back to default * conspicuousness
+			return (Constants.StandardVisibility * interaction.SubjectCache.Conspicuousness);
+		}
+		
 		protected override HengeInteraction Apply(HengeInteraction interaction)
 		{
 			Actor protagonist = interaction.Protagonist as Actor;
@@ -19,7 +25,7 @@ namespace Henge.Rules.Protagonist.Take
 			{
 				if (antagonist != null)
 				{
-					if (interaction.TraitCheck(protagonist, "Capacity") && protagonist.Traits["Capacity"].Value < protagonist.Inventory.Count )
+					if (interaction.ProtagonistCache.Capacity < protagonist.Inventory.Count )
 					{
 						double load = 0;
 						double weight = interaction.AntagonistCache.Weight;

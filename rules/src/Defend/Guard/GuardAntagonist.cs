@@ -12,6 +12,12 @@ namespace Henge.Rules.Antagonist.Defend.Guard
 		}
 		
 		
+		protected override double Visibility (HengeInteraction interaction)
+		{
+			//Don't change visibility
+			return -1;
+		}
+		
 		protected override HengeInteraction Apply(HengeInteraction interaction)
 		{
 			//put the appropriate guarding trait into the interaction

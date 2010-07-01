@@ -13,6 +13,12 @@ namespace Henge.Rules.Antagonist.Take
 			return subject is Item;
 		}
 		
+		protected override double Visibility (HengeInteraction interaction)
+		{
+			//Don't modify visibility
+			return -1;
+		}
+		
 		protected override HengeInteraction Apply(HengeInteraction interaction)
 		{
 			Location venue = ((Actor)interaction.Protagonist).Location;

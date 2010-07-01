@@ -12,6 +12,12 @@ namespace Henge.Rules.Interference.Take
 			return subject is Actor;
 		}
 		
+		protected override double Visibility (HengeInteraction interaction)
+		{
+			//Set our visibility back to default * conspicuousness
+			return (Constants.StandardVisibility * interaction.SubjectCache.Conspicuousness);
+		}
+		
 		protected override HengeInteraction Apply (HengeInteraction interaction)
 		{
 			//potentially need to do a skill check here
@@ -32,6 +38,7 @@ namespace Henge.Rules.Interference.Take
 				//Whether they overpowered us or not, this is going to cost 'em...
 				interaction.ProtagonistCache.UseEnergy(interaction.SubjectCache.Strength * energy);
 			}
+			return interaction;
 		}
 	}
 }

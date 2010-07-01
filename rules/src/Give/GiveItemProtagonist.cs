@@ -10,6 +10,18 @@ namespace Henge.Rules.Protagonist.Give
 			//you have to be an actor
 			return subject is Actor;
 		}
+		
+		protected override double Visibility (HengeInteraction interaction)
+		{
+			//Set our visibility back to default * conspicuousness if interacting with an Actor, or
+			//do not change if it's an inanimate object;
+			if (interaction.Antagonist is Actor)
+			{
+				return (Constants.StandardVisibility * interaction.SubjectCache.Conspicuousness);
+			}
+			else return -1;
+		}
+		
 		#region implemented abstract members of Henge.Rules.HengeRule
 		protected override HengeInteraction Apply (HengeInteraction interaction)
 		{
@@ -24,62 +36,64 @@ namespace Henge.Rules.Protagonist.Give
 					{
 						string itemDescription = item.Inspect(protagonist).ShortDescription;
 						double weight = item.Traits["Weight"].Value;
-						if (antagonist is Actor)
+						if (antagonist is Location)
 						{
-							if (antagonist.Traits.ContainsKey("Capacity") && antagonist.Traits["Capacity"].Value < antagonist.Inventory.Count)
+								double visibility = Constants.StandardVisibility * item.Traits["Conspicuousness"].Value;
+								interaction.Deltas.Add((success) => {
+									protagonist.Inventory.Remove(item);
+									protagonist.Traits["Weight"].Value -= weight;
+									item.Owner = antagonist;
+									item.Traits["Visibility"].Value = visibility;
+									antagonist.Inventory.Add(item);
+									return true;
+								});	
+								interaction.Success(string.Format("You put the {0} down", itemDescription));													
+						}
+						else
+						{
+							if (interaction.AntagonistCache.Capacity < antagonist.Inventory.Count)
 							{
-								double load = 0;
-								foreach (Item thing in antagonist.Inventory) load += thing.Traits["Weight"].Value;
-								if (interaction.AntagonistCache.Strength >= (weight + load) * Constants.WeightToLiftStrength)	
+								if (antagonist is Actor)
 								{
-									//delta to switch ownership of item
+								
+									double load = 0;
+									foreach (Item thing in antagonist.Inventory) load += thing.Traits["Weight"].Value;
+									if (interaction.AntagonistCache.Strength >= (weight + load) * Constants.WeightToLiftStrength)	
+									{
+										//delta to switch ownership of item
+										interaction.Deltas.Add((success) => {
+											protagonist.Inventory.Remove(item);
+											protagonist.Traits["Weight"].Value -= weight;
+											item.Owner = antagonist;
+											antagonist.Inventory.Add(item);
+											antagonist.Traits["Weight"].Value += weight;
+											return true;
+										});
+										if (antagonist is Npc)
+										{
+											interaction.Success(string.Format("You give the {0} to the {1}", itemDescription, protagonist.Inspect(protagonist).ShortDescription));
+										}
+										else
+										{
+											interaction.Success(string.Format("You hand the {0} to {1}", itemDescription, protagonist.Name));
+										}
+									}
+									else interaction.Failure(string.Format("The recipient is not strong enough to carry the {0}", itemDescription), false);
+								}
+								else
+								{
 									interaction.Deltas.Add((success) => {
 										protagonist.Inventory.Remove(item);
 										protagonist.Traits["Weight"].Value -= weight;
 										item.Owner = antagonist;
 										antagonist.Inventory.Add(item);
-										antagonist.Traits["Weight"].Value += weight;
 										return true;
-									});
-									if (antagonist is Npc)
-									{
-										interaction.Success(string.Format("You give the {0} to the {1}", itemDescription, protagonist.Inspect(protagonist).ShortDescription));
-									}
-									else
-									{
-										interaction.Success(string.Format("You hand the {0} to {1}", itemDescription, protagonist.Name));
-									}
+									});	
+									interaction.Success(string.Format("You place the {0} in the {1}", itemDescription, antagonist.Inspect(protagonist).ShortDescription));
 								}
-								else interaction.Failure(string.Format("The recipient is not strong enough to carry the {0}", itemDescription), false);
 							}
 							else interaction.Failure(string.Format("The recipient is unable to take the {0}", itemDescription), false);
-						}
-						else
-						{
-	
-							if (antagonist is Location)
-							{
-								interaction.Deltas.Add((success) => {
-									protagonist.Inventory.Remove(item);
-									protagonist.Traits["Weight"].Value -= weight;
-									item.Owner = antagonist;
-									item.Traits["Visibility"].Value = Constants.StandardVisibility * item.Traits["Conspicuousness"].Value;
-									antagonist.Inventory.Add(item);
-									return true;
-								});	
-								interaction.Success(string.Format("You put the {0} down", itemDescription));													
-							}
-							else
-							{
-								interaction.Deltas.Add((success) => {
-									protagonist.Inventory.Remove(item);
-									protagonist.Traits["Weight"].Value -= weight;
-									item.Owner = antagonist;
-									antagonist.Inventory.Add(item);
-									return true;
-								});	
-								interaction.Success(string.Format("You place the {0} in the {1}", itemDescription, antagonist.Inspect(protagonist).ShortDescription));
-							}
+
 						}
 					}
 					interaction.Failure("You don't have that item", true);

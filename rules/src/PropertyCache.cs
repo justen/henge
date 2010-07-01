@@ -70,10 +70,24 @@ namespace Henge.Rules
 			get { return (this.actor != null) ? (this.actor.Skills.ContainsKey("Strength") ? this.actor.Skills["Strength"].Value : Constants.DefaultSkill) : 0.0; }
 		}
 		
+		public double Conspicuousness
+		{
+			get { return this.subject.Traits.ContainsKey("Conspicuousness") ? this.subject.Traits["Conspicuousness"].Value : Constants.BaseConspicuousness; }
+		}
+		
+		public double Visibility
+		{
+				get { return this.subject.Traits.ContainsKey("Visibility") ? this.subject.Traits["Visibility"].Value : Constants.StandardVisibility; }
+		}
 		
 		public double Weight
 		{
 			get { return this.subject.Traits.ContainsKey("Weight") ? this.subject.Traits["Weight"].Value : Constants.ActorBaseWeight; }
+		}
+		
+		public double Capacity
+		{
+			get { return this.subject.Traits.ContainsKey("Capacity") ? this.subject.Traits["Capacity"].Value : 0; }
 		}
 		
 		
@@ -98,6 +112,32 @@ namespace Henge.Rules
 						
 						return true;
 					}
+				}
+				
+			}
+			
+			return false;
+		}
+		
+		//Method for burning energy in non-Strength related activities
+		//Unlike Strength-based energy usage, this *doesn't* perform a 
+		//skill check, but can *only* be performed if you have the 
+		//requisite amount of energy. If you set overdraw to true, this function
+		//will blindly use the amount of energy you specified (handy if the Rule
+		//is checking energy levels first)
+		public bool BurnEnergy(double amount, bool overdraw)
+		{
+			if (this.actor != null)
+			{
+				if (overdraw || (this.Energy >= amount))
+				{
+					Trait energy = subject.Traits["Energy"];
+					this.energy -= amount;
+					this.deltas.Add((success) => {
+						energy.Value -= amount;
+						return true;
+					});
+					return true;
 				}
 				
 			}

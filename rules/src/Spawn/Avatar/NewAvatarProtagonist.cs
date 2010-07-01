@@ -15,6 +15,11 @@ namespace Henge.Rules.Protagonist.Spawn.Avatar
 			return subject is Henge.Data.Entities.Avatar;
 		}
 		
+		protected override double Visibility (HengeInteraction interaction)
+		{
+			//Set our visibility back to default * conspicuousness
+			return (Constants.StandardVisibility * interaction.SubjectCache.Conspicuousness);
+		}
 		
 		protected override HengeInteraction Apply(HengeInteraction interaction)
 		{
