@@ -28,9 +28,7 @@ namespace Henge.Rules.Antagonist.Search
 				//potentially want to check for interferers here
 				IList<Component> hiddenItems = new List<Component>();
 				double perception = 1 - (protagonist.Skills.ContainsKey("Perception")? protagonist.Skills["Perception"].Value : Constants.DefaultSkill);
-				(interaction.Antagonist as Location).Inventory
-					.Where(c => c.Traits.ContainsKey("Visibility") && c.Traits["Visibility"].Value < perception).ToList()
-					.ForEach(c => hiddenItems.Add(c));
+				this.PrepareFindList(interaction, perception);
 				Constants.Randomise(hiddenItems);
 				interaction.Arguments.Add("Items", hiddenItems);
 			}
@@ -38,6 +36,15 @@ namespace Henge.Rules.Antagonist.Search
 			return interaction;
 		}
 		#endregion
+		
+		protected virtual IList<Component> PrepareFindList (HengeInteraction interaction, double perception)
+		{
+			IList<Component> hiddenItems = new List<Component>();
+			(interaction.Antagonist as Location).Inventory
+			.Where(c => c.Traits.ContainsKey("Visibility") && c.Traits["Visibility"].Value < perception).ToList()
+			.ForEach(c => hiddenItems.Add(c));	
+			return hiddenItems;
+		}
 	}
 }
 

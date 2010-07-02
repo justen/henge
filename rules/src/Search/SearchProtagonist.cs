@@ -32,7 +32,7 @@ namespace Henge.Rules.Protagonist.Search
 					{
 						//need to do a search-based skill check for each item
 						Item item = items[i] as Item;
-						if (interaction.ProtagonistCache.SkillCheck("Search", 1 - item.Traits["Visibility"].Value / Constants.SearchDifficulty))
+						if (interaction.ProtagonistCache.SkillCheck("Search", this.CalculateDifficulty(item)))
 						{
 							//found something, set its visibility
 							interaction.Deltas.Add((success) => {
@@ -50,6 +50,11 @@ namespace Henge.Rules.Protagonist.Search
 			return interaction;
 		}
 		#endregion
+		
+		protected virtual double CalculateDifficulty(Item item)
+		{
+			return (1 - item.Traits["Visibility"].Value / Constants.SearchDifficulty);
+		}
 	}
 }
 
