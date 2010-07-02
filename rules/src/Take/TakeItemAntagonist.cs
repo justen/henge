@@ -32,6 +32,7 @@ namespace Henge.Rules.Antagonist.Take
 				venue.Inhabitants
 					.Where(c => c.Traits.ContainsKey("Guard") && c.Traits["Guard"].Subject == antagonist).ToList()
 					.ForEach(c => interaction.Interferers.Add(c));
+				if (interaction.Interferers.Count>0) Constants.Randomise(interaction.Interferers);
 			}
 			else interaction.Failure("The item is no longer here", false);
 			return interaction;

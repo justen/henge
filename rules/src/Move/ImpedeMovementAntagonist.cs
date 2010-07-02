@@ -34,18 +34,29 @@ namespace Henge.Rules.Antagonist.Move
 					(dx > 0) ? 'e' : (dx < 0) ? 'w' : '-',
 					(dy > 0) ? 's' : (dy < 0) ? 'n' : '-'
 				};
-				
+				List<Component> critters = new List<Component>();
+				List<Component> guards = new List<Component>();
 				antagonist.Structures
 					.Where(c => c.Traits.ContainsKey("Impede") && c.Traits["Impede"].Flavour.IndexOfAny(impede) > -1).ToList()
 					.ForEach(c => interaction.Interferers.Add(c));
 				
 				antagonist.Fauna
 					.Where(c => c.Traits.ContainsKey("Impede") && c.Traits["Impede"].Flavour.IndexOfAny(impede) > -1).ToList()
-					.ForEach(c => interaction.Interferers.Add(c));
+					.ForEach(c => critters.Add(c));
+				if (critters.Count>0)
+				{
+					Constants.Randomise(critters);
+					(interaction.Interferers as List<Component>).AddRange(critters);
+				}
 				
 				antagonist.Inhabitants
 					.Where(c => c.Traits.ContainsKey("Impede") && c.Traits["Impede"].Flavour.IndexOfAny(impede) > -1).ToList()
-					.ForEach(c => interaction.Interferers.Add(c));
+					.ForEach(c => guards.Add(c));
+				if (guards.Count>0)
+				{
+					Constants.Randomise(guards);
+					(interaction.Interferers as List<Component>).AddRange(guards);
+				}
 			}
 			else interaction.Failure("Invalid destination", true);
 			

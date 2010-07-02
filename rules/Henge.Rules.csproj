@@ -59,6 +59,10 @@
     <Compile Include="src\Take\TakeItemInterference.cs" />
     <Compile Include="src\Hide\HideProtagonist.cs" />
     <Compile Include="src\Hide\HideAntagonist.cs" />
+    <Compile Include="src\Search\Find\FindAntagonist.cs" />
+    <Compile Include="src\Search\Find\FindProtagonist.cs" />
+    <Compile Include="src\Search\SearchAntagonist.cs" />
+    <Compile Include="src\Search\SearchProtagonist.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\data\Henge.Data.csproj">

@@ -37,7 +37,16 @@ namespace Henge.Rules
 		// things that have a visibility of less than this may be invisible to some characters
 		public const double StandardVisibility = 0.5;
 		
+		public const double HighVisibility = 0.75;
+		
 		public const double BaseConspicuousness = 1.0;
+		
+		public const double SearchCost = 1.0;
+		
+		public const double SearchDifficulty = 2.0;
+		
+		
+		
 		
 		private static Random rng = new Random();
 		public static double RandomNumber
@@ -47,5 +56,21 @@ namespace Henge.Rules
 				return Constants.rng.NextDouble();
 			}
 		}
+		
+		public static void Randomise(IList<Component> list)
+		{
+			int swap;
+		    for (int i = 0; i < list.Count; i++)
+		    {
+		        swap = Constants.rng.Next(i, list.Count);
+		        if (swap != i)
+		        {
+		            Component temp = list[i];
+		            list[i] = list[swap];
+		            list[swap] = temp;
+		        }
+		    }
+		}
+
 	}
 }
