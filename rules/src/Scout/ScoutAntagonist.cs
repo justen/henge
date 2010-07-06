@@ -19,7 +19,7 @@ namespace Henge.Rules.Antagonist.Scout
 		}
 		
 		#region implemented abstract members of Henge.Rules.HengeRule
-		protected override HengeInteraction Apply (HengeInteraction interaction)
+		protected override IInteraction Apply (HengeInteraction interaction)
 		{
 			//Nothing to do
 			return interaction;

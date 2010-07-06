@@ -21,7 +21,7 @@ namespace Henge.Rules.Protagonist.Scout
 		}
 		
 		#region implemented abstract members of Henge.Rules.HengeRule
-		protected override HengeInteraction Apply (HengeInteraction interaction)
+		protected override IInteraction Apply (HengeInteraction interaction)
 		{
 			if (interaction.ProtagonistCache.BurnEnergy(Constants.ScoutCost, true))
 			{
