@@ -33,7 +33,7 @@ namespace Henge.Engine
 			if (interaction != null)
 			{
 				this.rulebook.Section(interactionType).ApplyRules(interaction);
-			
+				interaction.Conclude();
 				if (interaction.Finished && !interaction.Illegal)
 				{
 					// while not failing to commit

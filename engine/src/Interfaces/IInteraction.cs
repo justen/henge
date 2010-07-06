@@ -20,7 +20,7 @@ namespace Henge.Rules
 		
 		void Success(string message);
 		void Failure(string message, bool illegal);
-		
+		IInteraction Conclude();
 		void SetSubject(Component subject);
 	}
 }

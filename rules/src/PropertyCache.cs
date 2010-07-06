@@ -14,6 +14,7 @@ namespace Henge.Rules
 		bool energyCached 		= false;
 		double energy			= 0.0;
 		IList<Func<bool, bool>> deltas = null;
+		public Dictionary<Skill, double> SkillBonuses {get; private set;}
 		
 		
 		public PropertyCache(IList<Func<bool, bool>> deltas, Component subject)
@@ -176,18 +177,11 @@ namespace Henge.Rules
 					
 					if (increase > 0)
 					{
-						this.deltas.Add((success) => {
-							skill.Add(increase);
-							
-							if (skill.Value == 1.0)
-							{
-								foreach (string s in skill.Children)
-								{
-									if (!this.actor.Skills.ContainsKey(s)) this.actor.Skills.Add(s, new Skill { Value = Constants.SkillGrantDefault });
-								}
-							}
-							return true;
-						});
+						if (!this.SkillBonuses.ContainsKey(skill)) this.SkillBonuses.Add(skill, increase);
+						else
+						{
+							if (increase > this.SkillBonuses[skill]) this.SkillBonuses[skill] = increase;
+						}
 					}
 				}	
 			}

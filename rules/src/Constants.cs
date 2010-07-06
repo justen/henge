@@ -45,7 +45,11 @@ namespace Henge.Rules
 		
 		public const double SearchDifficulty = 2.0;
 		
+		public const double ScoutCost = 2.5;
 		
+		public const double LocationScouting = 0.1;
+		public const double EdificeScouting = 0.2;
+		public const double ActorScouting = 0.3;
 		
 		
 		private static Random rng = new Random();

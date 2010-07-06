@@ -38,6 +38,7 @@
     <Folder Include="src\Search\" />
     <Folder Include="src\Search\Find\" />
     <Folder Include="src\Hide\" />
+    <Folder Include="src\Scout\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\Move\Run\BasicRunProtagonist.cs" />
@@ -63,6 +64,8 @@
     <Compile Include="src\Search\Find\FindProtagonist.cs" />
     <Compile Include="src\Search\SearchAntagonist.cs" />
     <Compile Include="src\Search\SearchProtagonist.cs" />
+    <Compile Include="src\Scout\ScoutAntagonist.cs" />
+    <Compile Include="src\Scout\ScoutProtagonist.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\data\Henge.Data.csproj">

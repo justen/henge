@@ -25,6 +25,8 @@ namespace Henge.Rules
 		
 		public override void SetSubject(Component subject)
 		{
+
+			this.ApplyBonuses(this.SubjectCache.SkillBonuses, this.Subject as Actor, this.SubjectCache);
 			this.Subject		= subject;
 			this.SubjectCache	= new PropertyCache(this.Deltas, subject);
 		}	
@@ -45,6 +47,38 @@ namespace Henge.Rules
 				else result = true;
 			}
 			return result;
+		}
+		
+		public override IInteraction Conclude()
+		{
+
+			this.ApplyBonuses(this.AntagonistCache.SkillBonuses, this.Antagonist as Actor, this.AntagonistCache);
+			this.ApplyBonuses(this.SubjectCache.SkillBonuses, this.Subject as Actor, this.SubjectCache);
+			this.ApplyBonuses(this.ProtagonistCache.SkillBonuses, this.Protagonist as Actor, this.ProtagonistCache);
+		
+			return this as IInteraction;
+		}
+		
+		private void ApplyBonuses(Dictionary<Skill, double> bonuses, Actor actor, PropertyCache cache)
+		{
+			if (cache!=null && actor!=null)
+			{
+				this.Deltas.Add((success) => {
+					foreach (Skill skill in bonuses.Keys)
+					{
+						skill.Add(bonuses[skill]);
+						
+						if (skill.Value == 1.0)
+						{
+							foreach (string s in skill.Children)
+							{
+								if (!actor.Skills.ContainsKey(s)) actor.Skills.Add(s, new Skill { Value = Constants.SkillGrantDefault });
+							}
+						}
+					}
+					return true;
+				});
+			}
 		}
 	}
 }

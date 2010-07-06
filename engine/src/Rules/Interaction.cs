@@ -20,6 +20,7 @@ namespace Henge.Rules
 		public bool Succeeded							{ get; private set; }
 		public bool Illegal								{ get; private set; }
 		public Dictionary<string, object> Arguments		{ get; private set; }
+		public Dictionary<string, object> Results		{ get; set; }
 		
 		
 		public Interaction (Actor protagonist, Component antagonist, Dictionary<string, object> arguments)
@@ -29,6 +30,7 @@ namespace Henge.Rules
 			this.Protagonist	= protagonist;
 			this.Antagonist		= antagonist;
 			this.Arguments		= arguments;
+			this.Results 		= new Dictionary<string, object>();
 		}		
 		
 		
@@ -53,6 +55,11 @@ namespace Henge.Rules
 		public virtual void SetSubject(Component subject)
 		{
 			this.Subject = subject;
+		}
+		
+		public virtual IInteraction Conclude()
+		{
+			return this as IInteraction;	
 		}
 	}
 }
