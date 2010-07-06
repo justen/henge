@@ -20,7 +20,7 @@ namespace Henge.Rules.Antagonist.Move
 			return -1;
 		}
 		
-		protected override HengeInteraction Apply(HengeInteraction interaction)
+		protected override IInteraction Apply(HengeInteraction interaction)
 		{	
 			Location antagonist = interaction.Antagonist as Location;
 			Actor protagonist	= interaction.Protagonist;

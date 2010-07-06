@@ -18,7 +18,7 @@ namespace Henge.Rules.Interference.Move
 			return (Constants.StandardVisibility * interaction.SubjectCache.Conspicuousness);
 		}
 		
-		protected override HengeInteraction Apply(HengeInteraction interaction)
+		protected override IInteraction Apply(HengeInteraction interaction)
 		{
 			//check to see if the impede trait has expired on this subject:
 			if (interaction.TraitCheck(interaction.Subject, "impede"))

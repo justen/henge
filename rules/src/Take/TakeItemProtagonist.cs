@@ -5,31 +5,36 @@ namespace Henge.Rules.Protagonist.Take
 {
 	public class TakeItem : HengeRule, IProtagonist
 	{
-		public override bool Valid (Component subject)
+		public override bool Valid(Component subject)
 		{
 			//Only Actors can take stuff
 			return subject is Actor;
 		}
 		
-		protected override double Visibility (HengeInteraction interaction)
+		
+		protected override double Visibility(HengeInteraction interaction)
 		{
 			//Set our visibility back to default * conspicuousness
-			return (Constants.StandardVisibility * interaction.SubjectCache.Conspicuousness);
+			return (Constants.StandardVisibility * interaction.ProtagonistCache.Conspicuousness);
 		}
 		
-		protected override HengeInteraction Apply(HengeInteraction interaction)
+		
+		protected override IInteraction Apply(HengeInteraction interaction)
 		{
-			Actor protagonist = interaction.Protagonist as Actor;
-			Item antagonist = interaction.Antagonist as Item;
+			Actor protagonist	= interaction.Protagonist as Actor;
+			Item antagonist		= interaction.Antagonist as Item;
+			
 			if(!interaction.Finished)	
 			{
 				if (antagonist != null)
 				{
 					if (interaction.ProtagonistCache.Capacity < protagonist.Inventory.Count )
 					{
-						double load = 0;
-						double weight = interaction.AntagonistCache.Weight;
+						double load		= 0;
+						double weight	= interaction.AntagonistCache.Weight;
+						
 						foreach (Item item in protagonist.Inventory) load += item.Traits["Weight"].Value;
+						
 						if (interaction.ProtagonistCache.Strength >= (load + weight) * Constants.WeightToLiftStrength)
 						{	
 							interaction.Impedance += weight * Constants.WeightToLiftStrength;

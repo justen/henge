@@ -8,7 +8,7 @@ namespace Henge.Rules.Protagonist.Search.Find
 {
 	public class FindProtagonist : SearchProtagonist
 	{
-		protected override double CalculateDifficulty (Item item)
+		protected override double CalculateDifficulty(Item item)
 		{
 			return (1 - item.Traits["Visibility"].Value);
 		}

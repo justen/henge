@@ -49,6 +49,7 @@ namespace Henge.Rules
 		
 		
 		private static Random rng = new Random();
+		
 		public static double RandomNumber
 		{
 			get
@@ -57,20 +58,23 @@ namespace Henge.Rules
 			}
 		}
 		
+		
 		public static void Randomise(IList<Component> list)
 		{
-			int swap;
-		    for (int i = 0; i < list.Count; i++)
+			int swap, count = list.Count;
+			Component temp;
+			
+		    for (int i=0; i<count; i++)
 		    {
-		        swap = Constants.rng.Next(i, list.Count);
+		        swap = Constants.rng.Next(i, count);
+				
 		        if (swap != i)
 		        {
-		            Component temp = list[i];
-		            list[i] = list[swap];
-		            list[swap] = temp;
+		            temp		= list[i];
+		            list[i]		= list[swap];
+		            list[swap]	= temp;
 		        }
 		    }
 		}
-
 	}
 }

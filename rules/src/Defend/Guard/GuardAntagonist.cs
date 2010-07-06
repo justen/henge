@@ -1,5 +1,7 @@
 using System;
+
 using Henge.Data.Entities;
+
 
 namespace Henge.Rules.Antagonist.Defend.Guard
 {
@@ -18,10 +20,11 @@ namespace Henge.Rules.Antagonist.Defend.Guard
 			return -1;
 		}
 		
-		protected override HengeInteraction Apply(HengeInteraction interaction)
+		
+		protected override IInteraction Apply(HengeInteraction interaction)
 		{
 			//put the appropriate guarding trait into the interaction
-			if ((interaction.Antagonist is Location)||(interaction.Antagonist is Edifice))
+			if (interaction.Antagonist is Location || interaction.Antagonist is Edifice)
 			{
 				//for Locations and Edifices, we want to impede entry
 				interaction.Arguments.Add("Impede", null);

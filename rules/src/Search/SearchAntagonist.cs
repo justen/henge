@@ -1,26 +1,29 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Henge.Data.Entities;
+
 
 namespace Henge.Rules.Antagonist.Search
 {
 	public class SearchAntagonist : HengeRule, IAntagonist
 	{
-		public override bool Valid (Component subject)
+		public override bool Valid(Component subject)
 		{
 			//you can only try to search a Location
 			return (subject is Location);
 		}
 		
-		protected override double Visibility (HengeInteraction interaction)
+		
+		protected override double Visibility(HengeInteraction interaction)
 		{
 			//Don't change visibility
 			return -1;
 		}
 		
-		#region implemented abstract members of Henge.Rules.HengeRule
-		protected override HengeInteraction Apply (HengeInteraction interaction)
+
+		protected override IInteraction Apply(HengeInteraction interaction)
 		{
 			Actor protagonist = interaction.Protagonist as Actor;
 			if (protagonist.Location == interaction.Antagonist)
@@ -35,15 +38,15 @@ namespace Henge.Rules.Antagonist.Search
 			else interaction.Failure("You're unable to search a location you aren't in", true);
 			return interaction;
 		}
-		#endregion
+
 		
-		protected virtual IList<Component> PrepareFindList (HengeInteraction interaction, double perception)
+		protected virtual IList<Component> PrepareFindList(HengeInteraction interaction, double perception)
 		{
-			IList<Component> hiddenItems = new List<Component>();
-			(interaction.Antagonist as Location).Inventory
-			.Where(c => c.Traits.ContainsKey("Visibility") && c.Traits["Visibility"].Value < perception).ToList()
-			.ForEach(c => hiddenItems.Add(c));	
-			return hiddenItems;
+			var query = from c in (interaction.Antagonist as Location).Inventory
+						where c.Traits.ContainsKey("Visibility") && c.Traits["Visibility"].Value < perception
+						select c;
+
+			return query.Cast<Component>().ToList();
 		}
 	}
 }

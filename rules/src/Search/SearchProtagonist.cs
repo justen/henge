@@ -13,25 +13,28 @@ namespace Henge.Rules.Protagonist.Search
 			return (subject is Actor);
 		}
 		
-		protected override double Visibility (HengeInteraction interaction)
+		
+		protected override double Visibility(HengeInteraction interaction)
 		{
 			return (Constants.StandardVisibility * interaction.SubjectCache.Conspicuousness);
 		}
 		
-		#region implemented abstract members of Henge.Rules.HengeRule
-		protected override HengeInteraction Apply (HengeInteraction interaction)
+
+		protected override IInteraction Apply(HengeInteraction interaction)
 		{
 			if (!interaction.Finished)
 			{
-				Actor protagonist = interaction.Protagonist as Actor;
-				List<Component> items = interaction.Arguments["Items"] as List<Component>;
+				Actor protagonist		= interaction.Protagonist as Actor;
+				List<Component> items	= interaction.Arguments["Items"] as List<Component>;
+				
 				int i = 0;
 				while (interaction.ProtagonistCache.BurnEnergy(Constants.SearchCost, false))
 				{
-					if (i<items.Count)
+					if (i < items.Count)
 					{
 						//need to do a search-based skill check for each item
 						Item item = items[i] as Item;
+						
 						if (interaction.ProtagonistCache.SkillCheck("Search", this.CalculateDifficulty(item)))
 						{
 							//found something, set its visibility
@@ -49,7 +52,7 @@ namespace Henge.Rules.Protagonist.Search
 			}
 			return interaction;
 		}
-		#endregion
+
 		
 		protected virtual double CalculateDifficulty(Item item)
 		{
