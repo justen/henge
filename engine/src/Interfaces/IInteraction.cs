@@ -21,6 +21,7 @@ namespace Henge.Rules
 		IInteraction Conclude();
 		IInteraction Success(string message);
 		IInteraction Failure(string message, bool illegal);
+
 		void SetSubject(Component subject);
 	}
 }
