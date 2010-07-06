@@ -7,11 +7,12 @@ namespace Henge.Rules
 	{
 		public override IInteraction Apply (IInteraction interaction)
 		{
-			interaction =  this.Apply(interaction as HengeInteraction);
+			interaction = this.Apply(interaction as HengeInteraction);
 			
 			// if the rule has modified the visibility of the subject, apply the visibility change
 			// Setting Visibility to <0 in the derived Rule signals that the rule shouldn't modify visibility
 			double visibility = this.Visibility(interaction as HengeInteraction);
+			
 			if (visibility>=0)  
 			{
 				Component subject = interaction.Subject;
@@ -25,7 +26,7 @@ namespace Henge.Rules
 		}
 	
 		
-		protected abstract HengeInteraction Apply(HengeInteraction interaction);
+		protected abstract IInteraction Apply(HengeInteraction interaction);
 		protected abstract double Visibility(HengeInteraction interaction);
 	}
 }

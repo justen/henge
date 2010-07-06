@@ -2,7 +2,7 @@
 using System;
 using Henge.Data.Entities;
 
-namespace Henge.Rules.Protagonist.Spawn.Avatar
+namespace Henge.Rules.Protagonist.Spawn.Character
 {
 
 
@@ -21,7 +21,7 @@ namespace Henge.Rules.Protagonist.Spawn.Avatar
 			return -1;
 		}
 		
-		protected override HengeInteraction Apply(HengeInteraction interaction)
+		protected override IInteraction Apply(HengeInteraction interaction)
 		{
 			//nothing to do
 			return interaction;

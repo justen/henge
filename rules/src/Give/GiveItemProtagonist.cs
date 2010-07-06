@@ -1,17 +1,20 @@
 using System;
+
 using Henge.Data.Entities;
+
 
 namespace Henge.Rules.Protagonist.Give
 {
 	public class GiveItemProtagonist : HengeRule, IProtagonist
 	{
-		public override bool Valid (Component subject)
+		public override bool Valid(Component subject)
 		{
 			//you have to be an actor
 			return subject is Actor;
 		}
 		
-		protected override double Visibility (HengeInteraction interaction)
+		
+		protected override double Visibility(HengeInteraction interaction)
 		{
 			//Set our visibility back to default * conspicuousness if interacting with an Actor, or
 			//do not change if it's an inanimate object;
@@ -22,20 +25,23 @@ namespace Henge.Rules.Protagonist.Give
 			else return -1;
 		}
 		
-		#region implemented abstract members of Henge.Rules.HengeRule
-		protected override HengeInteraction Apply (HengeInteraction interaction)
+		
+		protected override IInteraction Apply(HengeInteraction interaction)
 		{
-			Actor protagonist = interaction.Protagonist as Actor;
-			Component antagonist = interaction.Antagonist;
+			Actor protagonist		= interaction.Protagonist as Actor;
+			Component antagonist	= interaction.Antagonist;
+			
 			if (interaction.Arguments.ContainsKey("Item"))
 			{
 				Item item = interaction.Arguments["Item"] as Item;
-				if (item!=null)
+				
+				if (item != null)
 				{
 					if (item.Owner == protagonist)
 					{
-						string itemDescription = item.Inspect(protagonist).ShortDescription;
-						double weight = item.Traits["Weight"].Value;
+						string itemDescription	= item.Inspect(protagonist).ShortDescription;
+						double weight			= item.Traits["Weight"].Value;
+						
 						if (antagonist is Location)
 						{
 								double visibility = Constants.StandardVisibility * item.Traits["Conspicuousness"].Value;
@@ -93,7 +99,6 @@ namespace Henge.Rules.Protagonist.Give
 								}
 							}
 							else interaction.Failure(string.Format("The recipient is unable to take the {0}", itemDescription), false);
-
 						}
 					}
 					interaction.Failure("You don't have that item", true);
@@ -103,9 +108,6 @@ namespace Henge.Rules.Protagonist.Give
 			interaction.Failure("No item to give", true);
 			return interaction;
 		}
-		
-		#endregion
-
 	}
 }
 

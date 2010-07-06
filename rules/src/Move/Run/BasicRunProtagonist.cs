@@ -19,7 +19,7 @@ namespace Henge.Rules.Protagonist.Move.Run
 			return (Constants.StandardVisibility * 1.5 * interaction.SubjectCache.Conspicuousness);
 		}
 		
-		protected override HengeInteraction Apply(HengeInteraction interaction)
+		protected override IInteraction Apply(HengeInteraction interaction)
 		{
 			// structure of this rule is
 			//

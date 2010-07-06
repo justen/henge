@@ -51,8 +51,6 @@
     <Compile Include="src\PropertyCache.cs" />
     <Compile Include="src\Defend\Guard\GuardProtagonist.cs" />
     <Compile Include="src\Defend\Guard\GuardAntagonist.cs" />
-    <Compile Include="src\Spawn\Avatar\NewAvatarProtagonist.cs" />
-    <Compile Include="src\Spawn\Avatar\NewAvatarAntagonist.cs" />
     <Compile Include="src\Take\TakeItemProtagonist.cs" />
     <Compile Include="src\Take\TakeItemAntagonist.cs" />
     <Compile Include="src\Give\GiveItemProtagonist.cs" />
@@ -66,6 +64,8 @@
     <Compile Include="src\Search\SearchProtagonist.cs" />
     <Compile Include="src\Scout\ScoutAntagonist.cs" />
     <Compile Include="src\Scout\ScoutProtagonist.cs" />
+    <Compile Include="src\Spawn\Character\NewAvatarProtagonist.cs" />
+    <Compile Include="src\Spawn\Character\NewAvatarAntagonist.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\data\Henge.Data.csproj">

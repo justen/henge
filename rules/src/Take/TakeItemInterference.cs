@@ -12,20 +12,23 @@ namespace Henge.Rules.Interference.Take
 			return subject is Actor;
 		}
 		
-		protected override double Visibility (HengeInteraction interaction)
+		
+		protected override double Visibility(HengeInteraction interaction)
 		{
 			//Set our visibility back to default * conspicuousness
 			return (Constants.StandardVisibility * interaction.SubjectCache.Conspicuousness);
 		}
 		
-		protected override HengeInteraction Apply (HengeInteraction interaction)
+		
+		protected override IInteraction Apply (HengeInteraction interaction)
 		{
 			//potentially need to do a skill check here
 			//Since this is just a basic "take", let's assume that
 			//it's a brute force attempt.
-			if (interaction.SubjectCache.SkillCheck("defend", interaction.ProtagonistCache.Strength - interaction.SubjectCache.Strength))
+			if (interaction.SubjectCache.SkillCheck("Defend", interaction.ProtagonistCache.Strength - interaction.SubjectCache.Strength))
 			{
 				double energy = interaction.SubjectCache.Energy;
+				
 				if (interaction.SubjectCache.UseEnergy(interaction.ProtagonistCache.Energy * interaction.ProtagonistCache.Strength))
 				{
 					//Managed to prevent the protagonist from taking anything.
@@ -38,6 +41,7 @@ namespace Henge.Rules.Interference.Take
 				//Whether they overpowered us or not, this is going to cost 'em...
 				interaction.ProtagonistCache.UseEnergy(interaction.SubjectCache.Strength * energy);
 			}
+			
 			return interaction;
 		}
 	}

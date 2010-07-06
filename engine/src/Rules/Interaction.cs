@@ -23,7 +23,7 @@ namespace Henge.Rules
 		public Dictionary<string, object> Results		{ get; set; }
 		
 		
-		public Interaction (Actor protagonist, Component antagonist, Dictionary<string, object> arguments)
+		public Interaction(Actor protagonist, Component antagonist, Dictionary<string, object> arguments)
 		{
 			this.Deltas			= new List<Func<bool, bool>>();
 			this.Interferers	= new List<Component>();
@@ -34,21 +34,25 @@ namespace Henge.Rules
 		}		
 		
 		
-		public void Success(string message)
+		public IInteraction Success(string message)
 		{
 			this.Finished	= true;
 			this.Succeeded	= true;
 			this.Illegal	= false;
 			this.Conclusion = message;
+			
+			return this;
 		}
 		
 		
-		public void Failure(string message, bool illegal)
+		public IInteraction Failure(string message, bool illegal)
 		{
 			this.Finished	= true;
 			this.Succeeded 	= false;
 			this.Illegal	= illegal;
 			this.Conclusion	= message;
+			
+			return this;
 		}
 		
 		

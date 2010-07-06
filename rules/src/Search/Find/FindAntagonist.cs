@@ -4,6 +4,7 @@ using System.Linq;
 using Henge.Data.Entities;
 using Henge.Rules.Antagonist.Search;
 
+
 namespace Henge.Rules.Antagonist.Search.Find
 {
 	public class FindAntagonist : SearchAntagonist

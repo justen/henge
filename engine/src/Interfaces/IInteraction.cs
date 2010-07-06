@@ -18,9 +18,9 @@ namespace Henge.Rules
 		bool Succeeded					{ get; }
 		bool Illegal					{ get; }
 		
-		void Success(string message);
-		void Failure(string message, bool illegal);
 		IInteraction Conclude();
+		IInteraction Success(string message);
+		IInteraction Failure(string message, bool illegal);
 		void SetSubject(Component subject);
 	}
 }
