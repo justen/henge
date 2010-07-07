@@ -15,5 +15,15 @@ namespace Henge.Data.Entities
 		{
 			this.Expiry = null;
 		}
+		
+		
+		public override double Value {
+			get {
+				return base.Value;
+			}
+			set {
+				base.Value = (value>this.Maximum)? this.Maximum : ((value<this.Minimum)? this.Minimum : value);
+			}
+		}
 	}
 }

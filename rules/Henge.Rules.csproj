@@ -40,6 +40,7 @@
     <Folder Include="src\Hide\" />
     <Folder Include="src\Scout\" />
     <Folder Include="src\Inspect\" />
+    <Folder Include="src\Eat\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\Move\Run\BasicRunProtagonist.cs" />
@@ -69,6 +70,8 @@
     <Compile Include="src\Spawn\Character\NewAvatarAntagonist.cs" />
     <Compile Include="src\Inspect\InspectProtagonist.cs" />
     <Compile Include="src\Inspect\InspectAntagonist.cs" />
+    <Compile Include="src\Eat\EatAntagonist.cs" />
+    <Compile Include="src\Eat\EatProtagonist.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\data\Henge.Data.csproj">
