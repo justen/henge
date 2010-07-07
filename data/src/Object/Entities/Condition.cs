@@ -19,9 +19,9 @@ namespace Henge.Data.Entities
 	    public bool Invert 	{ get; set; }
 		
 		
-		public bool Valid(Trait trait)
+		public bool Valid(TraitBase trait)
 		{
 			return this.Invert ? (trait.Value < this.Minimum || trait.Value > this.Maximum) : (trait.Value >= this.Minimum && trait.Value <= this.Maximum);
-		}		
+		}	
 	}
 }

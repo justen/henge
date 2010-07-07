@@ -34,7 +34,8 @@ namespace Henge.Data.Entities
 		
 		public Appearance Inspect(Component inspector)
 		{
-			return this.Type.Appearance.LastOrDefault(a => a.Valid(inspector.Traits));
+			if (inspector is Actor) return this.Type.Appearance.LastOrDefault(a => a.Valid(inspector.Traits, (inspector as Actor).Skills));
+			else return this.Type.Appearance.LastOrDefault(a => a.Valid(inspector.Traits));
 		}
 	}
 }

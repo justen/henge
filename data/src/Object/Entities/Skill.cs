@@ -4,9 +4,8 @@ using System.Collections.Generic;
 
 namespace Henge.Data.Entities
 {
-	public class Skill
+	public class Skill : TraitBase
 	{
-		public double Value 			{get; set;}
 		public IList<string> Children	{get; set;}
 		
 		

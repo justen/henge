@@ -53,6 +53,7 @@ namespace Henge.Rules
 		
 		public const double DefaultCover = 1;
 		
+		public const double InspectionCharge = 1;
 		
 		private static Random rng = new Random();
 		

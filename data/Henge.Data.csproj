@@ -108,6 +108,7 @@
     <Compile Include="src\Object\Entities\Condition.cs" />
     <Compile Include="src\Object\Entities\Trait.cs" />
     <Compile Include="src\Object\Entities\Skill.cs" />
+    <Compile Include="src\Object\Entities\TraitBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />

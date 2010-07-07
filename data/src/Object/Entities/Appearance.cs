@@ -33,7 +33,12 @@ namespace Henge.Data.Entities
 		
 		public bool Valid(IDictionary<string, Trait> traits)
 		{
-			return this.Conditions.Count(c => traits.ContainsKey(c.Trait) ? c.Valid(traits[c.Trait]) : false) == this.Conditions.Count;
+			return this.Conditions.Count(c => traits.ContainsKey(c.Trait) ? c.Valid(traits[c.Trait] as TraitBase) : false) == this.Conditions.Count;
+		}
+		
+		public bool Valid(IDictionary<string, Trait> traits, IDictionary<string, Skill> skills)
+		{
+			return this.Conditions.Count(c => skills.ContainsKey(c.Trait) ? c.Valid(skills[c.Trait] as TraitBase) : (traits.ContainsKey(c.Trait) ? c.Valid(traits[c.Trait] as TraitBase) : false)) == this.Conditions.Count;
 		}
 	}
 }
