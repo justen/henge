@@ -16,6 +16,8 @@ namespace Henge.Data.Entities
 	    //the Map this location exists in
 	    public Map Map							{get; set;}
 		
+		public IList<Location> Visible			{get; set;}
+		public bool invertVisibility			{get; set;}
 		
 		public Location(int x, int y, int z)
 		{
@@ -24,6 +26,13 @@ namespace Henge.Data.Entities
 			this.Structures		= new List<Edifice>();
 			this.Fauna			= new List<Npc>();
 			this.Regions 		= new List<Region>();
+			this.Visible		= new List<Location>();
+			this.invertVisibility = true;
+		}
+		
+		public bool CanSee(Location target)
+		{
+			return (this.Visible.Contains(target) ^ this.invertVisibility);	
 		}
 	}
 }

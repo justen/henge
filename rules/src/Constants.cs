@@ -51,6 +51,8 @@ namespace Henge.Rules
 		public const double EdificeScouting = 0.2;
 		public const double ActorScouting = 0.3;
 		
+		public const double DefaultCover = 1;
+		
 		
 		private static Random rng = new Random();
 		

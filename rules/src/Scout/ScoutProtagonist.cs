@@ -30,25 +30,38 @@ namespace Henge.Rules.Protagonist.Scout
 				Location target = interaction.Antagonist as Location;
 				if (target.Map == source.Map)
 				{
-					double distance = (target.Coordinates.X - source.Coordinates.X) * (target.Coordinates.X - source.Coordinates.X)
-						     + (target.Coordinates.Y - source.Coordinates.Y) * (target.Coordinates.Y - source.Coordinates.Y);
-					double detection = protagonist.Skills["Perception"].Value;
-					double difficulty = distance * Constants.EdificeScouting;
-					if (interaction.ProtagonistCache.SkillCheck("Perception", distance * Constants.LocationScouting))
+					if (source.CanSee(target))
 					{
-						interaction.Results.Add("Location", target);
-						if (interaction.ProtagonistCache.SkillCheck("Perception", difficulty))
+						
+						double distance = (target.Coordinates.X - source.Coordinates.X) * (target.Coordinates.X - source.Coordinates.X)
+							     + (target.Coordinates.Y - source.Coordinates.Y) * (target.Coordinates.Y - source.Coordinates.Y);
+						
+						double cover = source.Traits.ContainsKey("Cover") ? source.Traits["Cover"].Value : Constants.DefaultCover;
+						double cover2 = target.Traits.ContainsKey("Cover")? target.Traits["Cover"].Value : Constants.DefaultCover;
+						distance = distance * (cover > cover2? cover : cover2);
+						double detection = protagonist.Skills["Perception"].Value; 
+						double difficulty = distance * Constants.EdificeScouting;
+						if (interaction.ProtagonistCache.SkillCheck("Perception", distance * Constants.LocationScouting))
 						{
-							interaction.Results.Add("Structures", target.Structures.Where(c => c.Traits.ContainsKey("Visibility") && c.Traits["Visibility"].Value >= detection - difficulty).ToList());
-							difficulty = distance * Constants.ActorScouting;
+							interaction.Results.Add("Location", target);
 							if (interaction.ProtagonistCache.SkillCheck("Perception", difficulty))
 							{
-								difficulty = detection - difficulty;
-								interaction.Results.Add("NPCs", target.Fauna.Where(c => c.Traits.ContainsKey("Visibility") && c.Traits["Visibility"].Value >= difficulty).ToList());
-								interaction.Results.Add("Avatars", target.Inhabitants.Where(c => c.Traits.ContainsKey("Visibility") && c.Traits["Visibility"].Value >= difficulty).ToList());
-							}		
-						}	
+								interaction.Results.Add("Structures", target.Structures.Where(c => c.Traits.ContainsKey("Visibility") && c.Traits["Visibility"].Value >= detection - difficulty).ToList());
+								difficulty = distance * Constants.ActorScouting;
+								if (interaction.ProtagonistCache.SkillCheck("Perception", difficulty))
+								{
+									difficulty = detection - difficulty;
+									interaction.Results.Add("NPCs", target.Fauna.Where(c => c.Traits.ContainsKey("Visibility") && c.Traits["Visibility"].Value >= difficulty).ToList());
+									interaction.Results.Add("Avatars", target.Inhabitants.Where(c => c.Traits.ContainsKey("Visibility") && c.Traits["Visibility"].Value >= difficulty).ToList());
+									interaction.Success("You feel that you have a good view of the area");
+								}
+								else interaction.Success("You can see the area reasonably well");
+							}
+							else interaction.Success("You can just about make out the terrain");
+						}
+						else interaction.Failure("You can't make anything out", false);
 					}
+					else interaction.Failure("You can't see from here", false);
 				}
 		 		else interaction.Failure("You are attempting to scout a location you cannot see", true);
 			}
