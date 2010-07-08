@@ -9,6 +9,22 @@ namespace Henge.Rules
 {
 	static class Constants
 	{
+		public static class Tick
+		{
+			public const double MetabolicRate = 1.0;
+			public static class Healthy
+			{
+				public const double Heal = 1.0;
+				public const double Revitalise = 2.0;
+			}
+			public static class Ill
+			{
+				public const double Heal = -1.0;
+				public const double Revitalise = 1.0;
+			}
+		}
+		
+		
 		// Maximum skill level
 		public const double SkillMax = 1.0;
 		// Maximum energy gain per second

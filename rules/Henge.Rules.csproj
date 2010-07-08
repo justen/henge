@@ -41,6 +41,8 @@
     <Folder Include="src\Scout\" />
     <Folder Include="src\Inspect\" />
     <Folder Include="src\Eat\" />
+    <Folder Include="src\Tick\" />
+    <Folder Include="src\Tick\Metabolise\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\Move\Run\BasicRunProtagonist.cs" />
@@ -72,6 +74,8 @@
     <Compile Include="src\Inspect\InspectAntagonist.cs" />
     <Compile Include="src\Eat\EatAntagonist.cs" />
     <Compile Include="src\Eat\EatProtagonist.cs" />
+    <Compile Include="src\Tick\Metabolise\MetaboliseAntagonist.cs" />
+    <Compile Include="src\Tick\Metabolise\MetaboliseProtagonist.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\data\Henge.Data.csproj">
