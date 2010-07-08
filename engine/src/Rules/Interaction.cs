@@ -21,6 +21,7 @@ namespace Henge.Rules
 		public bool Illegal								{ get; private set; }
 		public Dictionary<string, object> Arguments		{ get; private set; }
 		public Dictionary<string, object> Results		{ get; set; }
+		public List<Entity>	PendingDeletions			{ get; private set; }
 		
 		
 		public Interaction(Actor protagonist, Component antagonist, Dictionary<string, object> arguments)
@@ -31,6 +32,7 @@ namespace Henge.Rules
 			this.Antagonist		= antagonist;
 			this.Arguments		= arguments;
 			this.Results 		= new Dictionary<string, object>();
+			this.PendingDeletions = new List<Entity>();
 		}		
 		
 		
@@ -64,6 +66,11 @@ namespace Henge.Rules
 		public virtual IInteraction Conclude()
 		{
 			return this as IInteraction;	
+		}
+		
+		public virtual void Delete(Entity target)
+		{
+			if (!this.PendingDeletions.Contains(target)) this.PendingDeletions.Add(target);
 		}
 	}
 }

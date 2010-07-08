@@ -37,10 +37,10 @@ namespace Henge.Rules.Protagonist.Eat
 					interaction.Deltas.Add((success) => {
 						actor.Traits["Weight"].Value-=food.Traits["Weight"].Value;
 						actor.Inventory.Remove(food);
-						food.Owner = null;
 						actor.Traits["Constitution"].Value += nutrition;
 						return true;
 					});
+					interaction.Delete(food);
 					
 				}
 				else interaction.Failure("You no longer have that", true);

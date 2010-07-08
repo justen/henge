@@ -13,6 +13,7 @@ namespace Henge.Rules
 		Actor Protagonist				{ get; set; }
 		IList<Func<bool, bool>> Deltas 	{ get; }
 		IList<Component> Interferers	{ get; }
+		List<Entity> PendingDeletions	{ get; }
 		string Conclusion				{ get; }
 		bool Finished					{ get; }
 		bool Succeeded					{ get; }
@@ -23,5 +24,6 @@ namespace Henge.Rules
 		IInteraction Failure(string message, bool illegal);
 
 		void SetSubject(Component subject);
+		void Delete(Entity target);
 	}
 }

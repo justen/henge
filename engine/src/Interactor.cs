@@ -42,7 +42,10 @@ namespace Henge.Engine
 						{
 							if (!delta(interaction.Succeeded)) break;
 						}
-					
+						foreach (Entity entity in interaction.PendingDeletions)
+						{
+							db.Delete(entity);
+						}
 						//try
 						//{
 							db.Flush();	
