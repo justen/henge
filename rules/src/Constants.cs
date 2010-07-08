@@ -71,6 +71,11 @@ namespace Henge.Rules
 		
 		public const double InspectionCharge = 1;
 		
+		public const double TalkCost = 0.5;
+		
+		
+		
+		
 		private static Random rng = new Random();
 		
 		public static double RandomNumber
