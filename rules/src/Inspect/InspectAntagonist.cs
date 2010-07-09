@@ -9,7 +9,7 @@ namespace Henge.Rules.Antagonist.Inspect
 		public override bool Valid (Component subject)
 		{
 			//you can inspect anything
-			return (true);
+			return true;
 		}
 		
 		protected override double Visibility (HengeInteraction interaction)

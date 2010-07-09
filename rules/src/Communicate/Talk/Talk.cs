@@ -47,7 +47,8 @@ namespace Henge.Rules.Protagonist.Communicate.Talk
 							target = string.Format("to {0}", recipients[0].Name);	
 						}
 						interaction.Success(string.Format("You say \"{0}\" {0}.", interaction.Arguments["Message"], target));
-					} else interaction.Failure("You have nothing to say", false);
+					} 
+					else interaction.Failure("You have nothing to say", false);
 				}
 				else interaction.Failure("You are too tired even to speak", false);
 			}
