@@ -29,7 +29,8 @@ namespace ConcurrencyLayer
 	
 	public interface IPersistence
 	{
-		object GetSourceObject();
+		object GetSource();
+		object GetContainer();
 	}
 	
 	
@@ -105,7 +106,11 @@ namespace ConcurrencyLayer
 				if (ReflectHelper.IsGetter(invocation.Method))	invocation.ReturnValue = this.container.GetProperty(property);
 				else 											this.container.SetProperty(property, invocation.Arguments[0]);
 			}
-			else invocation.ReturnValue = this.container.Object;	// GetSourceObject() has been called
+			else switch (invocation.Method.Name)
+			{
+				case "GetSource": 			invocation.ReturnValue = this.container.Object;	break;
+				case "GetContainer":		invocation.ReturnValue = this.container;		break;
+			}
 
 			//invocation.Proceed();
 		}
@@ -116,7 +121,7 @@ namespace ConcurrencyLayer
 	{
 		public bool ShouldInterceptMethod(Type type, MethodInfo method)
 		{
-			return ReflectHelper.IsGetter(method) || ReflectHelper.IsSetter(method) || method.Name == "GetSourceObject";	
+			return ReflectHelper.IsGetter(method) || ReflectHelper.IsSetter(method) || method.Name == "GetSource" || method.Name == "GetContainer";	
 		}
 		
 		

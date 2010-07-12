@@ -47,18 +47,18 @@ namespace ConcurrencyLayer
 					if (this.cache.ContainsKey(id))
 					{
 						WeakReference reference = this.cache[id];
-						if (reference.Target == null) reference.Target = this.Create(type, id, item);
+						if (reference.Target == null) reference.Target = ConcurrencyContainer.Create(type, id, this.Activate(item), this);
 						
 						result = reference.Target as ConcurrencyContainer;
 					}
-					else this.cache.Add(id, new WeakReference(result = this.Create(type, id, item)));
+					else this.cache.Add(id, new WeakReference(result = ConcurrencyContainer.Create(type, id, this.Activate(item), this)));
 				}
 			}
 			
 			return result;	
 		}
 		
-		
+	
 		public object GetPersistent(Type type, object item)
 		{
 			ConcurrencyContainer cc = this.GetContainer(type, item);
@@ -67,15 +67,23 @@ namespace ConcurrencyLayer
 		}
 		
 		
-		private ConcurrencyContainer Create(Type type, long id, object item)
+		public object GetSource(Type type, object item)
 		{
-			if (!this.container.Ext().IsActive(item)) 
+			ConcurrencyContainer cc = this.GetContainer(type, item);
+			
+			return cc != null ? cc.Object : null;
+		}
+		
+		
+		public object Activate(object item)
+		{
+			if (!this.container.Ext().IsActive(item))
 			{
-				Console.WriteLine("  Lazy loading: " + item.ToString());
+				Console.WriteLine("  Lazy loading:" + item.ToString());
 				this.container.Activate(item, 1);
 			}
 			
-			return ConcurrencyContainer.Create(type, id, item, this);
-		}	
+			return item;
+		}
 	}
 }

@@ -66,7 +66,6 @@ namespace ConcurrencyLayer
 				}
 				else
 				{
-					// Lazy-loading here
 					this.objectLock.EnterReadLock();
 						object obj = property.GetValue(this.Object, null);
 					this.objectLock.ExitReadLock();
@@ -115,13 +114,13 @@ namespace ConcurrencyLayer
 						Console.WriteLine("  Intercepted entity assignment - target is not persistent");
 						
 						// This should create a new container and actually store the object to the database
-						actual = this.cache.GetContainer(value).Object;
+						actual = this.cache.GetSource(type, value);
 					}
 					else
 					{
 						Console.WriteLine("  Intercepted entity assignment - target is persistent");
 						
-						actual = persistent.GetSourceObject();
+						actual = persistent.GetSource();
 					}
 				}
 			}
