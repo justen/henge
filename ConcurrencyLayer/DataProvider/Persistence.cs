@@ -30,7 +30,7 @@ namespace ConcurrencyLayer
 	public interface IPersistence
 	{
 		object GetSource();
-		object GetContainer();
+		object GetBase();
 	}
 	
 	
@@ -41,62 +41,30 @@ namespace ConcurrencyLayer
 		private static readonly Type [] interfaces				= new Type [] { typeof(IPersistence) };
 		
 		
-		public static T Create<T>(ConcurrencyContainer container) where T : class
+		public static T Create<T>(PersistentContainer container) where T : class
 		{
 			return Create(typeof(T), container) as T;
 		}
 		
 		
-		public static object Create(Type type, ConcurrencyContainer container)
+		public static object Create(Type type, PersistentContainer container)
 		{
-			//return generator.CreateClassProxy(type, options, new PersistentInterceptor(container));
 			PersistentInterceptor interceptor 	= new PersistentInterceptor(container);
 			object result 						= generator.CreateClassProxy(type, interfaces, options, interceptor);
 			interceptor.Active					= true;
 			
 			return result;
 		}
-		
-		
-		/*public static bool IsPersistent(object value)
-		{
-			return (value as IPersistence) != null;
-		}*/
-		
-		
-		/*private static T Clone<T>(ConcurrencyContainer container, T dst, PersistentInterceptor interceptor) where T : class
-		{
-			T src 						= container.Object as T;
-			PropertyInfo [] properties 	= typeof(T).GetProperties();
-			
-			container.ObjectLock.EnterReadLock();
-				interceptor.Version = container.Version;
-			
-				foreach (PropertyInfo property in properties)
-				{
-					Type type = property.PropertyType;
-				
-					if (type.IsPrimitive || type.IsValueType || type == typeof(string) || type == typeof(DateTime)) 
-					{
-						property.SetValue(dst, property.GetValue(src, null), null);
-					}
-				}
-			container.ObjectLock.ExitReadLock();
-			
-			interceptor.Active = true;
-			
-			return dst;
-		}*/
 	}
 	
 	
 	internal class PersistentInterceptor : IInterceptor
 	{
 		public bool Active { get; set; }
-		private ConcurrencyContainer container;
+		private PersistentContainer container;
 		
 		
-		public PersistentInterceptor(ConcurrencyContainer container)
+		public PersistentInterceptor(PersistentContainer container)
 		{
 			this.container	= container;
 			this.Active		= false;
@@ -116,8 +84,8 @@ namespace ConcurrencyLayer
 				}
 				else switch (invocation.Method.Name)
 				{
-					case "GetSource": 			invocation.ReturnValue = this.container.Object;	break;
-					case "GetContainer":		invocation.ReturnValue = this.container;		break;
+					case "GetSource": 	invocation.ReturnValue = this.container.Object;	break;
+					case "GetBase":		invocation.ReturnValue = this.container;		break;
 				}
 			}
 
@@ -130,7 +98,7 @@ namespace ConcurrencyLayer
 	{
 		public bool ShouldInterceptMethod(Type type, MethodInfo method)
 		{
-			return ReflectHelper.IsGetter(method) || ReflectHelper.IsSetter(method) || method.Name == "GetSource" || method.Name == "GetContainer";	
+			return ReflectHelper.IsGetter(method) || ReflectHelper.IsSetter(method) || method.Name == "GetSource" || method.Name == "GetBase";	
 		}
 		
 		

@@ -9,27 +9,27 @@ using Db4objects.Db4o;
 
 namespace ConcurrencyLayer
 {
-	internal class ContainerCache
+	internal class PersistenceCache
 	{
 		private IObjectContainer container;
-		private IDictionary<long, ConcurrencyContainer> cache 	= new SortedDictionary<long, ConcurrencyContainer>();
+		private IDictionary<long, PersistentBase> cache = new SortedDictionary<long, PersistentBase>();
 		
 		
-		public ContainerCache(IObjectContainer container)
+		public PersistenceCache(IObjectContainer container)
 		{
 			this.container = container;
 		}
 		
 		
-		public ConcurrencyContainer GetContainer<T>(T item) where T : class
+		public PersistentContainer GetContainer<T>(T item) where T : class
 		{
-			return this.GetContainer(typeof(T), item);
-		}	
+			return this.GetBase(typeof(T), item) as PersistentContainer;
+		}
 		
 		
-		public ConcurrencyContainer GetContainer(Type type, object item)
+		public PersistentBase GetBase(Type type, object item)
 		{
-			ConcurrencyContainer result = null;
+			PersistentBase result = null;
 			
 			if (item != null)
 			{
@@ -49,7 +49,17 @@ namespace ConcurrencyLayer
 						result			= this.cache[id];
 						result.Access	= DateTime.Now;
 					}
-					else this.cache.Add(id, result = ConcurrencyContainer.Create(type, id, this.Activate(item), this));
+					else 
+					{
+						if (type.IsGenericType)
+						{
+							//Type generic = type.GetGenericTypeDefinition();
+							
+							//if (generic == typeof(IList<>))				result = new PersistentList(
+							//else if (generic == typeof(IDictionary<,>))	result = new PersistentDictionary(...);
+						}
+						else this.cache.Add(id, result = new PersistentContainer(type, id, this.Activate(item), this));
+					}
 				}
 			}
 			
@@ -59,17 +69,17 @@ namespace ConcurrencyLayer
 	
 		public object GetPersistent(Type type, object item)
 		{
-			ConcurrencyContainer cc = this.GetContainer(type, item);
+			PersistentBase pb = this.GetBase(type, item);
 			
-			return cc != null ? cc.PersistentObject : null;
+			return pb != null ? pb.PersistentObject : null;
 		}
 		
 		
 		public object GetSource(Type type, object item)
 		{
-			ConcurrencyContainer cc = this.GetContainer(type, item);
+			PersistentBase pb = this.GetBase(type, item);
 			
-			return cc != null ? cc.Object : null;
+			return pb != null ? pb.Object : null;
 		}
 		
 		
@@ -89,12 +99,12 @@ namespace ConcurrencyLayer
 		{
 			// Flush dirty items to db4o
 			// Check for objects that have not been accessed for some time and remove them from the cache so that they can be garbage collected	
-			List<ConcurrencyContainer> flush	= new List<ConcurrencyContainer>();
-			List<long> delete					= new List<long>();
+			List<PersistentBase> flush	= new List<PersistentBase>();
+			List<long> delete			= new List<long>();
 			
 			lock(this)
 			{
-				foreach (KeyValuePair<long, ConcurrencyContainer> kvp in this.cache)
+				foreach (KeyValuePair<long, PersistentBase> kvp in this.cache)
 				{
 					if (kvp.Value.Dirty)	flush.Add(kvp.Value);
 					if (kvp.Value.Expired)	delete.Add(kvp.Key);
@@ -103,12 +113,12 @@ namespace ConcurrencyLayer
 				foreach (long id in delete) this.cache.Remove(id);
 			}
 			
-			foreach (ConcurrencyContainer cc in flush)
+			foreach (PersistentBase item in flush)
 			{
-				cc.Lock();
-					this.container.Store(cc.Object);
-					cc.Dirty = false;
-				cc.Unlock();
+				item.Lock();
+					this.container.Store(item.Object);
+					item.Dirty = false;
+				item.Unlock();
 			}
 		}
 	}

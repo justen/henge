@@ -17,7 +17,7 @@ namespace ConcurrencyLayer
 	public class ConcurrencyDataProvider : IDisposable
 	{
 		private IObjectContainer container	= null;
-		private ContainerCache cache		= null;
+		private PersistenceCache cache		= null;
 		
 
 		public bool Initialise(string connectionString, int activationDepth)
@@ -29,7 +29,7 @@ namespace ConcurrencyLayer
 				config.ActivationDepth(activationDepth);
 				
 				this.container	= Db4oFactory.OpenFile(config, connectionString);
-				this.cache		= new ContainerCache(this.container);
+				this.cache		= new PersistenceCache(this.container);
 			
 				return true;
 			}
@@ -111,7 +111,7 @@ namespace ConcurrencyLayer
 		
 		public T Get<T>(Func<T, bool> expression) where T : class
 		{
-			ConcurrencyContainer container 	= this.cache.GetContainer<T>(this.container.AsQueryable<T>().SingleOrDefault(expression));
+			PersistentContainer container 	= this.cache.GetContainer<T>(this.container.AsQueryable<T>().SingleOrDefault(expression));
 			
 			return (container != null) ? container.PersistentObject as T : null;
 		}
@@ -129,7 +129,7 @@ namespace ConcurrencyLayer
 					
 					if (persistent != null)
 					{
-						if (!(persistent.GetContainer() as ConcurrencyContainer).Lock())
+						if (!(persistent.GetBase() as PersistentBase).Lock())
 						{
 							result = false;
 							break;
@@ -152,7 +152,7 @@ namespace ConcurrencyLayer
 			{
 				IPersistence persistent = entity as IPersistence;
 				
-				if (persistent != null) (persistent.GetContainer() as ConcurrencyContainer).Unlock();
+				if (persistent != null) (persistent.GetBase() as PersistentBase).Unlock();
 				else 					throw new Exception("Attempted to unlock a transient object");
 			}
 		}

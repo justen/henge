@@ -54,9 +54,10 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Entities\User.cs" />
     <Compile Include="Persistence.cs" />
-    <Compile Include="ConcurrencyContainer.cs" />
-    <Compile Include="ContainerCache.cs" />
     <Compile Include="PersistentList.cs" />
+    <Compile Include="PersistentContainer.cs" />
+    <Compile Include="PersistenceCache.cs" />
+    <Compile Include="PersistentBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Entities\" />

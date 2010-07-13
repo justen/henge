@@ -7,126 +7,76 @@ using System.Collections.Generic;
 
 namespace ConcurrencyLayer
 {
-	/*internal class PersistentList<T> : IList<T>
+	internal class PersistentList<T> : PersistentBase, IPersistence//, IList<T>
 	{
-		private ContainerCache cache;
-		private ReaderWriterLockSlim objectLock = new ReaderWriterLockSlim();
-
-		public bool Dirty	{ get; set; }
-		
-		protected IList<T> source;
-		protected IList<T> persistent;
-		
-		private bool active;
+		protected IList<T> source		= null;
+		protected IList<T> persistent	= null;
 		private bool isClass;
-		private bool isGeneric;
 		private Type type;
 		
 		
-		public PersistentList(IList<T> source, ContainerCache cache)
+		public PersistentList(long id, IList<T> source, PersistenceCache cache) : base(id, source, cache)
 		{
-			this.type 		= typeof(T);
-			this.source		= source;
-			this.cache		= cache;
-			this.Dirty		= false;
-			this.active		= false;
-			this.isClass	= this.type.IsClass && this.type != typeof(string);
-			this.isGeneric	= this.type.IsGenericType;
-			this.persistent	= this.isClass ? new List<T>(source.Count) : null;
+			this.type 				= typeof(T);
+			this.source				= source;
+			this.isClass			= this.type.IsClass && this.type != typeof(string);
+			this.PersistentObject	= this;
+			
+			if (this.isClass)
+			{
+				this.persistent	= new List<T>(source.Count);
+				foreach (T item in this.source)
+				{
+					this.persistent.Add((T)this.cache.GetPersistent(this.type, item));
+				}
+			}
 		}
 		
 		
-		private void Activate()
+		public object GetSource()
 		{
-			// Much quicker to check this without entering a lock, but if two threads
-			// happen to enter the conditional at the same time you have to avoid problems
-			// by checking the active flag again within a lock.
-			if (!this.active)
-			{
-				this.objectLock.EnterWriteLock();
-					if (!this.active)
-					{
-						this.cache.Activate(this.source);
-					
-						if (this.isClass)
-						{
-							if (this.isGeneric)
-							{
-								
-							}
-							else
-							{		
-								foreach (T item in this.source)
-								{
-									this.persistent.Add((T)this.cache.GetPersistent(this.type, item));
-								}
-							}
-						}
-						this.active = true;
-					}
-				this.objectLock.ExitWriteLock();
-			}
+			return this.Object;
+		}
+		
+		
+		public object GetBase()
+		{
+			return this;
 		}
 		
 		
 	#region IList<T> Members
-		int IList<T>.IndexOf(T item)
+		int IndexOf(T item)
 		{
-			this.Activate();
-			
 			return this.persistent.IndexOf(item);
 		}
 		
 
-		void IList<T>.Insert(int index, T item)
+		void Insert(int index, T item)
 		{
+			this.AssertWrite();
+			
 			if (index < 0) throw new IndexOutOfRangeException("Negative Index");
-			
-			this.Activate();
-			
-			
+
 			if (this.isClass)
 			{
-				if (this.isGeneric)
-				{
-					// Handle lists of lists/dictionaries here
-				}
-				else
-				{
-					IPersistence persistent = item as IPersistence;
-					ConcurrencyContainer cc = (persistent == null) ? this.cache.GetContainer(this.type, item) : persistent.GetContainer() as ConcurrencyContainer;
-					
-					this.objectLock.EnterWriteLock();
-					try
-					{
-						this.source.Insert(index, (T)cc.Object);
-						this.persistent.Insert(index, (T)cc.PersistentObject);
-					}
-					finally
-					{
-						this.objectLock.ExitWriteLock();
-					}
-				}
+				IPersistence persistent = item as IPersistence;
+				PersistentBase pb 		= (persistent == null) ? this.cache.GetBase(this.type, item) : persistent.GetBase() as PersistentBase;
+
+				this.source.Insert(index, (T)pb.Object);
+				this.persistent.Insert(index, (T)pb.PersistentObject);
 			}
-			else
-			{
-				this.objectLock.EnterWriteLock();
-				try
-				{
-					this.source.Insert(index, item);
-				}
-				finally
-				{
-					this.objectLock.ExitWriteLock();
-				}
-			}
+			else this.source.Insert(index, item);
 		}
 		
 
-		T IList<T>.this[int index]
+		T this[int index]
 		{
 			get
 			{
+				throw new NotImplementedException();
+				
+				return default(T);
 //				if (index < 0)
 //				{
 //					throw new IndexOutOfRangeException("negative index");
@@ -143,6 +93,8 @@ namespace ConcurrencyLayer
 			}
 			set
 			{
+				this.AssertWrite();
+				throw new NotImplementedException();
 //				if (index < 0)
 //				{
 //					throw new IndexOutOfRangeException("negative index");
