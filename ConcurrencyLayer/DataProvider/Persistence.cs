@@ -50,7 +50,11 @@ namespace ConcurrencyLayer
 		public static object Create(Type type, ConcurrencyContainer container)
 		{
 			//return generator.CreateClassProxy(type, options, new PersistentInterceptor(container));
-			return generator.CreateClassProxy(type, interfaces, options, new PersistentInterceptor(container));
+			PersistentInterceptor interceptor 	= new PersistentInterceptor(container);
+			object result 						= generator.CreateClassProxy(type, interfaces, options, interceptor);
+			interceptor.Active					= true;
+			
+			return result;
 		}
 		
 		
@@ -88,28 +92,33 @@ namespace ConcurrencyLayer
 	
 	internal class PersistentInterceptor : IInterceptor
 	{
+		public bool Active { get; set; }
 		private ConcurrencyContainer container;
 		
 		
 		public PersistentInterceptor(ConcurrencyContainer container)
 		{
 			this.container	= container;
+			this.Active		= false;
 		}
 		
 		
 		public void Intercept(IInvocation invocation)
 		{
-			PropertyInfo property = invocation.TargetType.GetProperty(ReflectHelper.GetPropertyName(invocation.Method));
-			
-			if (property != null)
+			if (this.Active)
 			{
-				if (ReflectHelper.IsGetter(invocation.Method))	invocation.ReturnValue = this.container.GetProperty(property);
-				else 											this.container.SetProperty(property, invocation.Arguments[0]);
-			}
-			else switch (invocation.Method.Name)
-			{
-				case "GetSource": 			invocation.ReturnValue = this.container.Object;	break;
-				case "GetContainer":		invocation.ReturnValue = this.container;		break;
+				PropertyInfo property = invocation.TargetType.GetProperty(ReflectHelper.GetPropertyName(invocation.Method));
+				
+				if (property != null)
+				{
+					if (ReflectHelper.IsGetter(invocation.Method))	invocation.ReturnValue = this.container.GetProperty(property);
+					else 											this.container.SetProperty(property, invocation.Arguments[0]);
+				}
+				else switch (invocation.Method.Name)
+				{
+					case "GetSource": 			invocation.ReturnValue = this.container.Object;	break;
+					case "GetContainer":		invocation.ReturnValue = this.container;		break;
+				}
 			}
 
 			//invocation.Proceed();

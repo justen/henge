@@ -14,14 +14,9 @@ using ConcurrencyLayer.Entities;
 
 namespace ConcurrencyLayer
 {
-	
-	
-	
-	
 	public class ConcurrencyDataProvider : IDisposable
 	{
 		private IObjectContainer container	= null;
-		//private IDictionary<long, WeakReference> cache 	= new SortedDictionary<long, WeakReference>();
 		private ContainerCache cache		= null;
 		
 
@@ -119,6 +114,47 @@ namespace ConcurrencyLayer
 			ConcurrencyContainer container 	= this.cache.GetContainer<T>(this.container.AsQueryable<T>().SingleOrDefault(expression));
 			
 			return (container != null) ? container.PersistentObject as T : null;
+		}
+		
+		
+		public bool Lock(params object [] entities)
+		{
+			bool result = true;
+			
+			lock(this)
+			{
+				foreach (object entity in entities)
+				{
+					IPersistence persistent = entity as IPersistence;
+					
+					if (persistent != null)
+					{
+						if (!(persistent.GetContainer() as ConcurrencyContainer).Lock())
+						{
+							result = false;
+							break;
+						}
+					}
+					else throw new Exception("Attempted to lock a transient object");
+				}
+			}
+			
+			// Couldn't lock all objects so unlock any that have been
+			if (!result) this.Unlock(entities);
+			
+			return result;
+		}
+		
+		
+		public void Unlock(params object [] entities)
+		{
+			foreach (object entity in entities)
+			{
+				IPersistence persistent = entity as IPersistence;
+				
+				if (persistent != null) (persistent.GetContainer() as ConcurrencyContainer).Unlock();
+				else 					throw new Exception("Attempted to unlock a transient object");
+			}
 		}
 		
 

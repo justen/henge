@@ -39,14 +39,19 @@ namespace ConcurrencyLayer
 			
 			if (user != null)
 			{
+				if (db.Lock(user)) Console.WriteLine("Achieved user write lock");
 				user.Time = DateTime.Now;
+				db.Unlock(user);
 				
 				Console.WriteLine("user.Name = " + user.Name);
+				
 				Console.WriteLine("user.Password = " + user.Password);
 				Console.WriteLine("user.Time = " + user.Time);
 				
+				if (db.Lock(user)) Console.WriteLine("Achieved user write lock");
 				user.Name = "Thing";
 				Console.WriteLine("user.Name = " + user.Name);
+				db.Unlock(user);
 				
 
 				if (user.Role != null) 
@@ -55,8 +60,10 @@ namespace ConcurrencyLayer
 					
 					if (user.Role.Rolex != null) Console.WriteLine("user.Role.Rolex.Name = " + user.Role.Rolex.Name);
 					
+					if (db.Lock(user.Role)) Console.WriteLine("Achieved user.Role write lock");
 					user.Role.Rolex = user.Role.Rolex;
 					user.Role.Rolex = new Role { Name = "Something" };
+					db.Unlock(user.Role);
 				}
 				
 				if (user.Roles != null) Console.WriteLine("Accessed list");

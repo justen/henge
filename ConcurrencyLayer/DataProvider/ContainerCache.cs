@@ -12,7 +12,7 @@ namespace ConcurrencyLayer
 	internal class ContainerCache
 	{
 		private IObjectContainer container;
-		private IDictionary<long, WeakReference> cache 	= new SortedDictionary<long, WeakReference>();
+		private IDictionary<long, ConcurrencyContainer> cache 	= new SortedDictionary<long, ConcurrencyContainer>();
 		
 		
 		public ContainerCache(IObjectContainer container)
@@ -44,14 +44,12 @@ namespace ConcurrencyLayer
 				
 				lock (this)
 				{
-					if (this.cache.ContainsKey(id))
+					if (this.cache.ContainsKey(id))	
 					{
-						WeakReference reference = this.cache[id];
-						if (reference.Target == null) reference.Target = ConcurrencyContainer.Create(type, id, this.Activate(item), this);
-						
-						result = reference.Target as ConcurrencyContainer;
+						result			= this.cache[id];
+						result.Access	= DateTime.Now;
 					}
-					else this.cache.Add(id, new WeakReference(result = ConcurrencyContainer.Create(type, id, this.Activate(item), this)));
+					else this.cache.Add(id, result = ConcurrencyContainer.Create(type, id, this.Activate(item), this));
 				}
 			}
 			
@@ -84,6 +82,34 @@ namespace ConcurrencyLayer
 			}
 			
 			return item;
+		}
+		
+		
+		public void Flush()
+		{
+			// Flush dirty items to db4o
+			// Check for objects that have not been accessed for some time and remove them from the cache so that they can be garbage collected	
+			List<ConcurrencyContainer> flush	= new List<ConcurrencyContainer>();
+			List<long> delete					= new List<long>();
+			
+			lock(this)
+			{
+				foreach (KeyValuePair<long, ConcurrencyContainer> kvp in this.cache)
+				{
+					if (kvp.Value.Dirty)	flush.Add(kvp.Value);
+					if (kvp.Value.Expired)	delete.Add(kvp.Key);
+				}
+				
+				foreach (long id in delete) this.cache.Remove(id);
+			}
+			
+			foreach (ConcurrencyContainer cc in flush)
+			{
+				cc.Lock();
+					this.container.Store(cc.Object);
+					cc.Dirty = false;
+				cc.Unlock();
+			}
 		}
 	}
 }
