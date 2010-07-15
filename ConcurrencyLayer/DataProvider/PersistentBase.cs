@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 
 
@@ -52,18 +53,54 @@ namespace ConcurrencyLayer
 		}
 		
 		
-		protected bool Writing
+		/*protected bool Writing
 		{
 			get
 			{
 				return this.objectLock.IsWriteLockHeld;
 			}
-		}
+		}*/
 		
 		
 		protected void AssertWrite()
 		{
 			if (!this.objectLock.IsWriteLockHeld) throw new Exception("Attempted to modify an unlocked persistent object");
+			
+			this.Dirty = true;
+		}
+		
+		
+		protected object Read(Func<object> operation)
+		{
+			object result = null;
+			
+			if (!this.objectLock.IsWriteLockHeld)
+			{
+				this.objectLock.EnterReadLock();
+				
+				try 	{ result = operation();				}
+				finally	{ this.objectLock.ExitReadLock();	}
+			}
+			else result = operation();
+			
+			return result;
+		}
+		
+		
+		protected T Read<T>(Func<T> operation)
+		{
+			T result;
+			
+			if (!this.objectLock.IsWriteLockHeld)
+			{
+				this.objectLock.EnterReadLock();
+				
+				try 	{ result = operation();				}
+				finally	{ this.objectLock.ExitReadLock();	}
+			}
+			else result = operation();
+			
+			return result;
 		}
 	}
 }

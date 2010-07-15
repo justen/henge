@@ -1,13 +1,14 @@
 using System;
 using System.Linq;
 using System.Threading;
+using System.Collections;
 using System.Collections.Generic;
 
 
 
 namespace ConcurrencyLayer
 {
-	internal class PersistentList<T> : PersistentBase, IPersistence//, IList<T>
+	internal class PersistentList<T> : PersistentBase, IPersistence, IList<T>
 	{
 		protected IList<T> source		= null;
 		protected IList<T> persistent	= null;
@@ -46,73 +47,192 @@ namespace ConcurrencyLayer
 		
 		
 	#region IList<T> Members
-		int IndexOf(T item)
+		public int IndexOf(T item)
 		{
-			return this.persistent.IndexOf(item);
+			return this.Read(() => this.isClass ? this.persistent.IndexOf(item) : this.source.IndexOf(item));
 		}
 		
 
-		void Insert(int index, T item)
+		public void Insert(int index, T item)
 		{
 			this.AssertWrite();
-			
-			if (index < 0) throw new IndexOutOfRangeException("Negative Index");
+			if (index < 0) throw new IndexOutOfRangeException("Negative index");
 
 			if (this.isClass)
 			{
-				IPersistence persistent = item as IPersistence;
-				PersistentBase pb 		= (persistent == null) ? this.cache.GetBase(this.type, item) : persistent.GetBase() as PersistentBase;
+				PersistentBase persistent = (item is IPersistence) ? (item as IPersistence).GetBase() as PersistentBase : this.cache.GetBase(this.type, item);
 
-				this.source.Insert(index, (T)pb.Object);
-				this.persistent.Insert(index, (T)pb.PersistentObject);
+				this.source.Insert(index, (T)persistent.Object);
+				this.persistent.Insert(index, (T)persistent.PersistentObject);
 			}
 			else this.source.Insert(index, item);
 		}
 		
 
-		T this[int index]
+		public T this[int index]
 		{
 			get
 			{
-				throw new NotImplementedException();
+				if (index < 0) throw new IndexOutOfRangeException("Negative index");
 				
-				return default(T);
-//				if (index < 0)
-//				{
-//					throw new IndexOutOfRangeException("negative index");
-//				}
-//				object result = ReadElementByIndex(index);
-//				if (result == Unknown)
-//				{
-//					return glist[index];
-//				}
-//				else
-//				{
-//					return (T) result;
-//				}
+				return this.Read(() => this.isClass ? this.persistent[index] : this.source[index]);
 			}
 			set
 			{
 				this.AssertWrite();
-				throw new NotImplementedException();
-//				if (index < 0)
-//				{
-//					throw new IndexOutOfRangeException("negative index");
-//				}
-//				object old = PutQueueEnabled ? ReadElementByIndex(index) : Unknown;
-//				if (old == Unknown)
-//				{
-//					Write();
-//					glist[index] = value;
-//				}
-//				else
-//				{
-//					QueueOperation(new SetDelayedOperation(this, index, value, old));
-//				}
+				if (index < 0) throw new IndexOutOfRangeException("Negative index");
+				
+				if (this.isClass)
+				{
+					PersistentBase persistent	= (value is IPersistence) ? (value as IPersistence).GetBase() as PersistentBase : this.cache.GetBase(this.type, value);
+					this.source[index]			= (T)persistent.Object;
+					this.persistent[index]		= (T)persistent.PersistentObject;
+				}
+				else this.source[index] = value;
 			}
 		}
 	#endregion
 		
 		
+	#region ICollection<T> Members
+		public void Add(T item)
+		{
+			this.AssertWrite();
+			
+			if (this.isClass)
+			{
+				PersistentBase persistent = (item is IPersistence) ? (item as IPersistence).GetBase() as PersistentBase : this.cache.GetBase(this.type, item);
+
+				this.source.Add((T)persistent.Object);
+				this.persistent.Add((T)persistent.PersistentObject);
+			}
+			else this.source.Add(item);
+		}
+		
+		
+		public void Clear()
+		{
+			this.AssertWrite();
+			
+			this.source.Clear();
+			if (this.isClass) this.persistent.Clear();
+		}
+
+		
+		public bool Contains(T item)
+		{
+			return this.Read(() => this.isClass ? this.persistent.Contains(item) : this.source.Contains(item));
+		}
+		
+
+		public void CopyTo(T[] array, int arrayIndex)
+		{
+			this.Read(() => {
+				int count = this.Count;
+				if (this.isClass) 	for (int i=0; i<count; i++) array.SetValue(this.persistent[i], i + arrayIndex);
+				else 				for (int i=0; i<count; i++) array.SetValue(this.source[i], i + arrayIndex);
+				return true;
+			});
+		}
+
+		
+		public bool Remove(T item)
+		{
+			this.AssertWrite();
+			
+			int index = this.IndexOf(item);
+			
+			if (index >= 0)
+			{
+				this.RemoveAt(index);
+				return true;
+			}
+			
+			return false;
+		}
+		
+		
+		public void RemoveAt(int index)
+		{
+			this.AssertWrite();
+			
+			this.source.RemoveAt(index);
+			if (this.isClass) this.persistent.RemoveAt(index);
+		}
+		
+		
+		public bool IsReadOnly
+		{
+			get { return false; }
+		}
+		
+		
+		public int Count
+		{
+			get { return this.Read(() => this.source.Count); }
+		}
+	#endregion
+
+		
+	#region IEnumerable<T> Members
+		IEnumerator<T> IEnumerable<T>.GetEnumerator()
+		{
+			return new Enumerator(this);
+		}
+		
+		
+		public IEnumerator GetEnumerator()
+		{
+			return new Enumerator(this);
+		}
+	#endregion
+
+		
+		class Enumerator : IEnumerator<T>, IEnumerator
+		{
+			private PersistentList<T> list;
+			private T current = default(T);
+			private int index = -1;
+			
+			
+			public Enumerator(PersistentList<T> list)
+			{
+				this.list = list;
+			}
+		
+		
+			public T Current
+			{
+				get { return this.current; }
+			}
+			
+			
+			object IEnumerator.Current
+			{
+				get { return this.Current; }
+			}
+			
+			
+			public bool MoveNext()
+			{
+				if (++this.index < this.list.Count) 
+				{
+					this.current = this.list[this.index];
+					return true;
+				}
+				
+				return false;
+			}
+			
+			
+			public void Reset() 
+			{
+				this.index		= -1;
+				this.current	= default(T);
+			}
+			
+			
+			void IDisposable.Dispose() { }
+		}
 	}//*/
 }

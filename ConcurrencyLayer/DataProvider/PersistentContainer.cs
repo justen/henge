@@ -14,41 +14,24 @@ namespace ConcurrencyLayer
 		}
 		
 		
+		private static bool RequiresPersistent(Type type)
+		{
+			return (type.IsClass || type.IsGenericType) && type != typeof(string);
+		}
+			
+		
+		
 		public object GetProperty(PropertyInfo property)
 		{
 			object result	= null;
 			Type type		= property.PropertyType;
 			
-			if (type.IsClass && type != typeof(string))
+			if (PersistentContainer.RequiresPersistent(type))
 			{
-				/*if (type.IsGenericType)
-				{
-					Type generic = type.GetGenericTypeDefinition();
-					
-					if (generic == typeof(IList<>))
-					{
-						Console.WriteLine("  Intercepted list access");
-					}
-					else if (generic == typeof(IDictionary<,>))
-					{
-						Console.WriteLine("  Intercepted dictionary access");
-					}
-				}
-				else
-				{*/
-					if (!this.Writing) this.objectLock.EnterReadLock();
-						object obj = property.GetValue(this.Object, null);
-					if (!this.Writing) this.objectLock.ExitReadLock();
-					
-					result = this.cache.GetPersistent(type, obj);
-				//}
+				object obj	= this.Read(() => property.GetValue(this.Object, null));
+				result		= this.cache.GetPersistent(type, obj);
 			}
-			else 
-			{
-				if (!this.Writing) this.objectLock.EnterReadLock();
-					result = property.GetValue(this.Object, null);
-				if (!this.Writing) this.objectLock.ExitReadLock();
-			}
+			else result = this.Read(() => property.GetValue(this.Object, null));
 				
 			return result;
 		}
@@ -62,44 +45,13 @@ namespace ConcurrencyLayer
 			object actual 	= value;
 			
 			// DateTime/TimeStamp will also get ignored since it is a struct not a class
-			if (value != null && type.IsClass && type != typeof(string))
+			if (value != null && PersistentContainer.RequiresPersistent(type))
 			{
-				/*if (type.IsGenericType)
-				{
-					Type generic = type.GetGenericTypeDefinition();
-						
-					if (generic == typeof(IList<>))
-					{
-						Console.WriteLine("  Intercepted list assignment");
-					}
-					else if (generic == typeof(IDictionary<,>))
-					{
-						Console.WriteLine("  Intercepted dictionary assignment");
-					}
-				}
-				else
-				{*/
-					IPersistence persistent = value as IPersistence;
-					
-					if (persistent == null)
-					{
-						Console.WriteLine("  Intercepted entity assignment - target is not persistent");
-						
-						// This should create a new container and actually store the object to the database
-						actual = this.cache.GetSource(type, value);
-					}
-					else
-					{
-						Console.WriteLine("  Intercepted entity assignment - target is persistent");
-						
-						actual = persistent.GetSource();
-					} 
-				//}
+				// If target is not persistent, create a new persistent wrapper and actually store the object to the database. If the target is persistent simply retrieve its source.
+				actual = (value is IPersistence) ? (value as IPersistence).GetSource() : this.cache.GetSource(type, value);
 			}
 			
 			property.SetValue(this.Object, actual, null);
-			this.Dirty = true;
 		}
 	}
-	
 }

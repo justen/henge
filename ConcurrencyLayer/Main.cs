@@ -35,7 +35,6 @@ namespace ConcurrencyLayer
 
 				
 			User user	= db.Get<User>(u => u.Name == "Dan");
-			//User user2	= db.Get<User>(u => u.Name == "Dan");
 			
 			if (user != null)
 			{
@@ -48,9 +47,10 @@ namespace ConcurrencyLayer
 				Console.WriteLine("user.Password = " + user.Password);
 				Console.WriteLine("user.Time = " + user.Time);
 				
-				if (db.Lock(user)) Console.WriteLine("Achieved user write lock");
+				if (db.Lock(user, user.Roles)) Console.WriteLine("Achieved user write lock");
 				user.Name = "Thing";
 				Console.WriteLine("user.Name = " + user.Name);
+				user.Roles.Add(user.Role);
 				db.Unlock(user);
 				
 
@@ -66,8 +66,25 @@ namespace ConcurrencyLayer
 					db.Unlock(user.Role);
 				}
 				
-				if (user.Roles != null) Console.WriteLine("Accessed list");
-				if (user.RoleDictionary != null) Console.WriteLine("Accessed dictionary");
+				if (user.Roles != null)
+				{
+					Console.WriteLine("user.Roles:");
+					foreach (Role r in user.Roles)
+					{
+						Console.WriteLine("  " + r.Name);
+					}
+					
+					Console.WriteLine("user.Numbers:");
+					foreach(int n in user.Numbers)
+					{
+						Console.WriteLine("  " + n);
+					}
+					
+					Console.WriteLine("LINQ for user.Roles:");
+					Console.WriteLine("  " + user.Roles.Where(r => r.Name.StartsWith("Code")).Single().Name);
+					
+				}
+				//if (user.RoleDictionary != null) Console.WriteLine("Accessed dictionary");
 			}//*/
 		}
 	}

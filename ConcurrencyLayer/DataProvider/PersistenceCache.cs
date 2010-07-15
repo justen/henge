@@ -53,18 +53,42 @@ namespace ConcurrencyLayer
 					{
 						if (type.IsGenericType)
 						{
-							//Type generic = type.GetGenericTypeDefinition();
-							
-							//if (generic == typeof(IList<>))				result = new PersistentList(
-							//else if (generic == typeof(IDictionary<,>))	result = new PersistentDictionary(...);
+							if (this.IsList(type)) result = Activator.CreateInstance(this.MakeList(type), id, this.Activate(item), this) as PersistentBase;
+							//else if (this.IsDictionary(type))	result = new PersistentDictionary(...);
 						}
-						else this.cache.Add(id, result = new PersistentContainer(type, id, this.Activate(item), this));
+						else result = new PersistentContainer(type, id, this.Activate(item), this);
+							
+						if (result != null) this.cache.Add(id, result);
 					}
 				}
 			}
 			
 			return result;	
 		}
+	
+		
+		private bool IsList(Type source)
+		{
+			return source.GetGenericTypeDefinition() == typeof(IList<>);
+		}
+		
+		
+		private bool IsDictionary(Type source)
+		{
+			return source.GetGenericTypeDefinition() == typeof(IDictionary<,>);
+		}
+		
+	
+		private Type MakeList(Type source)
+		{
+			return typeof(PersistentList<>).MakeGenericType(source.GetGenericArguments());
+		}
+		
+		
+		/*private Type MakeDictionary(Type source)
+		{
+			return typeof(PersistentDictionary<,>).MakeGenericType(source.GetGenericArguments());
+		}*/
 		
 	
 		public object GetPersistent(Type type, object item)
@@ -88,7 +112,7 @@ namespace ConcurrencyLayer
 			if (!this.container.Ext().IsActive(item))
 			{
 				Console.WriteLine("  Lazy loading:" + item.ToString());
-				this.container.Activate(item, 1);
+				this.container.Activate(item, 1);	
 			}
 			
 			return item;
