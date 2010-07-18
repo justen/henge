@@ -47,23 +47,9 @@ namespace ConcurrencyLayer
 		}
 
 		
-		public T Store<T>(T entity)
+		public T Store<T>(T entity) where T : class
 		{
-			/*IObjectContainer container = this.GetContainer();
-			
-			if (container != null)
-			{
-				container.Store(entity);
-				container.Commit();
-				
-				return entity;
-			}	*/
-			
-			// Temporary store code - should be using the queues
-			this.container.Store(entity);
-			this.container.Commit();
-			
-			return entity;
+			return this.cache.GetPersistent(typeof(T), entity) as T;
 		}
 		
 		
@@ -111,9 +97,7 @@ namespace ConcurrencyLayer
 		
 		public T Get<T>(Func<T, bool> expression) where T : class
 		{
-			PersistentContainer container 	= this.cache.GetContainer<T>(this.container.AsQueryable<T>().SingleOrDefault(expression));
-			
-			return (container != null) ? container.PersistentObject as T : null;
+			return this.cache.GetPersistent(typeof(T), this.container.AsQueryable<T>().SingleOrDefault(expression)) as T;
 		}
 		
 		

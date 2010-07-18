@@ -16,6 +16,7 @@ namespace ConcurrencyLayer
 		
 		private static bool RequiresPersistent(Type type)
 		{
+			// DateTime/TimeStamp will also get ignored since it is a struct not a class
 			return (type.IsClass || type.IsGenericType) && type != typeof(string);
 		}
 			
@@ -44,7 +45,6 @@ namespace ConcurrencyLayer
 			Type type		= property.PropertyType;
 			object actual 	= value;
 			
-			// DateTime/TimeStamp will also get ignored since it is a struct not a class
 			if (value != null && PersistentContainer.RequiresPersistent(type))
 			{
 				// If target is not persistent, create a new persistent wrapper and actually store the object to the database. If the target is persistent simply retrieve its source.

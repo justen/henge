@@ -21,12 +21,6 @@ namespace ConcurrencyLayer
 		}
 		
 		
-		public PersistentContainer GetContainer<T>(T item) where T : class
-		{
-			return this.GetBase(typeof(T), item) as PersistentContainer;
-		}
-		
-		
 		public PersistentBase GetBase(Type type, object item)
 		{
 			PersistentBase result = null;
@@ -39,6 +33,7 @@ namespace ConcurrencyLayer
 				{
 					// If db4o is not aware of this item then store it
 					this.container.Store(item);
+					this.container.Commit();
 					id = this.container.Ext().GetID(item);
 				}
 				
@@ -53,8 +48,8 @@ namespace ConcurrencyLayer
 					{
 						if (type.IsGenericType)
 						{
-							if (this.IsList(type)) result = Activator.CreateInstance(this.MakeList(type), id, this.Activate(item), this) as PersistentBase;
-							//else if (this.IsDictionary(type))	result = new PersistentDictionary(...);
+							if (this.IsList(type))				result = Activator.CreateInstance(this.MakeList(type), id, this.Activate(item), this) as PersistentBase;
+							else if (this.IsDictionary(type))	result = Activator.CreateInstance(this.MakeDictionary(type), id, this.Activate(item), this)	as PersistentBase;
 						}
 						else result = new PersistentContainer(type, id, this.Activate(item), this);
 							
@@ -85,10 +80,10 @@ namespace ConcurrencyLayer
 		}
 		
 		
-		/*private Type MakeDictionary(Type source)
+		private Type MakeDictionary(Type source)
 		{
 			return typeof(PersistentDictionary<,>).MakeGenericType(source.GetGenericArguments());
-		}*/
+		}
 		
 	
 		public object GetPersistent(Type type, object item)
@@ -128,10 +123,10 @@ namespace ConcurrencyLayer
 			
 			lock(this)
 			{
-				foreach (KeyValuePair<long, PersistentBase> kvp in this.cache)
+				foreach (KeyValuePair<long, PersistentBase> item in this.cache)
 				{
-					if (kvp.Value.Dirty)	flush.Add(kvp.Value);
-					if (kvp.Value.Expired)	delete.Add(kvp.Key);
+					if (item.Value.Dirty)	flush.Add(item.Value);
+					if (item.Value.Expired)	delete.Add(item.Key);
 				}
 				
 				foreach (long id in delete) this.cache.Remove(id);
@@ -144,6 +139,7 @@ namespace ConcurrencyLayer
 					item.Dirty = false;
 				item.Unlock();
 			}
+			this.container.Commit();
 		}
 	}
 }

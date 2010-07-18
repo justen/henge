@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
 
 
 using ConcurrencyLayer.Entities;
@@ -12,15 +13,6 @@ namespace ConcurrencyLayer
 	{
 		public static void Main (string[] args)
 		{
-			/*User user = Persistence.Create<User>();
-			user.Name = "Dan";
-			user.Password = "qwerty";
-			Console.WriteLine(user.Name);
-			Console.WriteLine(user.Password);
-			user.Test();*/
-			
-			//if (File.Exists("test.yap")) File.Delete("test.yap");
-			
 			ConcurrencyDataProvider db = new ConcurrencyDataProvider();
 
 			db.Initialise("test.yap", 1);
@@ -84,7 +76,21 @@ namespace ConcurrencyLayer
 					Console.WriteLine("  " + user.Roles.Where(r => r.Name.StartsWith("Code")).Single().Name);
 					
 				}
-				//if (user.RoleDictionary != null) Console.WriteLine("Accessed dictionary");
+				if (user.RoleDictionary != null)
+				{
+					Console.WriteLine("user.RoleDictionary:");
+					
+					//Console.WriteLine("  " + user.RoleDictionary["bread"].Name);
+					
+					foreach (KeyValuePair<string, Role> item in user.RoleDictionary)
+					{
+						Console.WriteLine("  {0} = {1}", item.Key, item.Value.Name);
+					}
+					
+					
+					Console.WriteLine("LINQ for user.RoleDictionary:");
+					Console.WriteLine("  " + user.RoleDictionary.Where(i => i.Key == "another").Single().Value.Name);
+				}
 			}//*/
 		}
 	}

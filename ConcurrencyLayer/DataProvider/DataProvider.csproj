@@ -58,6 +58,7 @@
     <Compile Include="PersistentContainer.cs" />
     <Compile Include="PersistenceCache.cs" />
     <Compile Include="PersistentBase.cs" />
+    <Compile Include="PersistentDictionary.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Entities\" />

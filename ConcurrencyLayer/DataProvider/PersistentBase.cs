@@ -9,8 +9,7 @@ namespace ConcurrencyLayer
 	{
 		private static int LOCK_TIMEOUT = 1;  // Milliseconds
 		private static int CACHE_LIFE	= 600;	// Seconds
-		
-		
+
 		protected PersistenceCache cache;
 		protected ReaderWriterLockSlim objectLock = new ReaderWriterLockSlim();
 		
@@ -34,10 +33,7 @@ namespace ConcurrencyLayer
 		
 		public bool Expired
 		{
-			get
-			{
-				return (DateTime.Now - this.Access).Seconds > CACHE_LIFE;
-			}
+			get { return (DateTime.Now - this.Access).Seconds > CACHE_LIFE; }
 		}
 		
 		
@@ -53,15 +49,6 @@ namespace ConcurrencyLayer
 		}
 		
 		
-		/*protected bool Writing
-		{
-			get
-			{
-				return this.objectLock.IsWriteLockHeld;
-			}
-		}*/
-		
-		
 		protected void AssertWrite()
 		{
 			if (!this.objectLock.IsWriteLockHeld) throw new Exception("Attempted to modify an unlocked persistent object");
@@ -70,9 +57,9 @@ namespace ConcurrencyLayer
 		}
 		
 		
-		protected object Read(Func<object> operation)
+		protected T Read<T>(Func<T> operation)
 		{
-			object result = null;
+			T result = default(T);
 			
 			if (!this.objectLock.IsWriteLockHeld)
 			{
@@ -87,20 +74,9 @@ namespace ConcurrencyLayer
 		}
 		
 		
-		protected T Read<T>(Func<T> operation)
+		protected PersistentBase GetBase(Type type, object item)
 		{
-			T result;
-			
-			if (!this.objectLock.IsWriteLockHeld)
-			{
-				this.objectLock.EnterReadLock();
-				
-				try 	{ result = operation();				}
-				finally	{ this.objectLock.ExitReadLock();	}
-			}
-			else result = operation();
-			
-			return result;
+			return (item is IPersistence) ? (item as IPersistence).GetBase() as PersistentBase : this.cache.GetBase(type, item);
 		}
 	}
 }

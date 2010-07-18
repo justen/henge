@@ -20,12 +20,13 @@ namespace ConcurrencyLayer
 		{
 			this.type 				= typeof(T);
 			this.source				= source;
-			this.isClass			= this.type.IsClass && this.type != typeof(string);
+			this.isClass			= (this.type.IsClass || this.type.IsGenericType) && this.type != typeof(string);
 			this.PersistentObject	= this;
 			
 			if (this.isClass)
 			{
 				this.persistent	= new List<T>(source.Count);
+				
 				foreach (T item in this.source)
 				{
 					this.persistent.Add((T)this.cache.GetPersistent(this.type, item));
@@ -60,7 +61,7 @@ namespace ConcurrencyLayer
 
 			if (this.isClass)
 			{
-				PersistentBase persistent = (item is IPersistence) ? (item as IPersistence).GetBase() as PersistentBase : this.cache.GetBase(this.type, item);
+				PersistentBase persistent = this.GetBase(this.type, item);
 
 				this.source.Insert(index, (T)persistent.Object);
 				this.persistent.Insert(index, (T)persistent.PersistentObject);
@@ -84,7 +85,7 @@ namespace ConcurrencyLayer
 				
 				if (this.isClass)
 				{
-					PersistentBase persistent	= (value is IPersistence) ? (value as IPersistence).GetBase() as PersistentBase : this.cache.GetBase(this.type, value);
+					PersistentBase persistent	= this.GetBase(this.type, value);
 					this.source[index]			= (T)persistent.Object;
 					this.persistent[index]		= (T)persistent.PersistentObject;
 				}
@@ -101,7 +102,7 @@ namespace ConcurrencyLayer
 			
 			if (this.isClass)
 			{
-				PersistentBase persistent = (item is IPersistence) ? (item as IPersistence).GetBase() as PersistentBase : this.cache.GetBase(this.type, item);
+				PersistentBase persistent = this.GetBase(this.type, item);
 
 				this.source.Add((T)persistent.Object);
 				this.persistent.Add((T)persistent.PersistentObject);
@@ -125,12 +126,12 @@ namespace ConcurrencyLayer
 		}
 		
 
-		public void CopyTo(T[] array, int arrayIndex)
+		public void CopyTo(T[] array, int index)
 		{
 			this.Read(() => {
-				int count = this.Count;
-				if (this.isClass) 	for (int i=0; i<count; i++) array.SetValue(this.persistent[i], i + arrayIndex);
-				else 				for (int i=0; i<count; i++) array.SetValue(this.source[i], i + arrayIndex);
+				int count = this.source.Count;
+				if (this.isClass) 	for (int i=0; i<count; i++) array.SetValue(this.persistent[i], i + index);
+				else 				for (int i=0; i<count; i++) array.SetValue(this.source[i], i + index);
 				return true;
 			});
 		}
@@ -160,16 +161,16 @@ namespace ConcurrencyLayer
 			if (this.isClass) this.persistent.RemoveAt(index);
 		}
 		
+
+		public int Count
+		{
+			get { return this.Read(() => this.source.Count); }
+		}
+
 		
 		public bool IsReadOnly
 		{
 			get { return false; }
-		}
-		
-		
-		public int Count
-		{
-			get { return this.Read(() => this.source.Count); }
 		}
 	#endregion
 
@@ -234,5 +235,5 @@ namespace ConcurrencyLayer
 			
 			void IDisposable.Dispose() { }
 		}
-	}//*/
+	}
 }
