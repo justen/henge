@@ -87,11 +87,7 @@ namespace ConcurrencyLayer
 		
 		public IQueryable<T> Query<T>()
 		{
-			/*IObjectContainer container = this.GetContainer();
-			
-			return (container == null) ? null : container.AsQueryable<T>(); //(from T item in container select item).AsQueryable();*/
-			
-			return null;
+			return InterceptingProvider.Intercept<T>(this.container.AsQueryable<T>(), this.cache);
 		}
 		
 		

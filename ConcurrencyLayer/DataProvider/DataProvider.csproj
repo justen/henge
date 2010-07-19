@@ -59,6 +59,7 @@
     <Compile Include="PersistenceCache.cs" />
     <Compile Include="PersistentBase.cs" />
     <Compile Include="PersistentDictionary.cs" />
+    <Compile Include="QueryIntercept.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Entities\" />

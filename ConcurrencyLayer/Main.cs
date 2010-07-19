@@ -26,7 +26,16 @@ namespace ConcurrencyLayer
 			db.Store<User>(user);//*/
 
 				
-			User user	= db.Get<User>(u => u.Name == "Dan");
+			//User user	= db.Get<User>(u => u.Name == "Dan");
+			
+			var roles = from r in db.Query<Role>() where r.Name != "Something" select r;
+			
+			foreach (Role r in roles)
+			{
+				Console.WriteLine(" Queried role: " + r.Name);
+			}
+			
+			User user = (from u in db.Query<User>() where u.Name == "Dan" select u).SingleOrDefault();
 			
 			if (user != null)
 			{
