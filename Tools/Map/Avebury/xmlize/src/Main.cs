@@ -2,7 +2,8 @@ using System;
 using System.IO;
 using System.Xml;
 using System.Drawing;
-using System.Collections.Generic;
+using System.Windows.Media.Imaging;
+using System.Collections.Generic; 
 
 namespace xmlize
 {
@@ -21,7 +22,8 @@ namespace xmlize
 				{
 					if (File.Exists(output))
 					{
-						maps.Add(output, new Bitmap(output));
+						
+						maps.Add(output, (Bitmap)Bitmap.FromFile(output));
 					}
 					output = arguments[i.ToString()];
 					i++;

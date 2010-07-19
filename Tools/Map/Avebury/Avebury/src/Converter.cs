@@ -69,14 +69,15 @@ namespace Avebury
 								key = world.CreateElement("key");
 								world.AppendChild(key);
 							}
-							if (mapNode==null)
+							if (mapNode!=null) mapNode.RemoveAll();
+							else 
 							{
 								mapNode = world.CreateElement("map");
-								mapNode.Attributes.Append(world.CreateAttribute("name"));
-								mapNode.Attributes["name"].Value = name;
 								world.AppendChild(mapNode);
 							}
-							else mapNode.RemoveAll();
+							mapNode.Attributes.Append(world.CreateAttribute("name"));
+							mapNode.Attributes["name"].Value = name;
+						
 							
 							//parse bitmap, and add it to the world;
 							this.GenerateMap(mapNode, key, map);
@@ -90,14 +91,27 @@ namespace Avebury
 			return world;
 		}
 		
-		private Dictionary<string, XmlNode> Collate (XmlNode key)
+		private Dictionary<string, XmlNode> Collate (XmlNode key, Mapper mapper)
 		{
 			Dictionary<string, XmlNode> result = new Dictionary<string, XmlNode>();
 			foreach ( XmlNode child in key)
 			{
 				if (key.Name == "terrain")
 				{
-					result.Add(child.Attributes["key"].Value, child);	
+					foreach (XmlNode appearance in child)
+					{
+						bool def = true;
+						foreach (XmlNode properties in appearance)
+						{
+							if (properties.Name == "condition") def = false;
+						}
+						if (def) 
+						{
+							result.Add(appearance.Attributes["colour"].Value, child);
+							mapper.AddMapping(child.Attributes["id"].Value, System.Drawing.ColorTranslator.FromHtml(appearance.Attributes["colour"].Value));
+							break;
+						}
+					}
 				}
 			}
 			return result;
@@ -106,7 +120,9 @@ namespace Avebury
 		private void GenerateMap (XmlNode map, XmlNode key, Bitmap source)
 		{
 			XmlDocument doc = map.OwnerDocument;
-			Dictionary<string, XmlNode> keys = this.Collate(key);
+			Mapper mapper = new Mapper();
+			Dictionary<string, XmlNode> keys = this.Collate(key, mapper);
+			
 			for (int x = 0; x < source.Width; x++)
 			{
 				for (int y = 0; y<source.Height; y++)
@@ -118,9 +134,7 @@ namespace Avebury
 					{
 						XmlNode newTerrain = key.OwnerDocument.CreateElement("terrain");
 						newTerrain.Attributes.Append(doc.CreateAttribute("id"));
-						newTerrain.Attributes.Append(doc.CreateAttribute("key"));
-						newTerrain.Attributes["id"].Value = "undefined";
-						newTerrain.Attributes["key"].Value = colour.ToString();
+						newTerrain.Attributes["id"].Value = mapper.Id(colour);
 						XmlNode appearance = key.OwnerDocument.CreateElement("appearance");
 						appearance.Attributes.Append(doc.CreateAttribute("type"));
 						appearance.Attributes.Append(doc.CreateAttribute("description"));
@@ -141,12 +155,11 @@ namespace Avebury
 						keys.Add(colour.ToString(), newTerrain);
 					}
 					XmlNode location = key.OwnerDocument.CreateElement("location");
-					location.Attributes.Append(doc.CreateAttribute("id"));
 					location.Attributes.Append(doc.CreateAttribute("type"));
 					location.Attributes.Append(doc.CreateAttribute("coordinates"));
 					location.Attributes.Append(doc.CreateAttribute("name"));
 					location.Attributes.Append(doc.CreateAttribute("detail"));
-					location.Attributes["type"].Value = colour.ToString();
+					location.Attributes["type"].Value = mapper.Id(colour);
 					location.Attributes["coordinates"].Value = string.Format("{0},{1},{2}", x, y, elevation);
 					map.AppendChild(location);
 				}
