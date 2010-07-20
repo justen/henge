@@ -1,4 +1,3 @@
-using wx;
 using System;
 using System.Xml;
 using System.Collections.Generic;

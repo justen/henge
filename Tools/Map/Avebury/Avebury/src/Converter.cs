@@ -1,5 +1,4 @@
 using System;
-using wx;
 using System.Xml;
 using System.Collections.Generic;
 
@@ -131,7 +130,6 @@ namespace Avebury
 					int red = source.GetRed(x, y);
 					int green = source.GetGreen(x, y);
 					int blue = source.GetBlue(x, y);
-					Console.WriteLine(string.Format("Alpha {3}, Red {0}, Green {1}, Blue {2}", red, green, blue, elevation));
 					string colourString = string.Format("#{0}{1}{2}", red.ToString("x").PadLeft(2,'0'), 
 					                                    green.ToString("x").PadLeft(2,'0'), 
 					                                    blue.ToString("x").PadLeft(2,'0'));

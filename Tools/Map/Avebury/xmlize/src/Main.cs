@@ -37,13 +37,29 @@ namespace xmlize
 				foreach (string map in maps.Keys)
 				{
 					Console.WriteLine(string.Format("Converting {0}", map));
-					target = Avebury.Converter.Instance.Convert(maps[map], map, target);
+					target = Avebury.Converter.Instance.Convert(Xmlize.PrepImage(maps[map]), map, target);
 					Console.WriteLine(string.Format("{0} converted", map));
 					maps[map].Dispose();
 				}
 				if (target != null) target.Save(output);
 			}
 			else Xmlize.Usage();
+		}
+		
+		private static Avebury.Image PrepImage(wx.Image input)
+		{
+			Avebury.Image result = new Avebury.Image(input.Width, input.Height);
+			for (int x = 0; x<input.Width; x++)
+			{
+				for (int y = 0; y<input.Height; y++)
+				{
+					result.SetRed(x, y, input.GetRed(x, y));
+					result.SetGreen(x, y, input.GetGreen(x, y));
+					result.SetBlue(x, y, input.GetBlue(x, y));
+					result.SetAlpha(x, y, input.GetAlpha(x, y));
+				}
+			}
+			return result;
 		}
 		
 		private static bool Validate(Dictionary<string, string> arguments)
