@@ -1,0 +1,4 @@
+ * the appropriate .so needs copying to /usr/local/lib and symlinking to /usr/local/lib/libwx-c-0-9-0-2.so
+ * You can simply refer to the wx.NET assembly if you can't be bothered sorting out the gac and pkg-config junk.
+ * Death to Microsoft.
+ * You also need the wxWidgets libraries installing on the system.

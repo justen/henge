@@ -1,8 +1,8 @@
+using wx;
 using System;
 using System.IO;
 using System.Xml;
-using System.Drawing;
-using System.Windows.Media.Imaging;
+
 using System.Collections.Generic; 
 
 namespace xmlize
@@ -15,7 +15,7 @@ namespace xmlize
 			Dictionary<string, string> arguments = Xmlize.GetOpt(args);
 			if (Xmlize.Validate(arguments))
 			{
-				Dictionary<string, Bitmap> maps = new Dictionary<string, Bitmap>();
+				Dictionary<string, Image> maps = new Dictionary<string, Image>();
 				int i = 1;
 				string output = arguments["0"];
 				while (arguments.ContainsKey(i.ToString()))
@@ -23,7 +23,7 @@ namespace xmlize
 					if (File.Exists(output))
 					{
 						
-						maps.Add(output, (Bitmap)Bitmap.FromFile(output));
+						maps.Add(output, new Image(output));
 					}
 					output = arguments[i.ToString()];
 					i++;

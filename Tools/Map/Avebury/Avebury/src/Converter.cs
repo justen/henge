@@ -1,6 +1,6 @@
 using System;
+using wx;
 using System.Xml;
-using System.Drawing;
 using System.Collections.Generic;
 
 namespace Avebury
@@ -11,15 +11,15 @@ namespace Avebury
 		public static Converter Instance { get { return instance; }}
 		static Converter() {}
 		private Converter (){}
-		
-		public XmlDocument Create(Bitmap map, string name)
+	
+		public XmlDocument Create(Image map, string name)
 		{
 			if (map==null) throw new Exception("Map image could not be opened");
 			//create a new world document
 			XmlDocument result = new XmlDocument();
 			result.AppendChild(result.CreateXmlDeclaration("1.0", "UTF-8", "yes"));
 			result.AppendChild(result.CreateDocumentType("avebury", null, null, null));
-			
+
 			//set up the world, key and first map elements
 			XmlNode root = result.CreateElement("world");
 			result.AppendChild(root);
@@ -37,7 +37,7 @@ namespace Avebury
 			return result;
 		}
 		
-		public XmlDocument Convert(Bitmap map, string name, XmlDocument world)
+		public XmlDocument Convert(Image map, string name, XmlDocument world)
 		{
 			bool worldFound = false;
 			if (map==null) throw new Exception("Map image could not be opened");
@@ -108,7 +108,7 @@ namespace Avebury
 						if (def) 
 						{
 							result.Add(appearance.Attributes["colour"].Value, child);
-							mapper.AddMapping(child.Attributes["id"].Value, System.Drawing.ColorTranslator.FromHtml(appearance.Attributes["colour"].Value));
+							mapper.AddMapping(child.Attributes["id"].Value, appearance.Attributes["colour"].Value);
 							break;
 						}
 					}
@@ -117,7 +117,7 @@ namespace Avebury
 			return result;
 		}
 		
-		private void GenerateMap (XmlNode map, XmlNode key, Bitmap source)
+		private void GenerateMap (XmlNode map, XmlNode key, Image source)
 		{
 			XmlDocument doc = map.OwnerDocument;
 			Mapper mapper = new Mapper();
@@ -126,15 +126,20 @@ namespace Avebury
 			for (int x = 0; x < source.Width; x++)
 			{
 				for (int y = 0; y<source.Height; y++)
-				{
-					Color tile = source.GetPixel(x, y);
-					int elevation = tile.A;
-					Color colour = Color.FromArgb(255, tile.R, tile.G, tile.B);
-					if (!keys.ContainsKey(colour.ToString()))
+				{			
+					int elevation = source.GetAlpha(x, y);
+					int red = source.GetRed(x, y);
+					int green = source.GetGreen(x, y);
+					int blue = source.GetBlue(x, y);
+					Console.WriteLine(string.Format("Alpha {3}, Red {0}, Green {1}, Blue {2}", red, green, blue, elevation));
+					string colourString = string.Format("#{0}{1}{2}", red.ToString("x").PadLeft(2,'0'), 
+					                                    green.ToString("x").PadLeft(2,'0'), 
+					                                    blue.ToString("x").PadLeft(2,'0'));
+					if (!keys.ContainsKey(colourString))
 					{
 						XmlNode newTerrain = key.OwnerDocument.CreateElement("terrain");
 						newTerrain.Attributes.Append(doc.CreateAttribute("id"));
-						newTerrain.Attributes["id"].Value = mapper.Id(colour);
+						newTerrain.Attributes["id"].Value = mapper.Id(colourString);
 						XmlNode appearance = key.OwnerDocument.CreateElement("appearance");
 						appearance.Attributes.Append(doc.CreateAttribute("type"));
 						appearance.Attributes.Append(doc.CreateAttribute("description"));
@@ -144,7 +149,7 @@ namespace Avebury
 						appearance.Attributes["type"].Value = "firmament";
 						appearance.Attributes["description"].Value = "nothingness";
 						appearance.Attributes["short_description"].Value = "nothingness";
-						appearance.Attributes["colour"].Value = System.Drawing.ColorTranslator.ToHtml(colour);
+						appearance.Attributes["colour"].Value = colourString;
 						
 						//If we were to handle conditional appearances here, it'd just be a case of adding multiple 
 						//appearance elements, each containing at least one "condition" element specifying the conditions
@@ -152,14 +157,14 @@ namespace Avebury
 						//apply *on top* of the default appearance.
 						
 						newTerrain.AppendChild(appearance);
-						keys.Add(colour.ToString(), newTerrain);
+						keys.Add(colourString, newTerrain);
 					}
 					XmlNode location = key.OwnerDocument.CreateElement("location");
 					location.Attributes.Append(doc.CreateAttribute("type"));
 					location.Attributes.Append(doc.CreateAttribute("coordinates"));
 					location.Attributes.Append(doc.CreateAttribute("name"));
 					location.Attributes.Append(doc.CreateAttribute("detail"));
-					location.Attributes["type"].Value = mapper.Id(colour);
+					location.Attributes["type"].Value = mapper.Id(colourString);
 					location.Attributes["coordinates"].Value = string.Format("{0},{1},{2}", x, y, elevation);
 					map.AppendChild(location);
 				}

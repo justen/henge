@@ -1,21 +1,22 @@
+using wx;
 using System;
 using System.Xml;
 using System.Collections.Generic;
-using System.Drawing;
+
 namespace Avebury
 {
 	public class Mapper
 	{
-		Dictionary<string, Color> idToColour;
-		Dictionary<Color, string> colourToId;
+		Dictionary<string, string> idToColour;
+		Dictionary<string, string> colourToId;
 		
 		public Mapper ()
 		{
-			this.colourToId = new Dictionary<Color, string>();
-			this.idToColour = new Dictionary<string, Color>();
+			this.colourToId = new Dictionary<string, string>();
+			this.idToColour = new Dictionary<string, string>();
 		}
 		
-		public bool AddMapping (string id, Color colour)
+		public bool AddMapping (string id, string colour)
 		{
 			bool result = false;
 			if (!this.colourToId.ContainsKey(colour) && !this.idToColour.ContainsKey(id))
@@ -27,7 +28,7 @@ namespace Avebury
 			return result;
 		}
 		
-		public string Id(Color colour)
+		public string Id(string colour)
 		{
 			if (this.colourToId.ContainsKey(colour))
 			{
@@ -46,9 +47,9 @@ namespace Avebury
 			}
 		}
 
-		public Color Colour (string id)
+		public string Colour (string id)
 		{
-			Color result = Color.Black;
+			string result = "#000000";
 			if (this.idToColour.ContainsKey(id))
 			{
 				result =  this.idToColour[id];	
