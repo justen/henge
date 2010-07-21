@@ -10,6 +10,7 @@ namespace Henge.Rules
 	public class HengeInteraction : Interaction
 	{
 		public double Impedance { get; set; }
+		public string Log {get; set;}
 		
 		public PropertyCache ProtagonistCache	{ get; private set; }
 		public PropertyCache AntagonistCache	{ get; private set; }

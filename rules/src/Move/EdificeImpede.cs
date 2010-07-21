@@ -22,7 +22,7 @@ namespace Henge.Rules.Interference.Move
 		{
 			// Basic impedance rule for any impeding structure - just use the impedance value in "Impede"	
 			interaction.Impedance += interaction.Subject.Traits["Impede"].Value;
-			
+			interaction.Log+=string.Format("A {0} hinders your progress", interaction.Subject.Inspect(interaction.Protagonist).ShortDescription);
 			return interaction;
 			
 		}

@@ -38,6 +38,8 @@ namespace Henge.Rules.Interference.Move
 							{
 								if (interaction.SubjectCache.UseEnergy(interaction.ProtagonistCache.Strength * interaction.ProtagonistCache.Energy))
 								{
+									if (interaction.Subject is Avatar) interaction.Log+=string.Format("{0} grapples with you, hindering your progress. ", interaction.Subject.Name);
+									else interaction.Log+=string.Format("A {0} hinders your progress", interaction.Subject.Inspect(interaction.Protagonist).ShortDescription);
 									interaction.Impedance += interaction.SubjectCache.Weight * Constants.WeightToImpedance;
 								}
 							}
@@ -45,6 +47,8 @@ namespace Henge.Rules.Interference.Move
 							{
 								if (interaction.SubjectCache.UseEnergy(2 * interaction.ProtagonistCache.Strength * interaction.ProtagonistCache.Energy))
 								{
+									if (interaction.Subject is Avatar) interaction.Log+=string.Format("{0} grapples with you, hindering your progress. ", interaction.Subject.Name);
+									else interaction.Log+=string.Format("A {0} hinders your progress", interaction.Subject.Inspect(interaction.Protagonist).ShortDescription);
 									interaction.Impedance += interaction.SubjectCache.Weight * Constants.WeightToImpedance;
 								}
 							}

@@ -6,7 +6,10 @@ namespace Henge.Data.Entities
 {
 	public class ComponentType : ObjectEntity
 	{
-		public string Id					{ get; set; }
+		//Identifier to allow us to pull this when creating new Components of a given type
+		public string Id	{ get; set; }
+		public IDictionary<string, Trait> BaseTraits {get; set;}
+		
 		public IList<Appearance> Appearance	{ get; set; }
 		
 		

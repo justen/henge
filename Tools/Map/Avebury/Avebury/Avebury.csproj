@@ -41,6 +41,13 @@
     <Compile Include="src\Converter.cs" />
     <Compile Include="src\Mapper.cs" />
     <Compile Include="src\Image.cs" />
+    <Compile Include="src\Loader.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\data\Henge.Data.csproj">
+      <Project>{2B345116-71E3-4C8E-BBC1-9354791C7451}</Project>
+      <Name>Henge.Data</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

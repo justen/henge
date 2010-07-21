@@ -29,17 +29,63 @@ namespace Henge.Rules.Protagonist.Move.Run
 			if (!interaction.Finished)
 			{
 				Location antagonist	= interaction.Antagonist as Location;
-				
+				Location source = interaction.Protagonist.Location;
 				if (interaction.Protagonist != null && antagonist != null)
 				{
-					if (this.CalculateDistance(interaction.Protagonist.Location, antagonist) <= 2)
+					if (this.CalculateDistance(source, antagonist) <= 2)
 					{
+						double gradient = (double)(antagonist.Coordinates.Z - source.Coordinates.Z)/255.0;
+						if (gradient > 0) 
+						{
+							if (!interaction.ProtagonistCache.SkillCheck("climb", gradient))
+							{
+								//it's beyond your climb skill; make this climb much more difficult
+								interaction.Impedance+=gradient * interaction.Impedance;
+								interaction.Log += "The ascent is punishing. You scramble up as best you can. ";
+							}
+							else
+							{
+								//you can climb this without it taking *that* much more energy	
+								interaction.Impedance+=gradient * 0.1 * interaction.Impedance;
+							}
+						}
+						else
+						{
+							if (interaction.ProtagonistCache.SkillCheck("climb", gradient * 2))
+							{
+								//you're comfortable charging down this slope - impedance will drop
+								//as a result (max reduction is to halve the impedance)
+								interaction.Impedance+=gradient * interaction.Impedance;
+							}
+							else
+							{
+								//You're going to have to climb down this
+								if (interaction.ProtagonistCache.SkillCheck("climb", gradient * 0.75))
+								{
+									interaction.Impedance -= gradient * interaction.Impedance;
+									interaction.Log += "The descent is difficult; you are forced to climb down. ";
+								}
+								else
+								{
+									//What are you, insane? I'm not climbing down that!
+									interaction.Failure("The descent is too intimidating for you to attempt", false);
+								}	
+									
+							}
+						}
 						if (interaction.ProtagonistCache.UseEnergy(interaction.Impedance))
 						{
 							this.ApplyInteraction(interaction, interaction.Protagonist, antagonist);
 							// Now everything that was trying to impede progress is going to have to take damage I suppose...?
 						}
-						else interaction.Failure("Out of energy", false);
+						else 
+						{
+							if (interaction.Impedance > interaction.Protagonist.Traits["energy"].Maximum)
+							{
+								interaction.Failure(string.Format("{0}Your chosen route seems impassable.", interaction.Log), false);
+							}
+							else interaction.Failure(string.Format("{0}You are unable to summon sufficient energy to make it to your destination.", interaction.Log), false);
+						}
 					}
 					else interaction.Failure("Out of range", true);
 				}
@@ -78,9 +124,9 @@ namespace Henge.Rules.Protagonist.Move.Run
 					return true;
 				});
 					
-				interaction.Success("Moved");	
+				interaction.Success(string.Format("{0}You reach your destination", interaction.Log));	
 			}
-			else if (actor is Npc)
+			else
 			{
 				Npc npc = actor as Npc;
 				
@@ -96,7 +142,6 @@ namespace Henge.Rules.Protagonist.Move.Run
 					
 				interaction.Success("Moved");	
 			}
-			else interaction.Failure("Antagonist cannot move", true);
 		}	
 	}
 }

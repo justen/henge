@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xmlize", "xmlize\xmlize.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avebury", "Avebury\Avebury.csproj", "{21E71371-734F-45A0-9850-B19C9251F869}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Henge.Data", "..\..\..\data\Henge.Data.csproj", "{2B345116-71E3-4C8E-BBC1-9354791C7451}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -19,6 +21,10 @@ Global
 		{21E71371-734F-45A0-9850-B19C9251F869}.Debug|x86.Build.0 = Debug|Any CPU
 		{21E71371-734F-45A0-9850-B19C9251F869}.Release|x86.ActiveCfg = Release|Any CPU
 		{21E71371-734F-45A0-9850-B19C9251F869}.Release|x86.Build.0 = Release|Any CPU
+		{2B345116-71E3-4C8E-BBC1-9354791C7451}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2B345116-71E3-4C8E-BBC1-9354791C7451}.Debug|x86.Build.0 = Debug|Any CPU
+		{2B345116-71E3-4C8E-BBC1-9354791C7451}.Release|x86.ActiveCfg = Release|Any CPU
+		{2B345116-71E3-4C8E-BBC1-9354791C7451}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = xmlize\xmlize.csproj

@@ -15,7 +15,6 @@ using Db4objects.Db4o.Config;
 using Henge.Data.Context;
 using Henge.Data.Entities;
 
-
 namespace Henge.Data
 {
 	internal class ObjectDataProvider
@@ -59,16 +58,16 @@ namespace Henge.Data
 				
 				var all = from Entity a in container select a;
 				foreach (var e in all) container.Delete(e);
-				 
+				
 				Appearance ap				= new Appearance { Type = "Nondescript Wasteland", Description = "looks like the Creator simply couldn''t be bothered to do anything with it. It is totally unremarkable in every way", ShortDescription = "a thoroughly boring spot" };
-				ComponentType type 			= new ComponentType(ap) { Id = "Nondescript Wasteland" };
+				ComponentType type 			= new ComponentType(ap);
 				Appearance apa				= new Appearance { Type = "Oz", Description = "looks like you're not in Kansas any more", ShortDescription = "somewhat magical" };
-				ComponentType typea			= new ComponentType(apa) { Id = "Magical Land Of Wonder" };
+				ComponentType typea			= new ComponentType(apa);
 				Henge.Data.Entities.User u	= new Henge.Data.Entities.User { Name = "test", Password = "A94A8FE5CCB19BA61C4C0873D391E987982FBBD3", Clan = "Test" };
 				Map m 						= new Map { Name = "Main" };
-				Location l					= new Location (0, 0, 0) { Map = m, Type = typea };
+				Location l					= new Location (0, 0, 0);
 				Appearance avatarAppearance = new Appearance {Type = "Person", ShortDescription = "another person", Description = "another person"};
-				ComponentType avatar		= new ComponentType(avatarAppearance) { Id = "avatar" };
+				ComponentType avatar		= new ComponentType(avatarAppearance);
 				Avatar av					= new Avatar { Name = "Og", User = u, Location = l, Type = avatar };
 				
 				av.Skills.Add("Strength", new Skill { Value = 0.5 });
@@ -76,7 +75,7 @@ namespace Henge.Data
 				av.Traits.Add("Weight", new Trait { Value = 70, Minimum = 0 });
 				
 				u.Avatars.Add(av);
-				m.Locations.Add(l.Coordinates, l);
+			//	m.Locations.Add(l.Coordinates, l);
 				l.Inhabitants.Add(av);
 				
 				for (int y = -2; y < 3; y++)
@@ -86,7 +85,7 @@ namespace Henge.Data
 						if (x == 0 && y == 0) continue;
 						
 						l = new Location (x, y, 0) { Map = m, Type = type }; 
-						m.Locations.Add(l.Coordinates, l);
+			//			m.Locations.Add(l.Coordinates, l);
 					}
 				}
 				
