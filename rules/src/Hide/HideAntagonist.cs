@@ -14,9 +14,10 @@ namespace Henge.Rules.Antagonist.Hide
 		}
 		
 		
-		protected override double Visibility(HengeInteraction interaction)
+		protected override double Visibility(HengeInteraction interaction, out Component subject)
 		{
 			//Don't change visibility - leave that for the Protagonist rule
+			subject = null;
 			return -1;
 		}
 		

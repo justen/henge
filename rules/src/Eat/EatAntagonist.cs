@@ -12,9 +12,10 @@ namespace Henge.Rules.Antagonist.Eat
 			return (subject is Item);
 		}
 		
-		protected override double Visibility (HengeInteraction interaction)
+		protected override double Visibility (HengeInteraction interaction, out Component subject)
 		{
 			//You're not going to eat the subject, so leave its visibility alone
+			subject = null;
 			return -1;
 		}
 		

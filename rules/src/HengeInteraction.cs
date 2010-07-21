@@ -27,7 +27,10 @@ namespace Henge.Rules
 		public override void SetSubject(Component subject)
 		{
 
-			this.ApplyBonuses(this.SubjectCache.SkillBonuses, this.Subject as Actor, this.SubjectCache);
+			if ((this.SubjectCache!=null)&&(this.Subject is Actor )) 
+			{
+				this.ApplyBonuses(this.SubjectCache.SkillBonuses, this.Subject as Actor, this.SubjectCache);
+			}
 			this.Subject		= subject;
 			this.SubjectCache	= new PropertyCache(this.Deltas, subject);
 		}	
@@ -53,8 +56,11 @@ namespace Henge.Rules
 		public override IInteraction Conclude()
 		{
 
-			this.ApplyBonuses(this.AntagonistCache.SkillBonuses, this.Antagonist as Actor, this.AntagonistCache);
-			this.ApplyBonuses(this.SubjectCache.SkillBonuses, this.Subject as Actor, this.SubjectCache);
+			if (this.Antagonist is Actor) this.ApplyBonuses(this.AntagonistCache.SkillBonuses, this.Antagonist as Actor, this.AntagonistCache);
+			if ((this.SubjectCache!=null)&&(this.Subject is Actor )) 
+			{
+				this.ApplyBonuses(this.SubjectCache.SkillBonuses, this.Subject as Actor, this.SubjectCache);
+			}
 			this.ApplyBonuses(this.ProtagonistCache.SkillBonuses, this.Protagonist as Actor, this.ProtagonistCache);
 		
 			return this as IInteraction;
@@ -62,7 +68,7 @@ namespace Henge.Rules
 		
 		private void ApplyBonuses(Dictionary<Skill, double> bonuses, Actor actor, PropertyCache cache)
 		{
-			if (cache!=null && actor!=null)
+			if (cache!=null && actor!=null && bonuses!=null)
 			{
 				this.Deltas.Add((success) => {
 					foreach (Skill skill in bonuses.Keys)

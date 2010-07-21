@@ -12,9 +12,10 @@ namespace Henge.Rules.Interference.Move
 			return subject is Actor;
 		}
 
-		protected override double Visibility (HengeInteraction interaction)
+		protected override double Visibility (HengeInteraction interaction, out Component subject)
 		{
 			//Set our visibility back to default * conspicuousness
+			subject = interaction.Subject;
 			return (Constants.StandardVisibility * interaction.SubjectCache.Conspicuousness);
 		}
 		

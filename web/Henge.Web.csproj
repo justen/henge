@@ -108,6 +108,10 @@
       <Project>{A6AA6A68-FC8D-45D5-BD25-F6B194EF15D9}</Project>
       <Name>Henge.Engine</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Tools\Map\Avebury\Avebury\Avebury.csproj">
+      <Project>{21E71371-734F-45A0-9850-B19C9251F869}</Project>
+      <Name>Avebury</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Content\interface\library\interface.js" />

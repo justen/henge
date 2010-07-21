@@ -12,9 +12,10 @@ namespace Henge.Rules.Antagonist.Inspect
 			return true;
 		}
 		
-		protected override double Visibility (HengeInteraction interaction)
+		protected override double Visibility (HengeInteraction interaction, out Component subject)
 		{
 			//You're not actually doing anything to the target, so leave its visibility alone
+			subject = null;
 			return -1;
 		}
 		

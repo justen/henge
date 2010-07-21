@@ -13,9 +13,10 @@ namespace Henge.Rules.Protagonist.Move.Run
 			return subject is Actor;
 		}
 		
-		protected override double Visibility (HengeInteraction interaction)
+		protected override double Visibility (HengeInteraction interaction, out Component subject)
 		{
 			//Running; become more obvious:
+			subject = interaction.Protagonist;
 			return (Constants.StandardVisibility * 1.5 * interaction.SubjectCache.Conspicuousness);
 		}
 		

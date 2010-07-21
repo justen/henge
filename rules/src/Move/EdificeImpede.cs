@@ -12,9 +12,10 @@ namespace Henge.Rules.Interference.Move
 			return subject is Edifice;
 		}
 
-		protected override double Visibility (HengeInteraction interaction)
+		protected override double Visibility (HengeInteraction interaction, out Component subject)
 		{
 			//Do not change visibility
+			subject = null;
 			return -1;
 		}
 		

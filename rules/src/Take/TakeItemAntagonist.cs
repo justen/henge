@@ -14,9 +14,10 @@ namespace Henge.Rules.Antagonist.Take
 		}
 		
 		
-		protected override double Visibility(HengeInteraction interaction)
+		protected override double Visibility(HengeInteraction interaction, out Component subject)
 		{
 			//Don't modify visibility
+			subject = null;
 			return -1;
 		}
 		

@@ -13,9 +13,10 @@ namespace Henge.Rules.Antagonist.Communicate.Talk
 			return (subject is Avatar);
 		}
 		
-		protected override double Visibility (HengeInteraction interaction)
+		protected override double Visibility (HengeInteraction interaction, out Component subject)
 		{
 			//visibility doesn't change
+			subject = null;
 			return -1;
 		}
 		

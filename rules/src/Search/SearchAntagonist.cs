@@ -16,9 +16,10 @@ namespace Henge.Rules.Antagonist.Search
 		}
 		
 		
-		protected override double Visibility(HengeInteraction interaction)
+		protected override double Visibility(HengeInteraction interaction, out Component subject)
 		{
 			//Don't change visibility
+			subject = null;
 			return -1;
 		}
 		

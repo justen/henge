@@ -14,10 +14,11 @@ namespace Henge.Rules.Protagonist.Give
 		}
 		
 		
-		protected override double Visibility(HengeInteraction interaction)
+		protected override double Visibility(HengeInteraction interaction, out Component subject)
 		{
 			//Set our visibility back to default * conspicuousness if interacting with an Actor, or
 			//do not change if it's an inanimate object;
+			subject = interaction.Antagonist;
 			if (interaction.Antagonist is Actor)
 			{
 				return (Constants.StandardVisibility * interaction.SubjectCache.Conspicuousness);

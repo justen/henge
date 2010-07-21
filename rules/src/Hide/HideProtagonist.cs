@@ -16,9 +16,10 @@ namespace Henge.Rules.Protagonist.Hide
 		}
 		
 		
-		protected override double Visibility(HengeInteraction interaction)
+		protected override double Visibility(HengeInteraction interaction, out Component subject)
 		{
 			//Unless hiding ourself, we should probably become Standardly Visible:
+			subject = interaction.Protagonist;
 			if (interaction.Antagonist != interaction.Protagonist)
 			{
 				return Constants.StandardVisibility * interaction.SubjectCache.Conspicuousness;

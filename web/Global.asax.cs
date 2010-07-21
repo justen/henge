@@ -3,7 +3,9 @@ using System.IO;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using System.Collections.Generic;
 
+using Henge.Data.Entities;
 
 namespace Henge.Web
 {
@@ -26,7 +28,12 @@ namespace Henge.Web
 			DataProvider = new Henge.Data.DataProvider();
 			//DataProvider.Initialise(Path.Combine(path, "henge.yap"), true);
 			DataProvider.Initialise(Path.Combine(path, "henge.yap"), "mysql", "Server=127.0.0.1;Uid=henge;Pwd=henge;Database=henge", true);
-			DataProvider.Bootstrap();
+			Avebury.Loader avebury = new Avebury.Loader(path);
+			List<Entity> data = avebury.Maps;
+			ComponentType avatarType = new ComponentType(){ Id = "avatar"};
+			avatarType.Appearance.Add( new Appearance() { Type = "avatar", ShortDescription = "A person", Description = "A nondescript person" });
+			data.Add(avatarType);     
+			DataProvider.Bootstrap(data);
 
 			DataProvider.UpdateSchema();
 			Henge.Engine.Interactor.Instance.Initialise(Path.Combine(Server.MapPath("~"), "bin"));

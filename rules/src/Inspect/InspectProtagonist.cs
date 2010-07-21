@@ -14,9 +14,10 @@ namespace Henge.Rules.Protagonist.Inspect
 		}
 		
 		
-		protected override double Visibility(HengeInteraction interaction)
+		protected override double Visibility(HengeInteraction interaction, out Component subject)
 		{
 			//This shouldn't affect your visibility
+			subject = null;
 			return -1;
 		}
 		

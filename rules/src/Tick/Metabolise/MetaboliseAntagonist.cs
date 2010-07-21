@@ -12,9 +12,10 @@ namespace Henge.Rules.Antagonist.Metabolise
 			return true;
 		}
 		
-		protected override double Visibility (HengeInteraction interaction)
+		protected override double Visibility (HengeInteraction interaction, out Component subject)
 		{
 			//This is an empty rule
+			subject = null;
 			return -1;
 		}
 		

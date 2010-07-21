@@ -14,8 +14,9 @@ namespace Henge.Rules.Protagonist.Search
 		}
 		
 		
-		protected override double Visibility(HengeInteraction interaction)
+		protected override double Visibility(HengeInteraction interaction, out Component subject)
 		{
+			subject = interaction.Protagonist;
 			return (Constants.StandardVisibility * interaction.SubjectCache.Conspicuousness);
 		}
 		

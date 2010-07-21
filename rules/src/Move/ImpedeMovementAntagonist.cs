@@ -14,9 +14,10 @@ namespace Henge.Rules.Antagonist.Move
 			return subject is Location;
 		}
 		
-		protected override double Visibility (HengeInteraction interaction)
+		protected override double Visibility (HengeInteraction interaction, out Component subject)
 		{
 			//Do not change visibility
+			subject = null;
 			return -1;
 		}
 		

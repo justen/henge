@@ -12,9 +12,10 @@ namespace Henge.Rules.Antagonist.Scout
 			return (subject is Location);
 		}
 		
-		protected override double Visibility (HengeInteraction interaction)
+		protected override double Visibility (HengeInteraction interaction, out Component subject)
 		{
 			//It's a location. You can't change visibility.
+			subject = null;
 			return -1;
 		}
 		

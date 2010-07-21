@@ -12,9 +12,10 @@ namespace Henge.Rules.Protagonist.Metabolise
 			return (subject is Actor);
 		}
 		
-		protected override double Visibility (HengeInteraction interaction)
+		protected override double Visibility (HengeInteraction interaction, out Component subject)
 		{
 			//This does not affect visibility
+			subject = null;
 			return -1;
 		}
 		

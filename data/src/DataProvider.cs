@@ -28,9 +28,9 @@ namespace Henge.Data
 		}
 		
 		
-		public void Bootstrap()
+		public void Bootstrap(List<Entity> data)
 		{
-			this.objectProvider.Bootstrap();
+			this.objectProvider.Bootstrap(data);
 		}
 		
 		

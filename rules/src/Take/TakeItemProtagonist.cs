@@ -12,9 +12,10 @@ namespace Henge.Rules.Protagonist.Take
 		}
 		
 		
-		protected override double Visibility(HengeInteraction interaction)
+		protected override double Visibility(HengeInteraction interaction, out Component subject)
 		{
 			//Set our visibility back to default * conspicuousness
+			subject = interaction.Protagonist;
 			return (Constants.StandardVisibility * interaction.ProtagonistCache.Conspicuousness);
 		}
 		

@@ -11,13 +11,13 @@ namespace Avebury
 	{
 		public Dictionary<string, ComponentType> Types {get; protected set;}
 		public List<Location> Locations {get; protected set;}
-		public List<Map> Maps {get; protected set;}
+		public List<Entity> Maps {get; protected set;}
 		
 		public Loader (string applicationPath)
 		{
 			this.Types = new Dictionary<string, ComponentType>();
 			this.Locations = new List<Location>();
-			this.Maps = new List<Map>();
+			this.Maps = new List<Entity>();
 			string path			= Path.Combine(applicationPath, "maps");
 			DirectoryInfo info	= new DirectoryInfo(path);
 			List<XmlNode> maps = new List<XmlNode>();
