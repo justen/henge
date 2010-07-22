@@ -13,10 +13,15 @@ namespace Henge.Data.Entities
 		//not sure if we need this but if we want to track avatars through generations...
 		public Avatar Parent			{ get; set; }
 		
-		public Avatar()
+		public Avatar(ComponentType type) : base (type)
 		{
 			this.Pets = new List<Npc>();
 			this.Log = new List<LogEntry>();
+		}
+		
+		public Avatar()
+		{
+			
 		}
 	}
 }

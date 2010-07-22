@@ -46,11 +46,12 @@ namespace Henge.Rules.Protagonist.Give
 						if (antagonist is Location)
 						{
 								double visibility = Constants.StandardVisibility * item.Traits["Conspicuousness"].Value;
+								Trait weightTrait = protagonist.Traits["Weight"];
 								interaction.Deltas.Add((success) => {
 									protagonist.Inventory.Remove(item);
-									protagonist.Traits["Weight"].Value -= weight;
+									weightTrait.SetValue(weightTrait.Value - weight);
 									item.Owner = antagonist;
-									item.Traits["Visibility"].Value = visibility;
+									item.Traits["Visibility"].SetValue(visibility);
 									antagonist.Inventory.Add(item);
 									return true;
 								});	
@@ -68,12 +69,14 @@ namespace Henge.Rules.Protagonist.Give
 									if (interaction.AntagonistCache.Strength >= (weight + load) * Constants.WeightToLiftStrength)	
 									{
 										//delta to switch ownership of item
+										Trait protagonistWeight = protagonist.Traits["Weight"];
+										Trait antagonistWeight = antagonist.Traits["Weight"];
 										interaction.Deltas.Add((success) => {
 											protagonist.Inventory.Remove(item);
-											protagonist.Traits["Weight"].Value -= weight;
+											protagonistWeight.SetValue(protagonistWeight.Value - weight);
 											item.Owner = antagonist;
 											antagonist.Inventory.Add(item);
-											antagonist.Traits["Weight"].Value += weight;
+											antagonistWeight.SetValue(antagonistWeight.Value - weight);
 											return true;
 										});
 										if (antagonist is Npc)
@@ -91,7 +94,7 @@ namespace Henge.Rules.Protagonist.Give
 								{
 									interaction.Deltas.Add((success) => {
 										protagonist.Inventory.Remove(item);
-										protagonist.Traits["Weight"].Value -= weight;
+										protagonist.Traits["Weight"].SetValue(protagonist.Traits["Weight"].Value - weight);
 										item.Owner = antagonist;
 										antagonist.Inventory.Add(item);
 										return true;

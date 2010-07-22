@@ -9,9 +9,14 @@ namespace Henge.Data.Entities
 		public IDictionary<string, Skill> Skills	{get; set;}
 		
 		
-		public Actor()
+		public Actor(ComponentType type) : base(type)
 		{
 			this.Skills		= new Dictionary<string, Skill>();
 		}  
+		
+		public Actor()
+		{
+			
+		}
 	}
 }

@@ -19,10 +19,27 @@ namespace Henge.Data.Entities
 		
 		public Component()
 		{
+			this.Type = null;
 			this.Inventory	= new List<Item>();
 			this.Created = DateTime.Now;
 			this.LastModified = DateTime.Now;
 			this.Traits = new Dictionary<string, Trait>();
+		}
+		
+		public Component(ComponentType type)
+		{
+			this.Type = type;
+			this.Inventory	= new List<Item>();
+			this.Created = DateTime.Now;
+			this.LastModified = DateTime.Now;
+			this.Traits = new Dictionary<string, Trait>();
+			if ((type != null)&&(type.BaseTraits!=null))
+			{
+				foreach (KeyValuePair<string, Trait> trait in type.BaseTraits)
+				{
+						this.Traits.Add(trait.Key, new Trait(trait.Value));
+				}
+			}
 		}
 		
 		

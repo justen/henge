@@ -29,11 +29,11 @@ namespace Henge.Web
 			//DataProvider.Initialise(Path.Combine(path, "henge.yap"), true);
 			DataProvider.Initialise(Path.Combine(path, "henge.yap"), "mysql", "Server=127.0.0.1;Uid=henge;Pwd=henge;Database=henge", true);
 			Avebury.Loader avebury = new Avebury.Loader(path);
-			List<Entity> data = avebury.Maps;
-			ComponentType avatarType = new ComponentType(){ Id = "avatar"};
-			avatarType.Appearance.Add( new Appearance() { Type = "avatar", ShortDescription = "A person", Description = "A nondescript person" });
-			data.Add(avatarType);     
-			DataProvider.Bootstrap(data);
+			//List<Entity> data = avebury.Maps;
+			//ComponentType avatarType = new ComponentType(){ Id = "avatar"};
+			//avatarType.Appearance.Add( new Appearance() { Type = "avatar", ShortDescription = "A person", Description = "A nondescript person" });
+			//data.Add(avatarType);     
+			DataProvider.Bootstrap(avebury.Data);
 
 			DataProvider.UpdateSchema();
 			Henge.Engine.Interactor.Instance.Initialise(Path.Combine(Server.MapPath("~"), "bin"));

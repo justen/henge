@@ -25,9 +25,9 @@ namespace Henge.Web.Controllers
 			//if (this.db.CreateCriteria<Avatar>().CreateAlias("BaseAppearance", "A").Add(Restrictions.Eq("A.Name", name)).UniqueResult<Avatar>() == null)
 			if ( (from a in this.db.Query<Avatar>() where a.Name == name select true).Count() == 0 )
 			{
-				Location location	= this.db.Get<Location>(x => x.Coordinates.X == 0 && x.Coordinates.Y == 0);
+				Location location	= this.db.Get<Location>(x => x.Coordinates.X == 25 && x.Coordinates.Y == 25);
 				ComponentType avatarType = db.Get<ComponentType>(x => x.Id == "avatar");
-				Avatar avatar		= new Avatar {Name = name, Type = avatarType , User  = this.user,  Location = location};
+				Avatar avatar		= new Avatar(avatarType) {Name = name , User  = this.user,  Location = location};
 				this.user.Avatars.Add(avatar);
 				IInteraction result = Interactor.Instance.Interact(this.db, avatar, location, "Spawn.Character", null);
 

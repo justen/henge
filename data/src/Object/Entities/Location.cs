@@ -20,9 +20,20 @@ namespace Henge.Data.Entities
 		public bool InvertVisibility			{ get; set; }
 		
 		
-		public Location(int x, int y, int z)
+		public Location(int x, int y, int z, ComponentType type) : base(type)
 		{
 			this.Coordinates		= new Coordinates { X = x, Y = y, Z = z };
+			this.Inhabitants 		= new List<Avatar>();
+			this.Structures			= new List<Edifice>();
+			this.Fauna				= new List<Npc>();
+			this.Regions 			= new List<Region>();
+			this.Visible			= new List<Location>();
+			this.InvertVisibility	= true;
+		}
+		
+		public Location()
+		{
+			this.Coordinates 		= null;
 			this.Inhabitants 		= new List<Avatar>();
 			this.Structures			= new List<Edifice>();
 			this.Fauna				= new List<Npc>();

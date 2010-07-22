@@ -37,7 +37,7 @@ namespace Henge.Rules.Protagonist.Defend.Guard
 				impede = string.Format("{1}{0}", (dx > 0) ? 'e' : (dx < 0) ? 'w' : '-', (dy > 0) ? 's' : (dy < 0) ? 'n' : '-' );
 				
 				interaction.Deltas.Add((success) => {
-					if (!subject.Traits.ContainsKey("Impede")) subject.Traits.Add("Impede", new Trait());
+					if (!subject.Traits.ContainsKey("Impede")) subject.Traits.Add("Impede", new Trait(double.MaxValue, 0, 0));
 					Trait trait		= subject.Traits["Impede"];
 					trait.Expiry 	= expiry;
 					trait.Flavour	= impede;
@@ -49,7 +49,7 @@ namespace Henge.Rules.Protagonist.Defend.Guard
 			if (interaction.Arguments.ContainsKey("Guard"))
 			{
 				interaction.Deltas.Add((success) => {
-					if (!subject.Traits.ContainsKey("Guard")) subject.Traits.Add("Guard", new Trait());
+					if (!subject.Traits.ContainsKey("Guard")) subject.Traits.Add("Guard", new Trait(double.MaxValue, 0, 0));
 					Trait trait		= subject.Traits["Guard"];
 					trait.Expiry	= expiry;
 					trait.Flavour	= String.Empty;

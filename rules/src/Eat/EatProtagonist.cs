@@ -36,9 +36,9 @@ namespace Henge.Rules.Protagonist.Eat
 				if (food.Owner == actor)
 				{
 					interaction.Deltas.Add((success) => {
-						actor.Traits["Weight"].Value-=food.Traits["Weight"].Value;
+						actor.Traits["Weight"].SetValue(actor.Traits["Weight"].Value - food.Traits["Weight"].Value);
 						actor.Inventory.Remove(food);
-						actor.Traits["Constitution"].Value += nutrition;
+						actor.Traits["Constitution"].SetValue(actor.Traits["Constitution"].Value + nutrition);
 						return true;
 					});
 					interaction.Delete(food);

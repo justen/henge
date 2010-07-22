@@ -40,7 +40,7 @@ namespace Henge.Rules.Protagonist.Search
 						{
 							//found something, set its visibility
 							interaction.Deltas.Add((success) => {
-								item.Traits["Visibility"].Value = Constants.HighVisibility;
+								item.Traits["Visibility"].SetValue(Constants.HighVisibility);
 								return true;
 							});
 							interaction.Success(string.Format("You found something! You put the {0} in plain view", item.Inspect(protagonist).ShortDescription));

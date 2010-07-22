@@ -9,9 +9,19 @@ namespace Avebury
 {
 	public class Loader
 	{
-		public Dictionary<string, ComponentType> Types {get; protected set;}
-		public List<Location> Locations {get; protected set;}
-		public List<Entity> Maps {get; protected set;}
+		private Dictionary<string, ComponentType> Types;
+		private List<Location> Locations;
+		private List<Entity> Maps ;
+		private List<Entity> UnlinkedEntities = new List<Entity>();
+		public List<Entity> Data 
+		{
+			get
+			{	
+				this.Maps.AddRange(UnlinkedEntities);
+				this.UnlinkedEntities = new List<Entity>();
+				return this.Maps;
+			}
+		}
 		
 		public Loader (string applicationPath)
 		{
@@ -44,16 +54,19 @@ namespace Avebury
 		{
 			foreach(XmlNode child in root)
 			{
-				if (child.Name=="terrain")
+				if (child.Name=="type")
 				{
-					ComponentType terrain = new ComponentType() { Id = string.Format("terrain.{0}", child.Attributes["id"].Value) };
+					ComponentType type = new ComponentType() { Id = child.Attributes["id"].Value };
 					foreach (XmlNode subnode in child)
 					{
 						if (subnode.Name=="appearance")
 						{
 							
 							Dictionary<string, string> parameters = new Dictionary<string, string>();
-							parameters.Add("colour", subnode.Attributes["colour"].Value);
+							foreach (XmlNode param in subnode)
+							{
+								if (param.Name=="parameter") parameters.Add(param.Attributes["name"].Value, param.Attributes["value"].Value);
+							}
 							Appearance appearance = new Appearance(){ 	Description = subnode.Attributes["description"].Value, 
 																	ShortDescription = subnode.Attributes["short_description"].Value, 
 																	Type = subnode.Attributes["type"].Value,
@@ -68,11 +81,12 @@ namespace Avebury
 																				Trait	= condition.Attributes["trait"].Value});																													
 								}
 							}
-							terrain.Appearance.Add(appearance);
+							type.Appearance.Add(appearance);
 						}
 					}
-					terrain.BaseTraits = this.GetTraits(child);
-					this.Types.Add(child.Attributes["id"].Value, terrain);
+					type.BaseTraits = this.GetTraits(child);
+					this.Types.Add(child.Attributes["id"].Value, type);
+					this.UnlinkedEntities.Add(type);
 				}
 			}
 			
@@ -86,17 +100,14 @@ namespace Avebury
 				if (child.Name=="location")
 				{
 					ComponentType type = this.Types[child.Attributes["type"].Value];
+					if (this.UnlinkedEntities.Contains(type)) this.UnlinkedEntities.Remove(type);
 					string[]coords = child.Attributes["coordinates"].Value.Split(new Char[] {','});
 		
-					Location location = new Location( int.Parse(coords[0]),int.Parse(coords[1]), int.Parse(coords[2]) ) 
+					Location location = new Location( int.Parse(coords[0]),int.Parse(coords[1]), int.Parse(coords[2]),  type  ) 
 														{	Detail = child.Attributes["detail"].Value,
 															Map = map,
-															Name = child.Attributes["name"].Value,
-															Type = type };
-					foreach (KeyValuePair<string, Trait> trait in type.BaseTraits) 
-					{
-						location.Traits.Add(trait);	
-					}
+															Name = child.Attributes["name"].Value};
+
 					Dictionary<string, Trait> traits = this.GetTraits(child);
 					foreach(KeyValuePair<string, Trait> trait in traits)
 					{
@@ -120,7 +131,22 @@ namespace Avebury
 			{
 				if (child.Name=="trait")
 				{
-					Trait trait = new Trait();
+					double max = double.MaxValue;
+					double min = double.MinValue;
+					double val = 0;
+					if (child.Attributes["maximum"]!=null)
+					{
+						max = double.Parse(child.Attributes["maximum"].Value);
+					}
+					if (child.Attributes["minimum"]!=null)
+					{
+						min = double.Parse(child.Attributes["minimum"].Value);
+					}
+					if (child.Attributes["value"]!=null)
+					{
+						val = double.Parse(child.Attributes["value"].Value);
+					}
+					Trait trait = new Trait(max, min, val);
 					if (child.Attributes["flavour"]!=null)
 					{
 						trait.Flavour = child.Attributes["flavour"].Value;
@@ -129,18 +155,7 @@ namespace Avebury
 					{
 						trait.Expiry = DateTime.Parse(child.Attributes["expiry"].Value);
 					}
-					if (child.Attributes["maximum"]!=null)
-					{
-						trait.Maximum = double.Parse(child.Attributes["maximum"].Value);
-					}
-					if (child.Attributes["minimum"]!=null)
-					{
-						trait.Minimum = double.Parse(child.Attributes["minimum"].Value);
-					}
-					if (child.Attributes["value"]!=null)
-					{
-						trait.Value = double.Parse(child.Attributes["value"].Value);
-					}
+					
 					//TODO: Setting the trait subject on import is not currently supported
 					result.Add(child.Attributes["name"].Value, trait); 	
 				}

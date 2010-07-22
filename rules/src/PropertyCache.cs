@@ -22,7 +22,7 @@ namespace Henge.Rules
 			this.deltas		= deltas;
 			this.subject	= subject;
 			this.actor		= subject as Actor;
-			
+			this.SkillBonuses = new Dictionary<Skill, double>();
 			if (this.actor == null) this.energyCached = true;
 		}
 		
@@ -48,10 +48,11 @@ namespace Henge.Rules
 						if (gain > reserve.Value)					gain = reserve.Value;
 						
 						this.energy += gain;
-						
+						double newReserve = reserve.Value - gain;
+						double newEnergy = energy.Value + gain;
 						this.deltas.Add((success) => {
-							reserve.Value	-= gain;
-							energy.Value	+= gain;
+							reserve.SetValue(newReserve);
+							energy.SetValue(newEnergy);
 							this.actor.LastModified = DateTime.Now;
 							return true;
 						});
@@ -107,7 +108,7 @@ namespace Henge.Rules
 						this.energy -= amount;
 						
 						this.deltas.Add((success) => {
-							energy.Value -= amount;
+							energy.SetValue(energy.Value - amount);
 							return true;
 						});
 						
@@ -135,7 +136,7 @@ namespace Henge.Rules
 					Trait energy = subject.Traits["Energy"];
 					this.energy -= amount;
 					this.deltas.Add((success) => {
-						energy.Value -= amount;
+						energy.SetValue(energy.Value - amount);
 						return true;
 					});
 					return true;

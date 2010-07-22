@@ -95,7 +95,7 @@ namespace Avebury
 			Dictionary<string, XmlNode> result = new Dictionary<string, XmlNode>();
 			foreach ( XmlNode child in key)
 			{
-				if (key.Name == "terrain")
+				if (key.Name == "type")
 				{
 					foreach (XmlNode appearance in child)
 					{
@@ -135,25 +135,37 @@ namespace Avebury
 					                                    blue.ToString("x").PadLeft(2,'0'));
 					if (!keys.ContainsKey(colourString))
 					{
-						XmlNode newTerrain = key.OwnerDocument.CreateElement("terrain");
+						XmlNode newTerrain = key.OwnerDocument.CreateElement("type");
 						newTerrain.Attributes.Append(doc.CreateAttribute("id"));
 						newTerrain.Attributes["id"].Value = mapper.Id(colourString);
 						XmlNode appearance = key.OwnerDocument.CreateElement("appearance");
 						appearance.Attributes.Append(doc.CreateAttribute("type"));
 						appearance.Attributes.Append(doc.CreateAttribute("description"));
 						appearance.Attributes.Append(doc.CreateAttribute("short_description"));
-						appearance.Attributes.Append(doc.CreateAttribute("colour"));
+						
 						
 						appearance.Attributes["type"].Value = "firmament";
 						appearance.Attributes["description"].Value = "nothingness";
 						appearance.Attributes["short_description"].Value = "nothingness";
-						appearance.Attributes["colour"].Value = colourString;
-						
+						XmlNode colour = doc.CreateElement("parameter");
+						colour.Attributes.Append(doc.CreateAttribute("name"));
+						colour.Attributes.Append(doc.CreateAttribute("value"));
+						colour.Attributes["name"].Value = "colour";
+						colour.Attributes["value"].Value = colourString;
+						appearance.AppendChild(colour);                         
+						XmlNode impedance = doc.CreateElement("trait");
+						impedance.Attributes.Append(doc.CreateAttribute("name"));
+						impedance.Attributes.Append(doc.CreateAttribute("minimum"));
+						impedance.Attributes.Append(doc.CreateAttribute("value"));
+						impedance.Attributes["name"].Value = "Impede";
+						impedance.Attributes["minimum"].Value = "0";
+						impedance.Attributes["value"].Value = "1.0";
 						//If we were to handle conditional appearances here, it'd just be a case of adding multiple 
 						//appearance elements, each containing at least one "condition" element specifying the conditions
 						//that must be met to "see" that appearance. we're assuming that any conditional appearances
 						//apply *on top* of the default appearance.
 						
+						newTerrain.AppendChild(impedance);
 						newTerrain.AppendChild(appearance);
 						keys.Add(colourString, newTerrain);
 					}

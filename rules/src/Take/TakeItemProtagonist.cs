@@ -42,11 +42,12 @@ namespace Henge.Rules.Protagonist.Take
 							if (interaction.ProtagonistCache.UseEnergy(interaction.Impedance))
 							{
 								//delta to switch ownership of item
+								Trait weightTrait = protagonist.Traits["Weight"];
 								interaction.Deltas.Add((success) => {
 									antagonist.Owner.Inventory.Remove(antagonist);
 									antagonist.Owner = protagonist;
 									protagonist.Inventory.Add(antagonist);
-									protagonist.Traits["Weight"].Value += weight;
+									weightTrait.SetValue(weightTrait.Value + weight);
 									return true;
 								});
 								interaction.Success(string.Format("{0} taken", antagonist.Inspect(protagonist).ShortDescription));

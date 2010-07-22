@@ -24,12 +24,11 @@ namespace Henge.Rules.Protagonist.Spawn.Character
 		{
 			Avatar avatar		= interaction.Protagonist as Avatar;
 			Location location	= interaction.Antagonist as Location;
-			
 			interaction.Deltas.Add((success) => {
 				location.Inhabitants.Add(avatar);
-				avatar.Traits.Add("Energy", new Trait { Value = 10, Minimum = -10, Maximum = 10 });
-				avatar.Skills.Add("Strength", new Skill {Value = 0.5});
-				avatar.Traits.Add("Weight", new Trait { Value = Constants.ActorBaseWeight, Minimum = 0 });
+				avatar.Skills.Add("Strength", new Skill() { Value = Constants.StartingSkill });
+				avatar.Skills.Add("Climb", new Skill() { Value = Constants.StartingSkill });
+				avatar.Skills.Add("Fitness", new Skill() { Value = Constants.StartingSkill });
 				return true;
 			});
 			

@@ -23,11 +23,10 @@ namespace Henge.Web.Controllers
 			if (this.avatar != null)
 			{
 				Coordinates coordinates = new Coordinates(this.avatar.Location.Coordinates);
-				
-				coordinates.X += dx;
-				coordinates.Y += dy;
-
-				Location location = this.avatar.Location.Map.GetLocation(coordinates);
+				Location location = this.db.Get<Location>(	l => l.Coordinates.X == coordinates.X + dx 
+				                                          	&& l.Coordinates.Y == coordinates.Y + dy 
+				                                          	&& l.Map == avatar.Location.Map);
+				//Location location = this.avatar.Location.Map.GetLocation(coordinates);
 				
 				if (location != null) 
 				{

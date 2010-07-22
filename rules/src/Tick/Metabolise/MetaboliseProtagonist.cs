@@ -51,9 +51,9 @@ namespace Henge.Rules.Protagonist.Metabolise
 					if (health.Value+healthDelta<0)
 					{
 						interaction.Deltas.Add((success) => {
-							health.Value = 0;
-							energy.Value = 0;
-							constitution.Value = 0;
+							health.SetValue(0);
+							energy.SetValue(0);
+							constitution.SetValue(0);
 							health.Flavour = "Dead";
 							return true;
 						});
@@ -62,9 +62,9 @@ namespace Henge.Rules.Protagonist.Metabolise
 					else
 					{
 						interaction.Deltas.Add((success) => {
-							health.Value += healthDelta;
-							energy.Value += energyDelta;
-							constitution.Value += constDelta;
+							health.SetValue(health.Value + healthDelta);
+							energy.SetValue(energy.Value + energyDelta);
+							constitution.SetValue(constitution.Value + constDelta);
 							return true;
 						});
 						interaction.Success(message);

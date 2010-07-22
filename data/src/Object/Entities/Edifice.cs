@@ -13,9 +13,14 @@ namespace Henge.Data.Entities
 	    public IList<Actor> Inhabitants	{ get; set; }
 		
 		
-		public Edifice()
+		public Edifice(ComponentType type) : base (type)
 		{
 		 	this.Inhabitants = new List<Actor>();	
+		}
+		
+		public Edifice()
+		{
+			
 		}
 	}
 }

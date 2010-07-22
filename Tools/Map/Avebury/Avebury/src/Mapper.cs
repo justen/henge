@@ -36,13 +36,15 @@ namespace Avebury
 			else
 			{
 				int i = 0; 
-				while(idToColour.ContainsKey(i.ToString()))
+				string id = string.Format("terrain.{0}", i);
+				while(idToColour.ContainsKey(id))
 				{
 					i++;
+					id = string.Format("terrain.{0}", i);
 				}
-				this.idToColour.Add(i.ToString(), colour);
-				this.colourToId.Add(colour, i.ToString());
-				return i.ToString();
+				this.idToColour.Add(id, colour);
+				this.colourToId.Add(colour, id);
+				return (id);
 			}
 		}
 

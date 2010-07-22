@@ -17,7 +17,7 @@ namespace Henge.Rules.Protagonist.Move.Run
 		{
 			//Running; become more obvious:
 			subject = interaction.Protagonist;
-			return (Constants.StandardVisibility * 1.5 * interaction.SubjectCache.Conspicuousness);
+			return (Constants.StandardVisibility * 1.5 * interaction.ProtagonistCache.Conspicuousness);
 		}
 		
 		protected override IInteraction Apply(HengeInteraction interaction)
@@ -38,7 +38,7 @@ namespace Henge.Rules.Protagonist.Move.Run
 						double gradient = (double)(antagonist.Coordinates.Z - source.Coordinates.Z)/255.0;
 						if (gradient > 0) 
 						{
-							if (!interaction.ProtagonistCache.SkillCheck("climb", gradient))
+							if (!interaction.ProtagonistCache.SkillCheck("Climb", gradient))
 							{
 								//it's beyond your climb skill; make this climb much more difficult
 								interaction.Impedance+=gradient * interaction.Impedance;
@@ -52,7 +52,7 @@ namespace Henge.Rules.Protagonist.Move.Run
 						}
 						else
 						{
-							if (interaction.ProtagonistCache.SkillCheck("climb", gradient * 2))
+							if (interaction.ProtagonistCache.SkillCheck("Climb", gradient * 2))
 							{
 								//you're comfortable charging down this slope - impedance will drop
 								//as a result (max reduction is to halve the impedance)
@@ -61,7 +61,7 @@ namespace Henge.Rules.Protagonist.Move.Run
 							else
 							{
 								//You're going to have to climb down this
-								if (interaction.ProtagonistCache.SkillCheck("climb", gradient * 0.75))
+								if (interaction.ProtagonistCache.SkillCheck("Climb", gradient * 0.75))
 								{
 									interaction.Impedance -= gradient * interaction.Impedance;
 									interaction.Log += "The descent is difficult; you are forced to climb down. ";
@@ -81,7 +81,7 @@ namespace Henge.Rules.Protagonist.Move.Run
 						}
 						else 
 						{
-							if (interaction.Impedance > interaction.Protagonist.Traits["energy"].Maximum)
+							if (interaction.Impedance > interaction.ProtagonistCache.Strength * interaction.Protagonist.Traits["energy"].Maximum)
 							{
 								interaction.Failure(string.Format("{0}Your chosen route seems impassable.", interaction.Log), false);
 							}

@@ -9,9 +9,14 @@ namespace Henge.Data.Entities
 		public IDictionary<String, GroupRole> Membership { get; set; }
 		
 		
-		public Group()
+		public Group(ComponentType type) : base (type)
 		{
 			this.Membership = new Dictionary<string, GroupRole>();
+		}
+		
+		public Group()
+		{
+			
 		}
 	}
 }

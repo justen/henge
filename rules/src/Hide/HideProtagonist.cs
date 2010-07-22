@@ -86,14 +86,14 @@ namespace Henge.Rules.Protagonist.Hide
 						interaction.Deltas.Add((success) => {
 							protagonist.Location.Inventory.Add(item);
 							item.Owner = protagonist.Location;
-							protagonist.Traits["Weight"].Value -= item.Traits["Weight"].Value;
+							protagonist.Traits["Weight"].SetValue(protagonist.Traits["Weight"].Value - item.Traits["Weight"].Value);
 							protagonist.Inventory.Remove(item);
 							return true;
 						});
 					}	
 					interaction.Deltas.Add((success) => {
-						if (!antagonist.Traits.ContainsKey("Visibility")) antagonist.Traits.Add("Visibility", new Trait());
-						antagonist.Traits["Visibility"].Value = visibility;
+						if (!antagonist.Traits.ContainsKey("Visibility")) antagonist.Traits.Add("Visibility", new Trait(double.MaxValue, 0, visibility));
+						else antagonist.Traits["Visibility"].SetValue(visibility);
 						return true;
 					});
 				}

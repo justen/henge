@@ -17,8 +17,8 @@ namespace Henge.Rules
 			if ((visibility>=0) && (subject != null))
 			{
 				interaction.Deltas.Add((success) => {
-						if (!subject.Traits.ContainsKey("visibility")) subject.Traits.Add("visibility", new Trait(){ Value = visibility});
-						subject.Traits["visibility"].Value = visibility;
+						if (!subject.Traits.ContainsKey("Visibility")) subject.Traits.Add("Visibility", new Trait(double.MaxValue, 0, visibility));
+						subject.Traits["Visibility"].SetValue(visibility);
 						return true;
 				});
 			}
