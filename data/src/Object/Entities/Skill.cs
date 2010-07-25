@@ -6,7 +6,7 @@ namespace Henge.Data.Entities
 {
 	public class Skill : TraitBase
 	{
-		public IList<string> Children	{get; set;}
+		public virtual IList<string> Children {get; set;}
 		
 		
 		public Skill()

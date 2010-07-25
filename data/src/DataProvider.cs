@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 
+using Coincidental;
 using Henge.Data.Entities;
 
 
@@ -10,14 +11,15 @@ namespace Henge.Data
 {
 	public class DataProvider
 	{
+		private static int ACTIVATION_DEPTH					= 2;
 		private Type objectEntityType						= typeof(ObjectEntity);
-		private ObjectDataProvider objectProvider			= new ObjectDataProvider();
+		private Provider objectProvider						= new Provider();
 		private RelationalDataProvider relationalProvider	= new RelationalDataProvider();
 		
 		
 		public bool Initialise(string objectConnection, string relationalType, string relationalConnection, bool web)
 		{
-			return this.objectProvider.Initialise(objectConnection, web) && this.relationalProvider.Initialise(relationalType, relationalConnection, web);
+			return this.objectProvider.Initialise(objectConnection, ACTIVATION_DEPTH) && this.relationalProvider.Initialise(relationalType, relationalConnection, web);
 		}
 		
 		
@@ -30,7 +32,7 @@ namespace Henge.Data
 		
 		public void Bootstrap(List<Entity> data)
 		{
-			this.objectProvider.Bootstrap(data);
+			foreach(Entity entity in data) this.objectProvider.Store(entity);
 		}
 		
 		
@@ -42,13 +44,13 @@ namespace Henge.Data
 		
 		public bool RegisterContext()
 		{	
-			return this.objectProvider.RegisterContext() && this.relationalProvider.RegisterContext();
+			return this.relationalProvider.RegisterContext();
 		}
 		
 		
 		public bool ReleaseContext()
 		{
-			return this.objectProvider.ReleaseContext() && this.relationalProvider.ReleaseContext();
+			return this.relationalProvider.ReleaseContext();
 		}
 		
 		
@@ -65,7 +67,7 @@ namespace Henge.Data
 		}
 		
 		
-		public bool Delete<T>(IList<T> entities) where T : Entity
+		public bool Delete<T>(IEnumerable<T> entities) where T : Entity
 		{
 			return typeof(T).IsSubclassOf(objectEntityType) ? this.objectProvider.Delete(entities) : this.relationalProvider.Delete(entities);
 		}
@@ -84,9 +86,15 @@ namespace Henge.Data
 		}
 		
 		
-		public T Get<T>(System.Linq.Expressions.Expression<Func<T, bool>> expression) where T : Entity
+		public T Get<T>(Func<T, bool> expression) where T : Entity
 		{
 			return typeof(T).IsSubclassOf(objectEntityType) ? this.objectProvider.Get<T>(expression) : this.relationalProvider.Get<T>(expression);
+		}
+		
+		
+		public IDisposable Lock(params object [] entities)
+		{
+			return this.objectProvider.Lock(entities);
 		}
 		
 		

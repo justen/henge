@@ -2,6 +2,7 @@ using System;
 using System.Text;
 using System.Collections.Generic;
 
+using Henge.Data;
 using Henge.Data.Entities;
 
 
@@ -13,7 +14,6 @@ namespace Henge.Rules
 		public Component Subject						{ get; protected set; }
 		public Component Antagonist						{ get; set; }
 		public Actor Protagonist						{ get; set; }
-		public IList<Func<bool, bool>> Deltas 			{ get; private set; }
 		public IList<Component> Interferers				{ get; private set; }
 		public string Conclusion						{ get; private set; }
 		public bool Finished							{ get; private set; }
@@ -21,18 +21,20 @@ namespace Henge.Rules
 		public bool Illegal								{ get; private set; }
 		public Dictionary<string, object> Arguments		{ get; private set; }
 		public Dictionary<string, object> Results		{ get; set; }
-		public List<Entity>	PendingDeletions			{ get; private set; }
+		//public List<Entity>	PendingDeletions			{ get; private set; }
+		
+		protected DataProvider db;
 		
 		
-		public Interaction(Actor protagonist, Component antagonist, Dictionary<string, object> arguments)
+		public Interaction(DataProvider db, Actor protagonist, Component antagonist, Dictionary<string, object> arguments)
 		{
-			this.Deltas			= new List<Func<bool, bool>>();
-			this.Interferers	= new List<Component>();
-			this.Protagonist	= protagonist;
-			this.Antagonist		= antagonist;
-			this.Arguments		= arguments;
-			this.Results 		= new Dictionary<string, object>();
-			this.PendingDeletions = new List<Entity>();
+			this.db					= db;
+			this.Interferers		= new List<Component>();
+			this.Protagonist		= protagonist;
+			this.Antagonist			= antagonist;
+			this.Arguments			= arguments;
+			this.Results 			= new Dictionary<string, object>();
+			//this.PendingDeletions	= new List<Entity>();
 		}		
 		
 		
@@ -63,14 +65,23 @@ namespace Henge.Rules
 			this.Subject = subject;
 		}
 		
+		
 		public virtual IInteraction Conclude()
 		{
 			return this as IInteraction;	
 		}
 		
+		
 		public virtual void Delete(Entity target)
 		{
-			if (!this.PendingDeletions.Contains(target)) this.PendingDeletions.Add(target);
+			//if (!this.PendingDeletions.Contains(target)) this.PendingDeletions.Add(target);
+			this.db.Delete(target);
+		}
+		
+		
+		public IDisposable Lock(params object [] entities)
+		{
+			return this.db.Lock(entities);
 		}
 	}
 }

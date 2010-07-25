@@ -10,18 +10,18 @@ namespace Henge.Data.Entities
 	public class Appearance : ObjectEntity
 	{
 		// Apparent type of this object ("Field")
-		public string Type				{ get; set; }
+		public virtual string Type				{ get; set; }
 		// Apparent detailed description of this object
-	    public string Description 		{ get; set; }
+	    public virtual string Description 		{ get; set; }
 		// Apparent brief description of this object
-	    public string ShortDescription 	{ get; set; }
+	    public virtual string ShortDescription 	{ get; set; }
 	    
 	    // This is going to store Other Stuff depending upon what type of entity this is
 	    // (for example, icons, colourschemes, etc) - dictionary is (Parameter, Payload)
-	    public IDictionary<string, string> Parameters { get; set; }
+	    public virtual IDictionary<string, string> Parameters { get; set; }
 	
 	    // The conditions that must be met in order to "see" this appearance
-	    public IList<Condition> Conditions { get; set; }
+	    public virtual IList<Condition> Conditions { get; set; }
 		
 		
 		public Appearance()
@@ -35,6 +35,7 @@ namespace Henge.Data.Entities
 		{
 			return this.Conditions.Count(c => traits.ContainsKey(c.Trait) ? c.Valid(traits[c.Trait] as TraitBase) : false) == this.Conditions.Count;
 		}
+		
 		
 		public bool Valid(IDictionary<string, Trait> traits, IDictionary<string, Skill> skills)
 		{

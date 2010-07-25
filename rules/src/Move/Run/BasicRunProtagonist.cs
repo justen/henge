@@ -115,15 +115,12 @@ namespace Henge.Rules.Protagonist.Move.Run
 			{
 				Avatar avatar = actor as Avatar;
 				
-				interaction.Deltas.Add((success) => {
-					//if (success)
-					//{
-						avatar.Location.Inhabitants.Remove(avatar);
-						avatar.Location = target;
-						avatar.Location.Inhabitants.Add(avatar);
-					//}
-					return true;
-				});
+				using (interaction.Lock(avatar, avatar.Location.Inhabitants, target.Inhabitants))
+				{
+					avatar.Location.Inhabitants.Remove(avatar);
+					target.Inhabitants.Add(avatar);
+					avatar.Location = target;
+				}
 					
 				interaction.Success(string.Format("{0}You reach your destination", interaction.Log));	
 			}
@@ -131,15 +128,12 @@ namespace Henge.Rules.Protagonist.Move.Run
 			{
 				Npc npc = actor as Npc;
 				
-				interaction.Deltas.Add((success) => {
-					//if (success)
-					//{
-						npc.Location.Fauna.Remove(npc);
-						npc.Location = target;
-						npc.Location.Fauna.Add(npc);
-					//}
-					return true;
-				});
+				using (interaction.Lock(npc, npc.Location.Fauna, target.Fauna))
+				{
+					npc.Location.Fauna.Remove(npc);
+					target.Fauna.Add(npc);
+					npc.Location = target;
+				}
 					
 				interaction.Success("Moved");	
 			}

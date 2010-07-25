@@ -6,7 +6,7 @@ namespace Henge.Data.Entities
 {
 	public class Group : Component
 	{
-		public IDictionary<String, GroupRole> Membership { get; set; }
+		public virtual IDictionary<String, GroupRole> Membership { get; set; }
 		
 		
 		public Group(ComponentType type) : base (type)
@@ -16,7 +16,7 @@ namespace Henge.Data.Entities
 		
 		public Group()
 		{
-			
+			this.Membership = new Dictionary<string, GroupRole>();
 		}
 	}
 }

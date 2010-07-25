@@ -29,21 +29,23 @@ namespace Henge.Rules.Protagonist.Communicate.Talk
 				{
 					if (interaction.Arguments.ContainsKey("Message"))
 					{
-						List<Avatar> recipients = interaction.Arguments["Recipients"] as List<Avatar>;
+						List<Avatar> recipients	= interaction.Arguments["Recipients"] as List<Avatar>;
 						if (recipients==null) recipients = new List<Avatar>();
-						string target = "to you";
-						if (recipients.Count>1) target = "out loud";
-						string message = string.Format("{0} says \"{1}\" {2}.", interaction.Protagonist.Name, interaction.Arguments["Message"] as string, target);
-						DateTime occurred = DateTime.Now;
+						
+						string target		= (recipients.Count > 1) ? "out loud" : "to you";
+						string message		= string.Format("{0} says \"{1}\" {2}.", interaction.Protagonist.Name, interaction.Arguments["Message"] as string, target);
+						DateTime occurred	= DateTime.Now;
 						foreach (Avatar recipient in recipients)
 						{
 							//Log the speech
-							interaction.Deltas.Add((success) => {
+							using (interaction.Lock(recipient.Log))
+							{
+								// Possibly inefficient to lock each recipient's log individually. Also, shouldn't
+								// we be using the relational DB for this sort of thing?
 								recipient.Log.Add(new LogEntry(){ Entry = message, Occurred = occurred});
-								return true;
-							});
+							}
 						}
-						if (recipients.Count==1)
+						if (recipients.Count == 1)
 						{
 							target = string.Format("to {0}", recipients[0].Name);	
 						}

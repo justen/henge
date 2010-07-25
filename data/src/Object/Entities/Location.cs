@@ -6,18 +6,18 @@ namespace Henge.Data.Entities
 {
 	public class Location : Component
 	{
-	    public IList<Avatar> Inhabitants		{ get; set; }
-		public IList<Edifice> Structures		{ get; set; }
-		public IList<Npc> Fauna					{ get; set; }
-		public Coordinates Coordinates			{ get; set; }
+	    public virtual IList<Avatar> Inhabitants		{ get; set; }
+		public virtual IList<Edifice> Structures		{ get; set; }
+		public virtual IList<Npc> Fauna					{ get; set; }
+		public virtual Coordinates Coordinates			{ get; set; }
 
 	    //List of the Regions this Location is in
-	    public IList<Region> Regions			{ get; set; }
+	    public virtual IList<Region> Regions			{ get; set; }
 	    //the Map this location exists in
-	    public Map Map							{ get; set; }
+	    public virtual Map Map							{ get; set; }
 		
-		public IList<Location> Visible			{ get; set; }
-		public bool InvertVisibility			{ get; set; }
+		public virtual IList<Location> Visible			{ get; set; }
+		public virtual bool InvertVisibility			{ get; set; }
 		
 		
 		public Location(int x, int y, int z, ComponentType type) : base(type)
@@ -31,9 +31,9 @@ namespace Henge.Data.Entities
 			this.InvertVisibility	= true;
 		}
 		
+		
 		public Location()
 		{
-			this.Coordinates 		= null;
 			this.Inhabitants 		= new List<Avatar>();
 			this.Structures			= new List<Edifice>();
 			this.Fauna				= new List<Npc>();

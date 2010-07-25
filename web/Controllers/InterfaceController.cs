@@ -22,10 +22,13 @@ namespace Henge.Web.Controllers
 			
 			if (this.avatar != null)
 			{
-				Coordinates coordinates = new Coordinates(this.avatar.Location.Coordinates);
-				Location location = this.db.Get<Location>(	l => l.Coordinates.X == coordinates.X + dx 
-				                                          	&& l.Coordinates.Y == coordinates.Y + dy 
-				                                          	&& l.Map == avatar.Location.Map);
+				// Can't compare references at the moment (since they are proxied
+				Coordinates coordinates = this.avatar.Location.Coordinates;
+				Location location		= this.db.Get<Location>(l => 
+					l.Coordinates.X == coordinates.X && 
+				    l.Coordinates.Y == coordinates.Y// &&
+					//l.Map == m
+				);
 				//Location location = this.avatar.Location.Map.GetLocation(coordinates);
 				
 				if (location != null) 

@@ -14,13 +14,13 @@ namespace Henge.Rules
 			Component subject = null;
 			double visibility = this.Visibility(interaction as HengeInteraction, out subject);
 		
-			if ((visibility>=0) && (subject != null))
+			if (visibility >= 0 && subject != null)
 			{
-				interaction.Deltas.Add((success) => {
-						if (!subject.Traits.ContainsKey("Visibility")) subject.Traits.Add("Visibility", new Trait(double.MaxValue, 0, visibility));
-						subject.Traits["Visibility"].SetValue(visibility);
-						return true;
-				});
+				using (interaction.Lock(subject.Traits))
+				{
+					if (!subject.Traits.ContainsKey("Visibility")) subject.Traits.Add("Visibility", new Trait(double.MaxValue, 0, visibility));
+					subject.Traits["Visibility"].SetValue(visibility);
+				}
 			}
 			return interaction;
 		}

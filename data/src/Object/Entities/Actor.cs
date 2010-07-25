@@ -6,17 +6,18 @@ namespace Henge.Data.Entities
 {
 	public abstract class Actor : MapComponent
 	{
-		public IDictionary<string, Skill> Skills	{get; set;}
+		public virtual IDictionary<string, Skill> Skills	{get; set;}
 		
 		
 		public Actor(ComponentType type) : base(type)
 		{
-			this.Skills		= new Dictionary<string, Skill>();
+			this.Skills	= new Dictionary<string, Skill>();
 		}  
+		
 		
 		public Actor()
 		{
-			
+			this.Skills	= new Dictionary<string, Skill>();
 		}
 	}
 }

@@ -20,9 +20,16 @@ var giLog = new Class(
 	},
 	
 	
-	add: function(time, message)
+	/*add: function(time, message)
 	{
 		this.log.push([time, message]);
+		this.scroller.toBottom();
+	},*/
+	
+	
+	add: function(message)
+	{
+		this.log.push([new Date().toLocaleTimeString(), message]);
 		this.scroller.toBottom();
 	},
 

@@ -190,7 +190,7 @@ namespace Henge.Data
 		}
 		
 		
-		public T Get<T>(System.Linq.Expressions.Expression<Func<T, bool>> expression) where T : Entity
+		public T Get<T>(Func<T, bool> expression) where T : Entity
 		{
 			ISession session = this.GetSession();
 			
@@ -218,7 +218,7 @@ namespace Henge.Data
 		}
 		
 		
-		public bool Delete<T>(IList<T> entities) where T : Entity
+		public bool Delete<T>(IEnumerable<T> entities) where T : Entity
 		{
 			ISession session = this.GetSession();
 			

@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Henge.Engine", "engine\Heng
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Henge.Rules", "rules\Henge.Rules.csproj", "{7C0D7ED6-6708-4596-B1DA-9F3B048D8C88}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avebury", "Tools\Map\Avebury\Avebury\Avebury.csproj", "{21E71371-734F-45A0-9850-B19C9251F869}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avebury", "tools\Map\Avebury\Avebury\Avebury.csproj", "{21E71371-734F-45A0-9850-B19C9251F869}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

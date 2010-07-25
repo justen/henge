@@ -25,48 +25,49 @@ namespace Henge.Rules.Protagonist.Metabolise
 			//TODO: Need to check if the Actor is a logged-out Avatar and give them bonuses if so.
 			if (!interaction.Finished)
 			{
-				Actor actor = interaction.Protagonist as Actor;
-				Trait health = actor.Traits["Health"];
-				Trait energy = actor.Traits["Energy"];
-				Trait constitution = actor.Traits["Constitution"];
-				string message = "You rest and recuperate";
+				Actor actor			= interaction.Protagonist as Actor;
+				Trait health		= actor.Traits["Health"];
+				Trait energy		= actor.Traits["Energy"];
+				Trait constitution	= actor.Traits["Constitution"];
+				string message		= "You rest and recuperate";
+				
 				if (health.Flavour!="Dead")
 				{
-					double constDelta = Constants.Tick.MetabolicRate;
-					double healthDelta = Constants.Tick.Healthy.Heal;
-					double energyDelta = Constants.Tick.Healthy.Revitalise;
+					double constDelta	= Constants.Tick.MetabolicRate;
+					double healthDelta	= Constants.Tick.Healthy.Heal;
+					double energyDelta	= Constants.Tick.Healthy.Revitalise;
 					
 					if (constitution.Value <= 0)
 					{
-						//decrease Health, increase Energy by less
-						healthDelta = Constants.Tick.Ill.Heal;
-						energyDelta = Constants.Tick.Ill.Revitalise;
-						constDelta = -constDelta;
-						if (constitution.Value == 0)
-						{// increase Constitution
-							constDelta = 0;
-						}
-						message = "You feel weaker";
+						// Decrease Health, increase Energy by less
+						healthDelta	= Constants.Tick.Ill.Heal;
+						energyDelta	= Constants.Tick.Ill.Revitalise;
+						constDelta	= -constDelta;
+						message		= "You feel weaker";
+						
+						// Increase Constitution
+						if (constitution.Value == 0) constDelta = 0;		
 					}
-					if (health.Value+healthDelta<0)
+					
+					if (health.Value + healthDelta < 0)
 					{
-						interaction.Deltas.Add((success) => {
+						using (interaction.Lock(health, energy, constitution))
+						{
 							health.SetValue(0);
 							energy.SetValue(0);
 							constitution.SetValue(0);
 							health.Flavour = "Dead";
-							return true;
-						});
+						}
 						interaction.Failure("You succumb to your ailments. Your story is over... will your line continue?", false);
 					}
 					else
 					{
-						interaction.Deltas.Add((success) => {
+						using (interaction.Lock(health, energy, constitution))
+						{
 							health.SetValue(health.Value + healthDelta);
 							energy.SetValue(energy.Value + energyDelta);
 							constitution.SetValue(constitution.Value + constDelta);
-							return true;
-						});
+						}
 						interaction.Success(message);
 					}
 					

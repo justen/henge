@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
+using Henge.Data;
 using Henge.Data.Entities;
 
 
@@ -10,30 +11,28 @@ namespace Henge.Rules
 	public class HengeInteraction : Interaction
 	{
 		public double Impedance { get; set; }
-		public string Log {get; set;}
+		public string Log 		{ get; set; }
 		
 		public PropertyCache ProtagonistCache	{ get; private set; }
 		public PropertyCache AntagonistCache	{ get; private set; }
 		public PropertyCache SubjectCache		{ get; private set; }
 		
 		
-		public HengeInteraction(Actor protagonist, Component antagonist, Dictionary<string, object> arguments) : base(protagonist, antagonist, arguments)
+		public HengeInteraction(DataProvider db, Actor protagonist, Component antagonist, Dictionary<string, object> arguments) : base(db, protagonist, antagonist, arguments)
 		{
-			this.ProtagonistCache	= new PropertyCache(this.Deltas, protagonist);
-			this.AntagonistCache	= new PropertyCache(this.Deltas, antagonist);
+			this.ProtagonistCache	= new PropertyCache(db, protagonist);
+			this.AntagonistCache	= new PropertyCache(db, antagonist);
 		}
 		
 		
 		public override void SetSubject(Component subject)
 		{
-
-			if ((this.SubjectCache!=null)&&(this.Subject is Actor )) 
-			{
-				this.ApplyBonuses(this.SubjectCache.SkillBonuses, this.Subject as Actor, this.SubjectCache);
-			}
+			if (this.SubjectCache != null && this.Subject is Actor) this.ApplyBonuses(this.SubjectCache.SkillBonuses, this.Subject as Actor);
+			
 			this.Subject		= subject;
-			this.SubjectCache	= new PropertyCache(this.Deltas, subject);
+			this.SubjectCache	= new PropertyCache(this.db, subject);
 		}	
+		
 		
 		public bool TraitCheck(Component subject, string traitName)
 		{
@@ -43,48 +42,47 @@ namespace Henge.Rules
 				Trait trait = subject.Traits[traitName];
 				if ( trait.Expiry.HasValue && trait.Expiry.Value < DateTime.Now)
 				{
-					this.Deltas.Add((success) => {
+					using (this.db.Lock(subject.Traits))
+					{
 						subject.Traits.Remove(traitName);
-						return true;
-					});
+					}
 				}
 				else result = true;
 			}
 			return result;
 		}
 		
+		
 		public override IInteraction Conclude()
 		{
-
-			if (this.Antagonist is Actor) this.ApplyBonuses(this.AntagonistCache.SkillBonuses, this.Antagonist as Actor, this.AntagonistCache);
-			if ((this.SubjectCache!=null)&&(this.Subject is Actor )) 
-			{
-				this.ApplyBonuses(this.SubjectCache.SkillBonuses, this.Subject as Actor, this.SubjectCache);
-			}
-			this.ApplyBonuses(this.ProtagonistCache.SkillBonuses, this.Protagonist as Actor, this.ProtagonistCache);
+			if (this.Antagonist is Actor) 							this.ApplyBonuses(this.AntagonistCache.SkillBonuses, this.Antagonist as Actor);
+			if (this.SubjectCache != null && this.Subject is Actor)	this.ApplyBonuses(this.SubjectCache.SkillBonuses, this.Subject as Actor);
+			
+			this.ApplyBonuses(this.ProtagonistCache.SkillBonuses, this.Protagonist as Actor);
 		
 			return this as IInteraction;
 		}
 		
-		private void ApplyBonuses(Dictionary<Skill, double> bonuses, Actor actor, PropertyCache cache)
+		
+		private void ApplyBonuses(Dictionary<Skill, double> bonuses, Actor actor)
 		{
-			if (cache!=null && actor!=null && bonuses!=null)
+			if (actor != null && bonuses != null)
 			{
-				this.Deltas.Add((success) => {
-					foreach (Skill skill in bonuses.Keys)
+				using (this.db.Lock(actor.Skills, bonuses.Keys.ToArray()))
+				{
+					foreach (var item in bonuses)
 					{
-						skill.Add(bonuses[skill]);
+						item.Key.Add(item.Value);
 						
-						if (skill.Value == 1.0)
+						if (item.Key.Value == 1.0)
 						{
-							foreach (string s in skill.Children)
+							foreach (string s in item.Key.Children)
 							{
 								if (!actor.Skills.ContainsKey(s)) actor.Skills.Add(s, new Skill { Value = Constants.SkillGrantDefault });
 							}
 						}
 					}
-					return true;
-				});
+				}
 			}
 		}
 	}

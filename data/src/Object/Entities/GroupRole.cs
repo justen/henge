@@ -6,9 +6,9 @@ namespace Henge.Data.Entities
 {
 	public class GroupRole : ObjectEntity
 	{
-		public double Rank								{ get; set; }
-		public IList<Avatar> Members 					{ get; set; }
-		public IDictionary<string, bool> Permissions	{ get; set; }
+		public virtual double Rank								{ get; set; }
+		public virtual IList<Avatar> Members 					{ get; set; }
+		public virtual IDictionary<string, bool> Permissions	{ get; set; }
 		
 		
 		public GroupRole()

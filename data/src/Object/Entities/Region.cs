@@ -6,10 +6,10 @@ namespace Henge.Data.Entities
 {
 	public class Region : ObjectEntity
 	{
-	    public string Name					{get; set;}
-	    public string Description			{get; set;}
-	    public Region Parent				{get; set;}
-	    public IList<Location> Locations	{get; set;}	
+	    public virtual string Name					{get; set;}
+	    public virtual string Description			{get; set;}
+	    public virtual Region Parent				{get; set;}
+	    public virtual IList<Location> Locations	{get; set;}	
 		
 		
 		public Region()

@@ -81,9 +81,7 @@ namespace Henge.Web.Controllers
 			// Make sure that something has at least been entered for the name and password, and that the passwords match
 			if (name.Length > 0 && password.Length > 0 && password == passwordRepeat)
 			{
-				//Console.WriteLine(FormsAuthentication.HashPasswordForStoringInConfigFile(password, "sha1"));
 				// Save a new user to the database, simply by creating a new transient User object and passing it to nhibernate
-				//this.db.Update(new User { Name = name, Clan = name, Password = FormsAuthentication.HashPasswordForStoringInConfigFile(password, "sha1") });
 				this.db.Store(new User { Name = name, Clan = name, Password = FormsAuthentication.HashPasswordForStoringInConfigFile(password, "sha1") });
 				this.SetMessage("User added successfully");
 			}
@@ -140,15 +138,15 @@ namespace Henge.Web.Controllers
 		public ActionResult Clan(string clan)
 		{
 			//if (this.db.CreateCriteria<User>().Add(Restrictions.Eq("Clan", clan)).UniqueResult<User>() == null)
-			if ( (from u in this.db.Query<User>() where u.Clan == clan select true).Count() == 0 )
+			if ( (from u in this.db.Query<User>() where u.Clan == clan select true).Any() )
 			{
-				this.user.Clan = clan;
-				this.db.Flush();	
+				using (this.db.Lock(this.user))
+				{
+					this.user.Clan = clan;
+				}
 			}
-			else
-			{
-				this.SetError("A clan with the same name already exists");	
-			}
+			else this.SetError("A clan with the same name already exists");	
+
 			return RedirectToAction ("Account");
 		}
 
@@ -173,7 +171,10 @@ namespace Henge.Web.Controllers
 		[Authorize][AcceptVerbs(HttpVerbs.Post)]
 		public ActionResult ConnectAvatar(int index)
 		{
-			this.user.CurrentAvatar = this.user.Avatars.ElementAtOrDefault(index);
+			using (this.db.Lock(this.user))
+			{
+				this.user.CurrentAvatar = this.user.Avatars.ElementAtOrDefault(index);
+			}
 			return RedirectToAction ("", "");	
 		}
 		
@@ -181,7 +182,10 @@ namespace Henge.Web.Controllers
 		[Authorize]
 		public ActionResult DisconnectAvatar()
 		{
-			this.user.CurrentAvatar = null;
+			using (this.db.Lock(this.user))
+			{
+				this.user.CurrentAvatar = null;
+			}
 			return RedirectToAction("Account");
 		}
 		

@@ -11,8 +11,9 @@ namespace Avebury
 	{
 		private Dictionary<string, ComponentType> Types;
 		private List<Location> Locations;
-		private List<Entity> Maps ;
+		private List<Entity> Maps;
 		private List<Entity> UnlinkedEntities = new List<Entity>();
+		
 		public List<Entity> Data 
 		{
 			get
@@ -23,24 +24,27 @@ namespace Avebury
 			}
 		}
 		
-		public Loader (string applicationPath)
+		
+		public Loader(string applicationPath)
 		{
-			this.Types = new Dictionary<string, ComponentType>();
-			this.Locations = new List<Location>();
-			this.Maps = new List<Entity>();
+			this.Types			= new Dictionary<string, ComponentType>();
+			this.Locations		= new List<Location>();
+			this.Maps			= new List<Entity>();
 			string path			= Path.Combine(applicationPath, "maps");
 			DirectoryInfo info	= new DirectoryInfo(path);
-			List<XmlNode> maps = new List<XmlNode>();
+			List<XmlNode> maps	= new List<XmlNode>();
+			
 			foreach(FileInfo file in info.GetFiles("*.xml"))
 			{
 				XmlDocument map = new XmlDocument();
 				map.Load(file.FullName);
-				if ((map.DocumentType.Name=="avebury")&&(map.DocumentElement.Name=="world"))
+				
+				if (map.DocumentType.Name=="avebury" && map.DocumentElement.Name=="world")
 				{
 					foreach (XmlNode child in map.DocumentElement)
 					{
-						if (child.Name=="key") this.ParseKey(child);
-						if (child.Name=="map") maps.Add(child);
+						if (child.Name == "key") this.ParseKey(child);
+						if (child.Name == "map") maps.Add(child);
 					}
 					foreach (XmlNode node in maps)
 					{
@@ -49,6 +53,7 @@ namespace Avebury
 				}
 			}
 		}
+		
 		
 		private void ParseKey(XmlNode root)
 		{

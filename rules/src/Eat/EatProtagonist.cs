@@ -24,25 +24,32 @@ namespace Henge.Rules.Protagonist.Eat
 		{
 			if (!interaction.Finished)
 			{
-				Item food = interaction.Antagonist as Item;
-				Actor actor = interaction.Protagonist as Actor;
-				double nutrition = food.Traits["Nutrition"].Value;
-				if (nutrition>0) interaction.Success(string.Format("You eat the {0} with relish", food.Inspect(actor)));
+				Item food			= interaction.Antagonist as Item;
+				Actor actor 		= interaction.Protagonist as Actor;
+				double nutrition	= food.Traits["Nutrition"].Value;
+				
+				if (nutrition > 0) 
+				{
+					interaction.Success(string.Format("You eat the {0} with relish", food.Inspect(actor)));
+				}
 				else 
 				{
 					if (nutrition == 0) interaction.Success(string.Format("You eat the {0}", food.Inspect(actor)));
 					else interaction.Success(string.Format("You eat the {0}. You feel queasy.", food.Inspect(actor)));
 				}
+				
 				if (food.Owner == actor)
 				{
-					interaction.Deltas.Add((success) => {
-						actor.Traits["Weight"].SetValue(actor.Traits["Weight"].Value - food.Traits["Weight"].Value);
-						actor.Inventory.Remove(food);
-						actor.Traits["Constitution"].SetValue(actor.Traits["Constitution"].Value + nutrition);
-						return true;
-					});
-					interaction.Delete(food);
+					Trait weight 		= actor.Traits["Weight"];
+					Trait constitution	= actor.Traits["Constitution"];
 					
+					using (interaction.Lock(actor.Inventory, weight, constitution))
+					{
+						weight.SetValue(weight.Value - food.Traits["Weight"].Value);
+						constitution.SetValue(constitution.Value + nutrition);
+						actor.Inventory.Remove(food);
+					}
+					interaction.Delete(food);	
 				}
 				else interaction.Failure("You no longer have that", true);
 				

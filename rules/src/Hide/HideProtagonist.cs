@@ -82,20 +82,31 @@ namespace Henge.Rules.Protagonist.Hide
 					
 					if (antagonist is Item && (antagonist as Item).Owner == protagonist)
 					{
-						Item item = antagonist as Item;
-						interaction.Deltas.Add((success) => {
+						Item item 				= antagonist as Item;
+						Trait protagonistWeight = protagonist.Traits["Weight"];
+						
+						using (interaction.Lock(protagonist.Location.Inventory, item, protagonistWeight, protagonist.Inventory))
+						{
 							protagonist.Location.Inventory.Add(item);
 							item.Owner = protagonist.Location;
 							protagonist.Traits["Weight"].SetValue(protagonist.Traits["Weight"].Value - item.Traits["Weight"].Value);
 							protagonist.Inventory.Remove(item);
-							return true;
-						});
-					}	
-					interaction.Deltas.Add((success) => {
-						if (!antagonist.Traits.ContainsKey("Visibility")) antagonist.Traits.Add("Visibility", new Trait(double.MaxValue, 0, visibility));
-						else antagonist.Traits["Visibility"].SetValue(visibility);
-						return true;
-					});
+						}
+					}
+					
+					using (interaction.Lock(antagonist.Traits))
+					{
+						if (antagonist.Traits.ContainsKey("Visibility")) 
+						{
+							// Not sure how safe it is to use recursive locking?
+							using (interaction.Lock(antagonist.Traits["Visibility"]))
+							{
+								antagonist.Traits["Visibility"].SetValue(visibility);
+							}
+						}
+						else antagonist.Traits.Add("Visibility", new Trait(double.MaxValue, 0, visibility));
+				
+					}
 				}
 			}			
 			return interaction;

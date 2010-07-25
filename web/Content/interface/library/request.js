@@ -15,7 +15,7 @@ var giRequest = new Class(
 		new Request.JSON({
 			url:		root + 'Interface/DefendLocation',
 			data:		'dx=' + dx + '&dy=' + dy + '&duration=' + duration,
-			onSuccess:	function(data) { interface.showMessage(data) }
+			onSuccess:	function(data) { log.add(data) }
 		}).send();
 	},
 

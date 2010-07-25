@@ -28,7 +28,7 @@ namespace Henge.Engine
 
 		public IInteraction Interact(DataProvider db, Actor protagonist, Component antagonist, string interactionType, Dictionary<string, object> arguments)
 		{
-			IInteraction interaction = this.rulebook.CreateInteraction(protagonist, antagonist, arguments);
+			IInteraction interaction = this.rulebook.CreateInteraction(db, protagonist, antagonist, arguments);
 			
 			if (interaction != null)
 			{
@@ -36,7 +36,7 @@ namespace Henge.Engine
 				interaction.Conclude();
 				if (interaction.Finished && !interaction.Illegal)
 				{
-					// while not failing to commit
+					/*// while not failing to commit
 					// {
 						foreach (var delta in interaction.Deltas)
 						{
@@ -54,7 +54,7 @@ namespace Henge.Engine
 						//{
 							
 						//}
-					//}		
+					//}	*/	
 				}
 				else
 				{

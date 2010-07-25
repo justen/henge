@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 
+using Henge.Data;
 using Henge.Data.Entities;
 
 
@@ -43,9 +44,9 @@ namespace Henge.Rules
 		}
 		
 		
-		public IInteraction CreateInteraction(Actor protagonist, Component antagonist, Dictionary<string, object> arguments)
+		public IInteraction CreateInteraction(DataProvider db, Actor protagonist, Component antagonist, Dictionary<string, object> arguments)
 		{
-			return (this.interactionType != null) ? (IInteraction)Activator.CreateInstance(this.interactionType, new object [] { protagonist, antagonist, arguments }) : null;
+			return (this.interactionType != null) ? (IInteraction)Activator.CreateInstance(this.interactionType, new object [] { db, protagonist, antagonist, arguments }) : null;
 		}
 		
 		

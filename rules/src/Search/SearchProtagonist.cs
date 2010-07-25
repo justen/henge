@@ -38,11 +38,12 @@ namespace Henge.Rules.Protagonist.Search
 						
 						if (interaction.ProtagonistCache.SkillCheck("Search", this.CalculateDifficulty(item)))
 						{
-							//found something, set its visibility
-							interaction.Deltas.Add((success) => {
+							// Found something, set its visibility
+							using (interaction.Lock(item.Traits["Visibility"]))
+							{
 								item.Traits["Visibility"].SetValue(Constants.HighVisibility);
-								return true;
-							});
+							}
+
 							interaction.Success(string.Format("You found something! You put the {0} in plain view", item.Inspect(protagonist).ShortDescription));
 							break;
 						}

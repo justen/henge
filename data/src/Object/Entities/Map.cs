@@ -6,12 +6,13 @@ namespace Henge.Data.Entities
 {
 	public class Coordinates : ObjectEntity
 	{
-		public int X { get; set; }
-		public int Y { get; set; }
-		public int Z { get; set; }
+		public virtual int X { get; set; }
+		public virtual int Y { get; set; }
+		public virtual int Z { get; set; }
 		
 		
 		public Coordinates() {}
+		
 		
 		public Coordinates(Coordinates c)
 		{
@@ -36,8 +37,8 @@ namespace Henge.Data.Entities
 	
 	public class Map : ObjectEntity
 	{
-		public IDictionary<Coordinates, Location> Locations	{ get; set; }
-	    public string Name									{ get; set; }
+		public virtual IDictionary<Coordinates, Location> Locations	{ get; set; }
+	    public virtual string Name									{ get; set; }
 		
 		
 		public Map()

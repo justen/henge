@@ -24,13 +24,14 @@ namespace Henge.Rules.Protagonist.Spawn.Character
 		{
 			Avatar avatar		= interaction.Protagonist as Avatar;
 			Location location	= interaction.Antagonist as Location;
-			interaction.Deltas.Add((success) => {
+			
+			using (interaction.Lock(location.Inhabitants, avatar.Skills))
+			{
 				location.Inhabitants.Add(avatar);
-				avatar.Skills.Add("Strength", new Skill() { Value = Constants.StartingSkill });
-				avatar.Skills.Add("Climb", new Skill() { Value = Constants.StartingSkill });
-				avatar.Skills.Add("Fitness", new Skill() { Value = Constants.StartingSkill });
-				return true;
-			});
+				avatar.Skills.Add("Strength",	new Skill() { Value = Constants.StartingSkill });
+				avatar.Skills.Add("Climb",		new Skill() { Value = Constants.StartingSkill });
+				avatar.Skills.Add("Fitness",	new Skill() { Value = Constants.StartingSkill });
+			}
 			
 			return interaction.Success("Spawned");
 		}

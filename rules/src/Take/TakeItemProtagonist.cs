@@ -43,13 +43,14 @@ namespace Henge.Rules.Protagonist.Take
 							{
 								//delta to switch ownership of item
 								Trait weightTrait = protagonist.Traits["Weight"];
-								interaction.Deltas.Add((success) => {
+								
+								using (interaction.Lock(antagonist, antagonist.Owner.Inventory, weightTrait, protagonist.Inventory))
+								{
 									antagonist.Owner.Inventory.Remove(antagonist);
 									antagonist.Owner = protagonist;
 									protagonist.Inventory.Add(antagonist);
 									weightTrait.SetValue(weightTrait.Value + weight);
-									return true;
-								});
+								}
 								interaction.Success(string.Format("{0} taken", antagonist.Inspect(protagonist).ShortDescription));
 							}
 							else interaction.Failure(string.Format("You're too tired to pick up the {0}", antagonist.Inspect(protagonist).ShortDescription), false);

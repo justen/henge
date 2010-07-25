@@ -20,11 +20,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <CustomCommands>
-      <CustomCommands>
-        <Command type="AfterBuild" command="mono Db4oTool.exe -v -collections -tp -by-name:Henge.Data.Entities ${TargetDir}/${TargetName}" workingdir="${SolutionDir}/references" />
-      </CustomCommands>
-    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -54,18 +49,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\references\NHibernate.ByteCode.Castle.dll</HintPath>
     </Reference>
-    <Reference Include="Db4objects.Db4o.CS, Version=8.0.146.14426, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\references\Db4objects.Db4o.CS.dll</HintPath>
-    </Reference>
-    <Reference Include="Db4objects.Db4o, Version=8.0.146.14426, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\references\Db4objects.Db4o.dll</HintPath>
-    </Reference>
-    <Reference Include="Db4objects.Db4o.Linq, Version=8.0.146.14426, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\references\Db4objects.Db4o.Linq.dll</HintPath>
-    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="MySql.Data, Version=6.1.4.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d">
       <SpecificVersion>False</SpecificVersion>
@@ -74,6 +57,10 @@
     <Reference Include="NHibernate.Linq, Version=1.1.0.1001, Culture=neutral, PublicKeyToken=444cf6a87fdab271">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\references\NHibernate.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="Coincidental, Version=0.1.3857.23825, Culture=neutral, PublicKeyToken=null">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\references\Coincidental.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -117,7 +104,4 @@
     <Folder Include="src\Entities\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <Target Name="AfterBuild">
-    <Exec WorkingDirectory="$(ProjectDir)../references" Command="mono Db4oTool.exe -v -collections -tp -by-name:Henge.Data.Entities $(TargetPath)" />
-  </Target>
 </Project>

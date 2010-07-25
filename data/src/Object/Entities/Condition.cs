@@ -7,16 +7,16 @@ namespace Henge.Data.Entities
 	public class Condition : ObjectEntity
 	{
 		// The attribute this relates to
-		public string Trait { get; set; }
+		public virtual string Trait { get; set; }
 		
 	    // Minimum value of the attribute to meet the condition
-	    public double Minimum { get; set; }
+	    public virtual double Minimum { get; set; }
 		
 	    // Maximum value of the attribute to meet the condition
-	    public double Maximum { get; set; }
+	    public virtual double Maximum { get; set; }
 		
 	    // Determine whether to invert the polarity of the result (i.e., you pass if you fail to meet the condition)
-	    public bool Invert 	{ get; set; }
+	    public virtual bool Invert 	{ get; set; }
 		
 		
 		public bool Valid(TraitBase trait)

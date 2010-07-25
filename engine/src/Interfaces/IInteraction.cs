@@ -11,9 +11,9 @@ namespace Henge.Rules
 		Component Subject				{ get; }
 		Component Antagonist			{ get; set; }
 		Actor Protagonist				{ get; set; }
-		IList<Func<bool, bool>> Deltas 	{ get; }
+		//IList<Func<bool, bool>> Deltas 	{ get; }
 		IList<Component> Interferers	{ get; }
-		List<Entity> PendingDeletions	{ get; }
+		//List<Entity> PendingDeletions	{ get; }
 		string Conclusion				{ get; }
 		bool Finished					{ get; }
 		bool Succeeded					{ get; }
@@ -25,5 +25,7 @@ namespace Henge.Rules
 
 		void SetSubject(Component subject);
 		void Delete(Entity target);
+		
+		IDisposable Lock(params object [] entities);
 	}
 }

@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
+using Henge.Data;
 using Henge.Data.Entities;
 
 
@@ -11,19 +12,20 @@ namespace Henge.Rules
 	{
 		Component subject;
 		Actor actor;
-		bool energyCached 		= false;
-		double energy			= 0.0;
-		IList<Func<bool, bool>> deltas = null;
+		bool energyCached	= false;
+		double energy		= 0.0;
+
+		DataProvider db;
 		public Dictionary<Skill, double> SkillBonuses {get; private set;}
 		
 		
-		public PropertyCache(IList<Func<bool, bool>> deltas, Component subject)
+		public PropertyCache(DataProvider db, Component subject)
 		{
-			this.deltas		= deltas;
-			this.subject	= subject;
-			this.actor		= subject as Actor;
-			this.SkillBonuses = new Dictionary<Skill, double>();
-			if (this.actor == null) this.energyCached = true;
+			this.db				= db;
+			this.subject		= subject;
+			this.actor			= subject as Actor;
+			this.SkillBonuses 	= new Dictionary<Skill, double>();
+			this.energyCached 	= this.actor == null;
 		}
 		
 		
@@ -48,14 +50,15 @@ namespace Henge.Rules
 						if (gain > reserve.Value)					gain = reserve.Value;
 						
 						this.energy += gain;
-						double newReserve = reserve.Value - gain;
-						double newEnergy = energy.Value + gain;
-						this.deltas.Add((success) => {
+						double newReserve	= reserve.Value - gain;
+						double newEnergy	= energy.Value + gain;
+						
+						using (this.db.Lock(this.actor, reserve, energy))
+						{
 							reserve.SetValue(newReserve);
 							energy.SetValue(newEnergy);
 							this.actor.LastModified = DateTime.Now;
-							return true;
-						});
+						}
 					}
 					
 					this.energyCached = true;
@@ -107,10 +110,10 @@ namespace Henge.Rules
 					{
 						this.energy -= amount;
 						
-						this.deltas.Add((success) => {
+						using (this.db.Lock(energy))
+						{
 							energy.SetValue(energy.Value - amount);
-							return true;
-						});
+						}
 						
 						return true;
 					}
@@ -131,14 +134,16 @@ namespace Henge.Rules
 		{
 			if (this.actor != null)
 			{
-				if (overdraw || (this.Energy >= amount))
+				if (overdraw || this.Energy >= amount)
 				{
 					Trait energy = subject.Traits["Energy"];
 					this.energy -= amount;
-					this.deltas.Add((success) => {
+					
+					using (this.db.Lock(energy))
+					{
 						energy.SetValue(energy.Value - amount);
-						return true;
-					});
+					}
+					
 					return true;
 				}
 				
@@ -178,11 +183,8 @@ namespace Henge.Rules
 					
 					if (increase > 0)
 					{
-						if (!this.SkillBonuses.ContainsKey(skill)) this.SkillBonuses.Add(skill, increase);
-						else
-						{
-							if (increase > this.SkillBonuses[skill]) this.SkillBonuses[skill] = increase;
-						}
+						if (!this.SkillBonuses.ContainsKey(skill))		this.SkillBonuses.Add(skill, increase);
+						else if (increase > this.SkillBonuses[skill])	this.SkillBonuses[skill] = increase;
 					}
 				}	
 			}

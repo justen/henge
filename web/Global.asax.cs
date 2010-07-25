@@ -20,24 +20,33 @@ namespace Henge.Web
 		}
 
 		
-		protected void Application_Start ()
+		protected void Application_Start()
 		{
-			string path = Path.Combine(Server.MapPath("~"), "Data");
-			if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+			string path	= Path.Combine(Server.MapPath("~"), "Data");
+			string yap	= Path.Combine(path, "henge.yap");
+			
+			if (!Directory.Exists(path))	Directory.CreateDirectory(path);
+			if (File.Exists(yap))			File.Delete(yap);
 			
 			DataProvider = new Henge.Data.DataProvider();
-			//DataProvider.Initialise(Path.Combine(path, "henge.yap"), true);
-			DataProvider.Initialise(Path.Combine(path, "henge.yap"), "mysql", "Server=127.0.0.1;Uid=henge;Pwd=henge;Database=henge", true);
-			Avebury.Loader avebury = new Avebury.Loader(path);
-			//List<Entity> data = avebury.Maps;
-			//ComponentType avatarType = new ComponentType(){ Id = "avatar"};
-			//avatarType.Appearance.Add( new Appearance() { Type = "avatar", ShortDescription = "A person", Description = "A nondescript person" });
-			//data.Add(avatarType);     
-			DataProvider.Bootstrap(avebury.Data);
-
+			DataProvider.Initialise(yap, "mysql", "Server=127.0.0.1;Uid=henge;Pwd=henge;Database=henge", true);
 			DataProvider.UpdateSchema();
+			
+			Avebury.Loader avebury = new Avebury.Loader(path);
+			DataProvider.Bootstrap(avebury.Data);
+			DataProvider.Store(new User { 
+				Name = "test", 
+				Password = System.Web.Security.FormsAuthentication.HashPasswordForStoringInConfigFile("test", "sha1") 
+			});
+			
 			Henge.Engine.Interactor.Instance.Initialise(Path.Combine(Server.MapPath("~"), "bin"));
-			RegisterRoutes (RouteTable.Routes);
+			RegisterRoutes(RouteTable.Routes);
+		}
+		
+		
+		protected void Application_End()
+		{
+			DataProvider.Dispose();
 		}
 		
 		
