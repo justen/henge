@@ -68,18 +68,25 @@ namespace Henge.Rules
 		{
 			if (actor != null && bonuses != null)
 			{
-				using (this.db.Lock(actor.Skills, bonuses.Keys.ToArray()))
+				List<string> skillsToAdd = new List<string>();
+				
+				using (this.db.Lock(bonuses.Keys.ToArray()))
 				{
 					foreach (var item in bonuses)
 					{
 						item.Key.Add(item.Value);
 						
-						if (item.Key.Value == 1.0)
+						if (item.Key.Value == 1.0) skillsToAdd.AddRange(item.Key.Children);
+					}
+				}
+			
+				if (skillsToAdd.Any())
+				{
+					using (this.db.Lock(actor.Skills))
+					{
+						foreach (string skill in skillsToAdd)
 						{
-							foreach (string s in item.Key.Children)
-							{
-								if (!actor.Skills.ContainsKey(s)) actor.Skills.Add(s, new Skill { Value = Constants.SkillGrantDefault });
-							}
+							if (!actor.Skills.ContainsKey(skill)) actor.Skills.Add(skill, new Skill { Value = Constants.SkillGrantDefault });
 						}
 					}
 				}

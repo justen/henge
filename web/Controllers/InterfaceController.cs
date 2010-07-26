@@ -25,13 +25,13 @@ namespace Henge.Web.Controllers
 				// Can't compare references at the moment (since they are proxied
 				Coordinates coordinates = this.avatar.Location.Coordinates;
 				Location location		= this.db.Get<Location>(l => 
-					l.Coordinates.X == coordinates.X && 
-				    l.Coordinates.Y == coordinates.Y// &&
+					l.Coordinates.X == (coordinates.X + dx) && 
+				    l.Coordinates.Y == (coordinates.Y + dy) // &&
 					//l.Map == m
 				);
 				//Location location = this.avatar.Location.Map.GetLocation(coordinates);
 				
-				if (location != null) 
+				if (location != null && location != this.avatar.Location) 
 				{
 					IInteraction result = Interactor.Instance.Interact(this.db, this.avatar, location, "Move.Run", null);
 					

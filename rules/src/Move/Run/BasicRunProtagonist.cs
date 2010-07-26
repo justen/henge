@@ -30,7 +30,8 @@ namespace Henge.Rules.Protagonist.Move.Run
 			if (!interaction.Finished)
 			{
 				Location antagonist	= interaction.Antagonist as Location;
-				Location source = interaction.Protagonist.Location;
+				Location source		= interaction.Protagonist.Location;
+				
 				if (interaction.Protagonist != null && antagonist != null)
 				{
 					if (this.CalculateDistance(source, antagonist) <= 2)
@@ -81,7 +82,7 @@ namespace Henge.Rules.Protagonist.Move.Run
 						}
 						else 
 						{
-							if (interaction.Impedance > interaction.ProtagonistCache.Strength * interaction.Protagonist.Traits["energy"].Maximum)
+							if (interaction.Impedance > interaction.ProtagonistCache.Strength * interaction.Protagonist.Traits["Energy"].Maximum)
 							{
 								interaction.Failure(string.Format("{0}Your chosen route seems impassable.", interaction.Log), false);
 							}
