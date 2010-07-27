@@ -67,11 +67,10 @@ var giTile = new Class(
 			//this.peopleIcon 	= new giIcon(this.tile, library.icons[1]);
 			this.animalsIcon 	= new giIcon(this.tile, library.icons[2]);
 			this.structuresIcon = new giIcon(this.tile, library.icons[3]);
-			
-			var colour = [Math.floor(Math.random() * 255), Math.floor(Math.random() * 255), Math.floor(Math.random() * 255)].rgbToHex();
+
 			this.tile.setStyles({
-				border: '1px solid #000',
-				'background-color': colour
+				//border: '1px solid #000',
+				'background-color': data.Colour
 			});
 			this.tile.set('title', data.Name);
 		}

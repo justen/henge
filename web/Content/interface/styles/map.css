@@ -8,7 +8,6 @@ div#canvas
 
 div.tile
 {
-	padding: 3px;
 	position: absolute;
 	z-index: 1;
 }
