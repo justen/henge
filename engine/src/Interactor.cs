@@ -11,6 +11,7 @@ namespace Henge.Engine
 	public sealed class Interactor
 	{
 		private Rulebook rulebook;
+		private DataProvider db;
 		private static readonly Interactor instance = new Interactor();
 
 		public static Interactor Instance { get { return instance; }}
@@ -20,15 +21,16 @@ namespace Henge.Engine
 		private Interactor() {}
 		
 		
-		public void Initialise(string applicationPath)
+		public void Initialise(string applicationPath, DataProvider db)
 		{
-			this.rulebook = Loader.LoadRules(applicationPath);
+			this.rulebook 	= Loader.LoadRules(applicationPath);
+			this.db			= db;
 		}
 		
 
-		public IInteraction Interact(DataProvider db, Actor protagonist, Component antagonist, string interactionType, Dictionary<string, object> arguments)
+		public IInteraction Interact(Actor protagonist, Component antagonist, string interactionType, Dictionary<string, object> arguments)
 		{
-			IInteraction interaction = this.rulebook.CreateInteraction(db, protagonist, antagonist, arguments);
+			IInteraction interaction = this.rulebook.CreateInteraction(this.db, protagonist, antagonist, arguments);
 			
 			if (interaction != null)
 			{

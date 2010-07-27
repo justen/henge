@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
-//using Db4objects.Db4o;
+
+using Coincidental;
 
 
 namespace Henge.Data.Entities
 {
 	public class User : ObjectEntity
 	{
-		//[Indexed]
+		[Indexed]
 	    public virtual string Name				{ get; set; }
 		public virtual string Password			{ get; set; }	
 		public virtual string Clan				{ get; set; }

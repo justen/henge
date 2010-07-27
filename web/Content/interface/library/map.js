@@ -61,8 +61,6 @@ var giMap = new Class(
 				mouseup:	this.bound.mouseUp,
 				mousemove:	this.bound.mouseDrag
 			});
-			
-			log.add('Mouse down');
 		}
 
 		return false;	// Stops the event and prevents FF3 from dragging images

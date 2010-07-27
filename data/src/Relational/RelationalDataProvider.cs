@@ -190,15 +190,15 @@ namespace Henge.Data
 		}
 		
 		
-		public T Get<T>(Func<T, bool> expression) where T : Entity
+		public T Get<T>(System.Linq.Expressions.Expression<Func<T, bool>> expression) where T : Entity
 		{
 			ISession session = this.GetSession();
 			
 			// This is what should be used with NHibernate 3.0
-			//return (session != null) ? session.Query<T>().SingleOrDefault(expression) : null;
+			//return (session != null) ? session.Query<T>().Where(expression).SingleOrDefault() : null;
 			
 			// This is what we have to use with NHibernate 2.1 and the additional Linq provider
-			return (session != null) ? session.Linq<T>().SingleOrDefault(expression) : null;
+			return (session != null) ? session.Linq<T>().Where(expression).SingleOrDefault() : null;
 		}
 		
 	

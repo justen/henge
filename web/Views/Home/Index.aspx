@@ -7,11 +7,6 @@
 	</div>
 	<div id="log">
 		<table id="log-table">
-			<tr><td>Time</td><td>Log entry</td></tr>
-			<tr><td>Time</td><td>Log entry</td></tr>
-			<tr><td>Time</td><td>Log entry</td></tr>
-			<tr><td>Time</td><td>Log entry</td></tr>
-			<tr><td>Time</td><td>Log entry</td></tr>
 		</table>
 	</div>
 </asp:Content>

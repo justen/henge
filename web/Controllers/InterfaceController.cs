@@ -23,22 +23,17 @@ namespace Henge.Web.Controllers
 			if (this.avatar != null)
 			{
 				// Can't compare references at the moment (since they are proxied
-				Coordinates coordinates = this.avatar.Location.Coordinates;
-				Location location		= this.db.Get<Location>(l => 
-					l.Coordinates.X == (coordinates.X + dx) && 
-				    l.Coordinates.Y == (coordinates.Y + dy) // &&
-					//l.Map == m
-				);
-				//Location location = this.avatar.Location.Map.GetLocation(coordinates);
+				Location current	= this.avatar.Location;
+				Location location	= this.db.Get<Location>(l => l.X == (current.X + dx) && l.Y == (current.Y + dy)); // && l.Map == m);
 				
 				if (location != null && location != this.avatar.Location) 
 				{
-					IInteraction result = Interactor.Instance.Interact(this.db, this.avatar, location, "Move.Run", null);
+					IInteraction result = Interactor.Instance.Interact(this.avatar, location, "Move.Run", null);
 					
 					if (result.Succeeded)
 					{
 						//this.db.Store<LogEntry>(new LogEntry { Occurred = DateTime.Now, Entry = "We moved!" });
-						return Json(new { Valid = true, X = coordinates.X, Y = coordinates.Y });
+						return Json(new { Valid = true, X = location.X, Y = location.Y });
 					}
 					else error = result.Conclusion;
 				}
@@ -66,7 +61,7 @@ namespace Henge.Web.Controllers
 				Location location = this.avatar.Location;
 				if (location != null) 
 				{
-					IInteraction result = Interactor.Instance.Interact(this.db, this.avatar, location, "Defend.Guard", arguments);
+					IInteraction result = Interactor.Instance.Interact(this.avatar, location, "Defend.Guard", arguments);
 					
 					if (result.Succeeded)
 					{

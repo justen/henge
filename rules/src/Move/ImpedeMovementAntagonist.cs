@@ -29,8 +29,8 @@ namespace Henge.Rules.Antagonist.Move
 			if (antagonist != null && protagonist != null && protagonist.Location.Map == antagonist.Map)
 			{
 				interaction.Impedance	= antagonist.Traits.ContainsKey("Impede") ? antagonist.Traits["Impede"].Value : Constants.Impedance;
-				int dx					= protagonist.Location.Coordinates.X - antagonist.Coordinates.X;
-				int dy 					= protagonist.Location.Coordinates.Y - antagonist.Coordinates.Y;
+				int dx					= protagonist.Location.X - antagonist.X;
+				int dy 					= protagonist.Location.Y - antagonist.Y;
 				char [] impede 			= new char [] {
 					(dx > 0) ? 'e' : (dx < 0) ? 'w' : '-',
 					(dy > 0) ? 's' : (dy < 0) ? 'n' : '-'

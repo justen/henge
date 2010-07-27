@@ -36,8 +36,8 @@ namespace Henge.Rules.Protagonist.Scout
 				{
 					if (source.CanSee(target))
 					{
-						double dx			= target.Coordinates.X - source.Coordinates.X;
-						double dy			= target.Coordinates.Y - source.Coordinates.Y;
+						double dx			= target.X - source.X;
+						double dy			= target.Y - source.Y;
 						double distance		= dx * dx + dy * dy;
 						double sourceCover	= source.Traits.ContainsKey("Cover") ? source.Traits["Cover"].Value : Constants.DefaultCover;
 						double targetCover	= target.Traits.ContainsKey("Cover") ? target.Traits["Cover"].Value : Constants.DefaultCover;

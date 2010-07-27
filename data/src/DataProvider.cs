@@ -19,7 +19,14 @@ namespace Henge.Data
 		
 		public bool Initialise(string objectConnection, string relationalType, string relationalConnection, bool web)
 		{
-			return this.objectProvider.Initialise(objectConnection, ACTIVATION_DEPTH) && this.relationalProvider.Initialise(relationalType, relationalConnection, web);
+			CoincidentalConfiguration config = Provider.Configure
+				.Connection(objectConnection)
+				.ActivationDepth(ACTIVATION_DEPTH)
+				.Debugging(true)
+				.Indexing(i => i.AssemblyOf<Entity>().Where(t => t.IsSubclassOf(typeof(ObjectEntity))));
+					       
+			return 	this.objectProvider.Initialise(config) && 
+					this.relationalProvider.Initialise(relationalType, relationalConnection, web);
 		}
 		
 		
@@ -32,7 +39,10 @@ namespace Henge.Data
 		
 		public void Bootstrap(List<Entity> data)
 		{
-			foreach(Entity entity in data) this.objectProvider.Store(entity);
+			foreach(Entity entity in data) 
+			{
+				this.objectProvider.Store(entity);
+			}
 		}
 		
 		
@@ -86,7 +96,7 @@ namespace Henge.Data
 		}
 		
 		
-		public T Get<T>(Func<T, bool> expression) where T : Entity
+		public T Get<T>(System.Linq.Expressions.Expression<Func<T, bool>> expression) where T : Entity
 		{
 			return typeof(T).IsSubclassOf(objectEntityType) ? this.objectProvider.Get<T>(expression) : this.relationalProvider.Get<T>(expression);
 		}

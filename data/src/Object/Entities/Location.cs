@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 
+using Coincidental;
+
 
 namespace Henge.Data.Entities
 {
@@ -9,7 +11,12 @@ namespace Henge.Data.Entities
 	    public virtual IList<Avatar> Inhabitants		{ get; set; }
 		public virtual IList<Edifice> Structures		{ get; set; }
 		public virtual IList<Npc> Fauna					{ get; set; }
-		public virtual Coordinates Coordinates			{ get; set; }
+		//public virtual Coordinates Coordinates			{ get; set; }
+		[Indexed]
+		public virtual int X { get; set; }
+		[Indexed]
+		public virtual int Y { get; set; }
+		public virtual int Z { get; set; }
 
 	    //List of the Regions this Location is in
 	    public virtual IList<Region> Regions			{ get; set; }
@@ -22,7 +29,10 @@ namespace Henge.Data.Entities
 		
 		public Location(int x, int y, int z, ComponentType type) : base(type)
 		{
-			this.Coordinates		= new Coordinates { X = x, Y = y, Z = z };
+			//this.Coordinates		= new Coordinates { X = x, Y = y, Z = z };
+			this.X					= x;
+			this.Y					= y;
+			this.Z					= z;
 			this.Inhabitants 		= new List<Avatar>();
 			this.Structures			= new List<Edifice>();
 			this.Fauna				= new List<Npc>();

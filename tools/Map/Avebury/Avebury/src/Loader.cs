@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Xml;
+using System.Linq;
 using System.Collections.Generic;
 
 using Henge.Data.Entities;
@@ -18,9 +19,14 @@ namespace Avebury
 		{
 			get
 			{	
-				this.Maps.AddRange(UnlinkedEntities);
-				this.UnlinkedEntities = new List<Entity>();
-				return this.Maps;
+				List<Entity> result = new List<Entity>();
+				
+				result.AddRange(this.UnlinkedEntities.Cast<Entity>());
+				result.AddRange(this.Maps.Cast<Entity>());
+				result.AddRange(this.Locations.Cast<Entity>());
+				//this.Maps.AddRange(UnlinkedEntities);
+				//this.UnlinkedEntities = new List<Entity>();
+				return result;
 			}
 		}
 		
@@ -122,7 +128,7 @@ namespace Avebury
 						}
 						else location.Traits.Add(trait);
 					}
-					map.Locations.Add(location.Coordinates, location);
+					//map.Locations.Add(location.Coordinates, location);
 					this.Locations.Add(location);
 				}
 			}

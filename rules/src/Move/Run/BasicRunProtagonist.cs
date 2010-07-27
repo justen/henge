@@ -36,7 +36,7 @@ namespace Henge.Rules.Protagonist.Move.Run
 				{
 					if (this.CalculateDistance(source, antagonist) <= 2)
 					{
-						double gradient = (double)(antagonist.Coordinates.Z - source.Coordinates.Z)/255.0;
+						double gradient = (double)(antagonist.Z - source.Z)/255.0;
 						if (gradient > 0) 
 						{
 							if (!interaction.ProtagonistCache.SkillCheck("Climb", gradient))
@@ -99,8 +99,8 @@ namespace Henge.Rules.Protagonist.Move.Run
 		
 		private int CalculateDistance(Location source, Location destination)
 		{
-			int deltaX = source.Coordinates.X - destination.Coordinates.X;
-			int deltaY = source.Coordinates.Y - destination.Coordinates.Y;
+			int deltaX = source.X - destination.X;
+			int deltaY = source.Y - destination.Y;
 			// currently can't run in z, so don't bother calculating it.
 			// int deltaZ = source.Coordinates.Z - destination.Coordinates.Z;
 			

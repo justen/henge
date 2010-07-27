@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Henge.Data.Entities
 {
-	public class Coordinates : ObjectEntity
+	/*public class Coordinates : ObjectEntity
 	{
 		public virtual int X { get; set; }
 		public virtual int Y { get; set; }
@@ -32,22 +32,22 @@ namespace Henge.Data.Entities
 		{
 			return string.Format("{0};{1};{2}", X, Y, Z).GetHashCode();
 		}
-	}
+	}*/
 	
 	
 	public class Map : ObjectEntity
 	{
-		public virtual IDictionary<Coordinates, Location> Locations	{ get; set; }
+		//public virtual IDictionary<Coordinates, Location> Locations	{ get; set; }
 	    public virtual string Name									{ get; set; }
 		
 		
 		public Map()
 		{
-			this.Locations = new Dictionary<Coordinates, Location>();
+			//this.Locations = new Dictionary<Coordinates, Location>();
 		}
 		
 		
-		public Location GetLocation(int x, int y, int z)
+		/*public Location GetLocation(int x, int y, int z)
 		{
 			return this.GetLocation(new Coordinates { X = x, Y = y, Z = z });
 		}
@@ -56,6 +56,6 @@ namespace Henge.Data.Entities
 		{
 			Location result;
 			return this.Locations.TryGetValue(coordinates, out result) ? result : null;
-		}
+		}*/
 	}
 }
