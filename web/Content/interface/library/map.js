@@ -10,6 +10,7 @@ var giMap = new Class(
 		this.map		= $('map');
 		this.document	= this.map.getDocument();
 		this.canvas		= new giCanvas(this.map);
+		this.dragged	= false;
 
 		this.mouse = {
 			current: {}
@@ -55,7 +56,8 @@ var giMap = new Class(
 	{
 		if (!event.rightClick)
 		{
-			this.mouse.current = event.page;
+			this.dragged		= false;
+			this.mouse.current	= event.page;
 	
 			this.document.addEvents({
 				mouseup:	this.bound.mouseUp,
@@ -76,6 +78,7 @@ var giMap = new Class(
 
 	mouseDrag: function(event)
 	{
+		this.dragged = true;
 		var position = event.page;
 
 		this.canvas.move(position.x - this.mouse.current.x, position.y - this.mouse.current.y);

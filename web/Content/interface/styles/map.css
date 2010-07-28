@@ -29,6 +29,16 @@ div.avatar
 	z-index: 2;
 }
 
+div.arrow
+{
+	position: absolute;
+	width: 24px;
+	height: 24px;
+	background-color: #f00;
+	z-index: 2;
+}
+
+
 div#youarehere
 {
 	position: absolute;
