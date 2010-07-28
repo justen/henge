@@ -33,11 +33,11 @@ var giInterface = new Class(
 	
 	handleMove: function(data)
 	{
+		log.add(data.Message);
 		if (data.Valid)
 		{
 			map.canvas.setLocation(data.X, data.Y);
 			//$('description').set('text', 'You are standing at ' + data.X + ', ' + data.Y);
 		}
-		else log.add(data.Message);
 	},
 });

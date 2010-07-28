@@ -45,9 +45,9 @@
     <Folder Include="src\Tick\Metabolise\" />
     <Folder Include="src\Communicate\" />
     <Folder Include="src\Communicate\Talk\" />
+    <Folder Include="src\Move\Run\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\Move\Run\BasicRunProtagonist.cs" />
     <Compile Include="src\Move\ActorImpede.cs" />
     <Compile Include="src\Move\EdificeImpede.cs" />
     <Compile Include="src\Move\ImpedeMovementAntagonist.cs" />
@@ -82,6 +82,7 @@
     <Compile Include="src\Communicate\Talk\ToPerson.cs" />
     <Compile Include="src\Communicate\Talk\ToInhabitants.cs" />
     <Compile Include="src\Communicate\Talk\ToOccupants.cs" />
+    <Compile Include="src\Move\BasicMoveProtagonist.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\data\Henge.Data.csproj">

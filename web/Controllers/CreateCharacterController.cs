@@ -26,7 +26,7 @@ namespace Henge.Web.Controllers
 			//if (this.db.CreateCriteria<Avatar>().CreateAlias("BaseAppearance", "A").Add(Restrictions.Eq("A.Name", name)).UniqueResult<Avatar>() == null)
 			if ( (from a in this.db.Query<Avatar>() where a.Name == name select true).Count() == 0 )
 			{
-				Location location			= this.db.Get<Location>(l => l.X == 25 && l.Y == 25);
+				Location location			= this.db.Get<Location>(l => l.X == 50 && l.Y == 50);
 				ComponentType avatarType 	= db.Get<ComponentType>(x => x.Id == "avatar");
 				Avatar avatar				= new Avatar(avatarType) {Name = name , User  = this.user,  Location = location};
 				

@@ -14,7 +14,7 @@ namespace Henge.Web.Controllers
 {
 	[Authorize][HandleError]
 	public class InterfaceController : MasterController
-	{
+	{	
 		[AcceptVerbs(HttpVerbs.Post)]
 		public JsonResult Move(int dx, int dy)
 		{
@@ -28,12 +28,13 @@ namespace Henge.Web.Controllers
 				
 				if (location != null && location != this.avatar.Location) 
 				{
-					IInteraction result = Interactor.Instance.Interact(this.avatar, location, "Move.Run", null);
+					string movement = location.Traits.ContainsKey("Movement") ? movement = string.Format("Move.{0}", location.Traits["Movement"]) : "Move";
+					IInteraction result = Interactor.Instance.Interact(this.avatar, location, movement, null);
 					
 					if (result.Succeeded)
 					{
 						//this.db.Store<LogEntry>(new LogEntry { Occurred = DateTime.Now, Entry = "We moved!" });
-						return Json(new { Valid = true, X = location.X, Y = location.Y });
+						return Json(new { Valid = true, X = location.X, Y = location.Y, Message = result.Conclusion });
 					}
 					else error = result.Conclusion;
 				}

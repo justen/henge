@@ -58,6 +58,7 @@ namespace Henge.Rules.Antagonist.Move
 					Constants.Randomise(guards);
 					(interaction.Interferers as List<Component>).AddRange(guards);
 				}
+				interaction.Log += string.Format("Base move cost: {0} ", interaction.Impedance);
 			}
 			else interaction.Failure("Invalid destination", true);
 			

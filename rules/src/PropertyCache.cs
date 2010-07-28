@@ -12,8 +12,7 @@ namespace Henge.Rules
 	{
 		Component subject;
 		Actor actor;
-		bool energyCached	= false;
-		double energy		= 0.0;
+		private Trait energy	= null;
 
 		DataProvider db;
 		public Dictionary<Skill, double> SkillBonuses {get; private set;}
@@ -25,7 +24,7 @@ namespace Henge.Rules
 			this.subject		= subject;
 			this.actor			= subject as Actor;
 			this.SkillBonuses 	= new Dictionary<Skill, double>();
-			this.energyCached 	= this.actor == null;
+			
 		}
 		
 		
@@ -33,40 +32,54 @@ namespace Henge.Rules
 		{
 			get
 			{
-				if (!this.energyCached)
+				double result = 0;
+				if (this.energy == null)
 				{
-					// Get the protagonist energy level here accounting for transferal since the last modification time
-					Trait energy 	= this.actor.Traits["Energy"];
-					Skill fitness	= this.actor.Skills.ContainsKey("Fitness") ? this.actor.Skills["Fitness"] : null;
-					this.energy		= energy.Value;
-					
-					if (fitness != null && fitness.Value > 0)
+					if (this.actor.Traits.ContainsKey("Energy"))
 					{
-						double time		= (DateTime.Now - this.actor.LastModified).TotalSeconds;
-						double gain 	= Constants.MaxEnergyGain * fitness.Value * time;
-						Trait reserve 	= this.actor.Traits["Reserve"];
-						
-						if ((energy.Value + gain) > energy.Maximum) gain = energy.Maximum - energy.Value;
-						if (gain > reserve.Value)					gain = reserve.Value;
-						
-						this.energy += gain;
-						double newReserve	= reserve.Value - gain;
-						double newEnergy	= energy.Value + gain;
-						
-						using (this.db.Lock(this.actor, reserve, energy))
+						// Get the protagonist energy level here accounting for transferal since the last modification time
+						this.energy 	= this.actor.Traits["Energy"];
+						Skill fitness	= this.actor.Skills.ContainsKey("Fitness") ? this.actor.Skills["Fitness"] : null;
+					
+						Console.WriteLine(string.Format("Caching Energy: Starting with energy {0} and fitness {1}", this.energy.Value, fitness.Value));
+						if (fitness != null && fitness.Value > 0)
 						{
-							reserve.SetValue(newReserve);
-							energy.SetValue(newEnergy);
-							this.actor.LastModified = DateTime.Now;
+							
+							double time		= (DateTime.Now - this.actor.LastModified).TotalSeconds;
+							double gain 	= Constants.MaxEnergyGain * fitness.Value * time;
+							Trait reserve 	= this.actor.Traits["Reserve"];
+							Console.WriteLine(string.Format("Incrementing energy by MaxGain of {0} by fitness {1} by time {2}", Constants.MaxEnergyGain, fitness.Value, time));	
+							if ((this.energy.Value + gain) > this.energy.Maximum) gain = this.energy.Maximum - this.energy.Value;
+							if (gain > reserve.Value)					gain = reserve.Value;
+							
+							double newReserve	= reserve.Value - gain;
+							double newEnergy	= this.energy.Value + gain;
+							
+							using (this.db.Lock(this.actor, reserve, this.energy))
+							{
+								reserve.SetValue(newReserve);
+								this.energy.SetValue(newEnergy);
+								this.actor.LastModified = DateTime.Now;
+								result = this.energy.Value;
+							}
+							Console.WriteLine(string.Format("New Energy {0}", result));	
 						}
 					}
-					
-					this.energyCached = true;
 				}
+				else result = this.energy.Value;
 				
-				return this.energy;
+				return result;
 			}
-
+			
+			protected set
+			{
+				if (this.energy!=null)
+				{
+					Console.WriteLine(string.Format("Setting energy to {0}", value));
+					this.energy.SetValue(value);	
+				}
+			}
+			
 		}
 		
 		
@@ -104,17 +117,14 @@ namespace Henge.Rules
 			{
 				if (this.Energy > 0)
 				{
-					Trait energy = subject.Traits["Energy"];
-					
-					if (this.SkillCheck("Strength", amount / energy.Maximum))
+					Console.WriteLine(string.Format("Energy at {0}, using {1}", this.Energy, amount));
+					if (this.SkillCheck("Strength", amount / this.energy.Maximum))
 					{
-						this.energy -= amount;
-						
-						using (this.db.Lock(energy))
+						using (this.db.Lock(this.energy))
 						{
-							energy.SetValue(energy.Value - amount);
+							this.Energy-=amount;
 						}
-						
+						Console.WriteLine(string.Format("Energy now at {0}", energy.Value));
 						return true;
 					}
 				}
@@ -135,13 +145,12 @@ namespace Henge.Rules
 			if (this.actor != null)
 			{
 				if (overdraw || this.Energy >= amount)
-				{
-					Trait energy = subject.Traits["Energy"];
-					this.energy -= amount;
+				{					
+					Console.WriteLine(string.Format("Energy at {0}, using {1}", this.Energy, amount));
 					
 					using (this.db.Lock(energy))
 					{
-						energy.SetValue(energy.Value - amount);
+						this.Energy-=amount;
 					}
 					
 					return true;

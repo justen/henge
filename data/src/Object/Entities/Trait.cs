@@ -39,8 +39,7 @@ namespace Henge.Data.Entities
 		
 		public double SetValue(double value)
 		{
-			base.Value = value > this.Maximum ? this.Maximum : (value < this.Minimum ? this.Minimum : value);
-			return base.Value;
+			return this.Value = value > this.Maximum ? this.Maximum : (value < this.Minimum ? this.Minimum : value);
 		}
 	}
 }

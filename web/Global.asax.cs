@@ -39,7 +39,7 @@ namespace Henge.Web
 				Password = System.Web.Security.FormsAuthentication.HashPasswordForStoringInConfigFile("test", "sha1") 
 			});
 			
-			Location location			= DataProvider.Get<Location>(l => l.X == 25 && l.Y == 25);
+			Location location			= DataProvider.Get<Location>(l => l.X == 56 && l.Y == 50);
 			ComponentType avatarType 	= DataProvider.Get<ComponentType>(x => x.Id == "avatar");
 			Avatar avatar				= DataProvider.Store(new Avatar(avatarType) { Name = "Og" , User  = user,  Location = location });
 			

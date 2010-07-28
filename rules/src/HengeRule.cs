@@ -16,11 +16,14 @@ namespace Henge.Rules
 		
 			if (visibility >= 0 && subject != null)
 			{
-				using (interaction.Lock(subject.Traits))
+				if (!subject.Traits.ContainsKey("Visibility"))
 				{
-					if (!subject.Traits.ContainsKey("Visibility")) subject.Traits.Add("Visibility", new Trait(double.MaxValue, 0, visibility));
-					subject.Traits["Visibility"].SetValue(visibility);
+					using (interaction.Lock(subject.Traits))
+					{
+						if (!subject.Traits.ContainsKey("Visibility")) subject.Traits.Add("Visibility", new Trait(double.MaxValue, 0, visibility));
+					}
 				}
+				using (interaction.Lock(subject.Traits["Visibility"])) subject.Traits["Visibility"].SetValue(visibility);
 			}
 			return interaction;
 		}
