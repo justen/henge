@@ -65,11 +65,10 @@ var giTile = new Class(
 		{
 			//this.locationIcon 	= new giIcon(this.tile, library.icons[0]);
 			//this.peopleIcon 	= new giIcon(this.tile, library.icons[1]);
-			this.animalsIcon 	= new giIcon(this.tile, library.icons[2]);
-			this.structuresIcon = new giIcon(this.tile, library.icons[3]);
+			//this.animalsIcon 	= new giIcon(this.tile, library.icons[2]);
+			//this.structuresIcon = new giIcon(this.tile, library.icons[3]);
 
 			this.tile.setStyles({
-				//border: '1px solid #000',
 				'background-color': data.Colour
 			});
 			this.tile.set('title', data.Name);
@@ -81,19 +80,5 @@ var giTile = new Class(
 	{
 		this.tile.set('text', data);
 	},
-
-	/*setData: function(data)
-	{
-		data = data.split(',');
-		this.type = data[0];
-
-		if (this.type == 0) this.tile.setStyle('background-color', '#888888');
-		else
-		{
-			this.tile.addClass(this.type);
-
-			if (this.type == 'mansion') this.tile.setStyle('background-image', 'url(/images/mountains2.png)');
-		}
-	},*/
 });
 

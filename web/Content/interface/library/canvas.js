@@ -17,6 +17,7 @@ var giCanvas = new Class(
 			id:	'canvas'
 		});
 		
+		this.canvas.set('morph', { duration: 150, onComplete: this.refresh.bind(this) });
 		this.avatar = new giAvatar(this.canvas, library.icons[4]);
 		
 		this.canvas.inject(this.map);
@@ -46,7 +47,8 @@ var giCanvas = new Class(
 			x: this.centre.x - x * TILE_SIZE - TILE_SIZE / 2, 
 			y: this.centre.y - y * TILE_SIZE - TILE_SIZE / 2 
 		};
-		this.refresh();
+		
+		this.canvas.morph({ left: this.position.x, top: this.position.y });
 	},
 
 

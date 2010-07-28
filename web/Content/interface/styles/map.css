@@ -34,9 +34,17 @@ div.arrow
 	position: absolute;
 	width: 24px;
 	height: 24px;
-	background-color: #f00;
 	z-index: 2;
 }
+
+div#arrow-n		{ background-image: url('../images/icons/arrow-n.png');		}
+div#arrow-ne	{ background-image: url('../images/icons/arrow-ne.png');	}
+div#arrow-e		{ background-image: url('../images/icons/arrow-e.png');		}
+div#arrow-se	{ background-image: url('../images/icons/arrow-se.png');	}
+div#arrow-s		{ background-image: url('../images/icons/arrow-s.png');		}
+div#arrow-sw	{ background-image: url('../images/icons/arrow-sw.png');	}
+div#arrow-w		{ background-image: url('../images/icons/arrow-w.png');		}
+div#arrow-nw	{ background-image: url('../images/icons/arrow-nw.png');	}
 
 
 div#youarehere
