@@ -56,3 +56,13 @@ div#youarehere
 	z-index: 100;
 	margin: 43px;
 }
+
+
+.tile-plain 	{ background-image: url('../images/tiles/plain.png');		}
+.tile-woodland	{ background-image: url('../images/tiles/woodland.png');	}
+.tile-forest	{ background-image: url('../images/tiles/forest.png');		}
+.tile-cliff		{ background-image: url('../images/tiles/cliff.png');		}
+.tile-beach		{ background-image: url('../images/tiles/beach.png');		}
+.tile-dunes		{ background-image: url('../images/tiles/dunes.png');		}
+.tile-shallows	{ background-image: url('../images/tiles/shallows.png');	}
+.tile-ocean		{ background-image: url('../images/tiles/ocean.png');		}

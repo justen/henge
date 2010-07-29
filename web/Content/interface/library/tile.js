@@ -67,7 +67,7 @@ var giTile = new Class(
 			//this.peopleIcon 	= new giIcon(this.tile, library.icons[1]);
 			//this.animalsIcon 	= new giIcon(this.tile, library.icons[2]);
 			//this.structuresIcon = new giIcon(this.tile, library.icons[3]);
-
+			this.tile.addClass('tile-' + data.Name);
 			this.tile.setStyles({
 				'background-color': data.Colour
 			});

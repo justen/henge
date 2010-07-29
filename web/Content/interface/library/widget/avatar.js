@@ -9,7 +9,7 @@ var giAvatar = new Class(
 	{
 		this.icon = new Element('div', {
 			'class': 	'avatar',
-			opacity:	0.5,
+			opacity:	0.7,
 		});
 		
 		this.bound = {
@@ -67,7 +67,7 @@ var giAvatar = new Class(
 		this.icon.set('morph', { duration: 150 });
 		this.icon.addEvents({
 			mouseover:	function(event) { $(event.target).tween('opacity', 1.0) },
-			mouseout:	function(event) { $(event.target).tween('opacity', 0.5) },
+			mouseout:	function(event) { $(event.target).tween('opacity', 0.7) },
 			mouseup:	this.bound.avatarClick
 		});
 		
