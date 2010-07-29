@@ -62,53 +62,61 @@ namespace Henge.Rules.Protagonist.Hide
 					
 					if (randomNumber > 0)
 					{
-						interaction.ProtagonistCache.BurnEnergy(randomNumber * maxEnergy, true);
+			
 						//So, the worst-case visibility is now known.
 						//difficulty is in Impedance, need to modify it by the cover available:
-						if(interaction.ProtagonistCache.SkillCheck("Hide", interaction.Impedance / protagonist.Location.Traits["Cover"].Value))
+						switch (interaction.ProtagonistCache.SkillCheck("Hide", interaction.Impedance / protagonist.Location.Traits["Cover"].Value, randomNumber * maxEnergy, randomNumber * maxEnergy, EnergyType.Concentration))
 						{
+						case SkillResult.PassSufficient:
 							//You've hidden it. But how well?
 							//Let's add our rng result to the hide skill and divide by two
 							visibility -= visibility * (interaction.Protagonist.Skills.ContainsKey("Hide") ? 0.5 * (randomNumber + interaction.Protagonist.Skills["Hide"].Value) : 0.5 * randomNumber);
 							
 							if (antagonist is Avatar)	interaction.Success(string.Format("You attempt to conceal {0}", antagonist.Name));	
 							else 						interaction.Success(string.Format("You attempt to conceal the {0}", antagonist.Inspect(protagonist).ShortDescription));	
+							break;
+							
+						case SkillResult.PassExhausted:
+							interaction.Failure("You are too tired", false);
+							break;
+								
+						default: interaction.Failure("Your skill at concealing things isn't up to the task", false);
+							break;
 						}
-						else interaction.Failure("Your skill at concealing things isn't up to the task", false);
-					}
-					else interaction.Failure("You are too tired", false);
-					
-					visibility *= interaction.AntagonistCache.Conspicuousness;
-					
-					if (antagonist is Item && (antagonist as Item).Owner == protagonist)
-					{
-						Item item 				= antagonist as Item;
-						Trait protagonistWeight = protagonist.Traits["Weight"];
-						
-						using (interaction.Lock(protagonist.Location.Inventory, item, protagonistWeight, protagonist.Inventory))
+						visibility *= interaction.AntagonistCache.Conspicuousness;		
+						if (antagonist is Item && (antagonist as Item).Owner == protagonist)
 						{
-							protagonist.Location.Inventory.Add(item);
-							item.Owner = protagonist.Location;
-							protagonist.Traits["Weight"].SetValue(protagonist.Traits["Weight"].Value - item.Traits["Weight"].Value);
-							protagonist.Inventory.Remove(item);
-						}
-					}
-					
-					using (interaction.Lock(antagonist.Traits))
-					{
-						if (antagonist.Traits.ContainsKey("Visibility")) 
-						{
-							// Not sure how safe it is to use recursive locking?
-							using (interaction.Lock(antagonist.Traits["Visibility"]))
+							Item item 				= antagonist as Item;
+							Trait protagonistWeight = protagonist.Traits["Weight"];
+							
+							using (interaction.Lock(protagonist.Location.Inventory, item, protagonistWeight, protagonist.Inventory))
 							{
-								antagonist.Traits["Visibility"].SetValue(visibility);
+								protagonist.Location.Inventory.Add(item);
+								item.Owner = protagonist.Location;
+								protagonist.Traits["Weight"].SetValue(protagonist.Traits["Weight"].Value - item.Traits["Weight"].Value);
+								protagonist.Inventory.Remove(item);
 							}
 						}
-						else antagonist.Traits.Add("Visibility", new Trait(double.MaxValue, 0, visibility));
-				
+						using (interaction.Lock(antagonist.Traits))
+						{
+							if (antagonist.Traits.ContainsKey("Visibility")) 
+							{
+								// Not sure how safe it is to use recursive locking?
+								using (interaction.Lock(antagonist.Traits["Visibility"]))
+								{
+									antagonist.Traits["Visibility"].SetValue(visibility);
+								}
+							}
+							else antagonist.Traits.Add("Visibility", new Trait(double.MaxValue, 0, visibility));
+					
+						}
 					}
-				}
-			}			
+					else
+					{
+						interaction.Failure("You can see nowhere to hide that", false);	
+					}
+				}			
+			}
 			return interaction;
 		}
 	}

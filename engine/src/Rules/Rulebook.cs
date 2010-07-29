@@ -52,7 +52,19 @@ namespace Henge.Rules
 		
 		public Section Section(string interaction)
 		{
-			return this.rules.ContainsKey(interaction) ? this.rules[interaction] : null;
+			Section result = this.rules.ContainsKey(interaction) ? this.rules[interaction] : null;
+			while (result == null)
+			{
+				int trim = interaction.LastIndexOf('.');
+				
+				if (trim > 0)
+				{
+					interaction = interaction.Remove(trim); 
+					result = this.rules.ContainsKey(interaction) ? this.rules[interaction] : null;
+				}
+				else break;
+			} 
+			return result;
 		}
 	}
 }

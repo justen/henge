@@ -26,23 +26,31 @@ namespace Henge.Rules.Interference.Take
 			//potentially need to do a skill check here
 			//Since this is just a basic "take", let's assume that
 			//it's a brute force attempt.
-			if (interaction.SubjectCache.SkillCheck("Defend", interaction.ProtagonistCache.Strength - interaction.SubjectCache.Strength))
+			double energy = interaction.SubjectCache.Energy;
+			if (interaction.Subject is Npc)
 			{
-				double energy = interaction.SubjectCache.Energy;
-				
-				if (interaction.SubjectCache.UseEnergy(interaction.ProtagonistCache.Energy * interaction.ProtagonistCache.Strength))
-				{
-					//Managed to prevent the protagonist from taking anything.
-					if (interaction.Subject is Npc)
-					{
-						interaction.Failure(string.Format("{0} prevented you from taking the {1}", interaction.Subject.Inspect(interaction.Protagonist).ShortDescription, interaction.Antagonist.Inspect(interaction.Protagonist).ShortDescription), false);
-					}
-					else interaction.Failure(string.Format("{0} prevented you from taking the {1}", interaction.Subject.Name, interaction.Antagonist.Inspect(interaction.Protagonist).ShortDescription), false);
-				}
-				//Whether they overpowered us or not, this is going to cost 'em...
-				interaction.ProtagonistCache.UseEnergy(interaction.SubjectCache.Strength * energy);
+				interaction.Log += string.Format("A {0} attempted to prevent you from taking the {1} ", interaction.Subject.Inspect(interaction.Protagonist).ShortDescription, interaction.Antagonist.Inspect(interaction.Protagonist).ShortDescription);
 			}
+			else interaction.Failure(string.Format("{0} attempted to prevent you from taking the {1} ", interaction.Subject.Name, interaction.Antagonist.Inspect(interaction.Protagonist).ShortDescription), false);
+			bool charge = false;
+			switch (interaction.SubjectCache.SkillCheck("Defend", interaction.ProtagonistCache.Strength - interaction.SubjectCache.Strength, interaction.ProtagonistCache.Energy * interaction.ProtagonistCache.Strength, 0, EnergyType.Strength))
+			{
+				
 			
+			case SkillResult.PassSufficient: 
+					interaction.Failure("and succeeded.", false);
+					charge = true;
+					break;
+			case SkillResult.PassExhausted:
+					//Whether they overpowered us or not, this is going to cost 'em...
+					interaction.Log+=("but you overpowered them. ");
+					charge = true;
+					break;
+			default: interaction.Log+=("but failed. ");
+					break;
+
+			}
+			if (charge)	interaction.ProtagonistCache.UseEnergy(interaction.SubjectCache.Strength * energy, EnergyType.Strength);
 			return interaction;
 		}
 	}

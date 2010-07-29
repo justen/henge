@@ -7,6 +7,13 @@ using Henge.Data.Entities;
 
 namespace Henge.Rules
 {
+	public enum EnergyType
+	{
+		Strength,
+		Fitness,
+		Concentration,
+		None
+	}
 	static class Constants
 	{
 		public static class Tick
@@ -31,8 +38,12 @@ namespace Henge.Rules
 		public const double MaxEnergyGain = 1.0;
 		// Maximum energy
 		public const double MaxEnergy = 10.0; 
+		//span of max energy to min energy
+		public const double EnergySpan = 20.0;
 		// Skill gain rate
 		public const double SkillAcquisition = 0.01;
+		// Multiplier for skill gain when it's one of the base skills being used within another skill check
+		public const double BaseEnergyUseSkillMultiplier = 0.1;
 		// How close you need to be to passing a (failed) skill check to get a little bit of skill anyway
 		public const double AlmostPassed = 0.01;
 		// How much skill you get for passing a barely-failed skill check
@@ -52,6 +63,10 @@ namespace Henge.Rules
 		// Standard visibility of things which aren't either hidden or deliberately conspicuous
 		// things that have a visibility of less than this may be invisible to some characters
 		public const double StandardVisibility = 0.5;
+		
+		//Maximum Z-difference someone can move down on a base-move action.
+		//You can actually scramble up steeper terrain (it costs you a lot)
+		public const double MaximumMoveZ = 99;
 		
 		public const double HighVisibility = 0.75;
 		
@@ -73,9 +88,9 @@ namespace Henge.Rules
 		
 		public const double TalkCost = 0.5;
 		
-		public const double StartingSkill = 0.4;
+		public const double StartingSkill = 0.5;
 		
-		
+
 		
 		
 		private static Random rng = new Random();

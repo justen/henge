@@ -39,7 +39,7 @@ namespace Henge.Rules.Protagonist.Take
 						if (interaction.ProtagonistCache.Strength >= (load + weight) * Constants.WeightToLiftStrength)
 						{	
 							interaction.Impedance += weight * Constants.WeightToLiftStrength;
-							if (interaction.ProtagonistCache.UseEnergy(interaction.Impedance))
+							if (interaction.ProtagonistCache.UseEnergy(interaction.Impedance, EnergyType.Strength))
 							{
 								//delta to switch ownership of item
 								Trait weightTrait = protagonist.Traits["Weight"];

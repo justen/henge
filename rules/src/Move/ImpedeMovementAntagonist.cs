@@ -58,7 +58,7 @@ namespace Henge.Rules.Antagonist.Move
 					Constants.Randomise(guards);
 					(interaction.Interferers as List<Component>).AddRange(guards);
 				}
-				interaction.Log += string.Format("Base move cost: {0} ", interaction.Impedance);
+				interaction.Log += string.Format("Strength: {2} Climb: {4} Fitness: {3} Energy: {1} Base move cost: {0} ", interaction.Impedance, interaction.ProtagonistCache.Energy, interaction.ProtagonistCache.Strength, interaction.Protagonist.Skills["Fitness"].Value, interaction.Protagonist.Skills["Climb"].Value);
 			}
 			else interaction.Failure("Invalid destination", true);
 			
