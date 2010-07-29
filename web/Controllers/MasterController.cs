@@ -49,7 +49,7 @@ namespace Henge.Web.Controllers
 		
 		protected override void OnActionExecuted (ActionExecutedContext filterContext)
 		{
-			this.db.Flush();
+			//this.db.Flush();
 			
 			base.OnActionExecuted (filterContext);
 		}
