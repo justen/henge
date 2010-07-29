@@ -24,7 +24,9 @@ namespace Henge.Web.Controllers
 			{
 				// Can't compare references at the moment (since they are proxied
 				Location current	= this.avatar.Location;
-				Location location	= this.db.Get<Location>(l => l.X == (current.X + dx) && l.Y == (current.Y + dy)); // && l.Map == m);
+				ulong index			= ((ulong)(current.X + dx) << 32) | (ulong)(current.Y + dy);
+				Location location	= this.db.Get<Location>(l => l.Index == index);
+				//Location location	= this.db.Get<Location>(l => l.X == (current.X + dx) && l.Y == (current.Y + dy)); // && l.Map == m);
 				
 				if (location != null && location != this.avatar.Location) 
 				{

@@ -22,8 +22,8 @@ namespace Henge.Web.Controllers
 			{
 				for (int i=0; i<x.Length; i++)
 				{
-					Location location = this.db.Get<Location>(l => l.X == x[i] && l.Y == y[i]);
-					//Location location = this.avatar.Location.Map.GetLocation(x[i], y[i], 0);
+					ulong index			= ((ulong)x[i] << 32) | (ulong)y[i];
+					Location location	= this.db.Get<Location>(l => l.Index == index);
 					
 					if (location != null)
 					{

@@ -12,6 +12,13 @@ var giAvatar = new Class(
 			opacity:	0.5,
 		});
 		
+		this.bound = {
+			mouseOver:		this.mouseOver.bind(this),
+			mouseOut:		this.mouseOut.bind(this),
+			arrowClick:		this.arrowClick.bind(this),
+			avatarClick:	this.avatarClick.bind(this)
+		};
+		
 		var i			= 0;
 		this.arrows 	= new Array();
 		this.navigation = false;
@@ -39,9 +46,9 @@ var giAvatar = new Class(
 					arrow.set('tween', { duration: 150 });
 					arrow.set('morph', { duration: 150 });
 					arrow.addEvents({
-						mouseover:	this.mouseOver.bind(this),
-						mouseout:	this.mouseOut.bind(this),
-						mouseup:	this.arrowClick.bind(this)
+						mouseover:	this.bound.mouseOver,
+						mouseout:	this.bound.mouseOut,
+						mouseup:	this.bound.arrowClick
 					});
 					
 					arrow.inject(container);
@@ -59,9 +66,9 @@ var giAvatar = new Class(
 		this.icon.set('tween', { duration: 150 });
 		this.icon.set('morph', { duration: 150 });
 		this.icon.addEvents({
-			mouseover:	this.mouseOver.bind(this),
-			mouseout:	this.mouseOut.bind(this),
-			mouseup:	this.avatarClick.bind(this)
+			mouseover:	function(event) { $(event.target).tween('opacity', 1.0) },
+			mouseout:	function(event) { $(event.target).tween('opacity', 0.5) },
+			mouseup:	this.bound.avatarClick
 		});
 		
 		this.setLocation(0, 0);
@@ -70,12 +77,12 @@ var giAvatar = new Class(
 	
 	mouseOver: function(event)
 	{
-		$(event.target).tween('opacity', 1.0);
+		if (this.navigation) $(event.target).tween('opacity', 1.0);
 	},
 	
 	mouseOut: function(event)
 	{
-		$(event.target).tween('opacity', 0.5);
+		if (this.navigation) $(event.target).tween('opacity', 0.5);
 	},
 	
 	avatarClick: function(event)
