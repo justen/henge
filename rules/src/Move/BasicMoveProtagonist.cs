@@ -36,64 +36,71 @@ namespace Henge.Rules.Protagonist.Move
 				{
 					if (this.CalculateDistance(source, antagonist) <= 2)
 					{
-						double gradient = (double)(antagonist.Z - source.Z)/255.0;
+						//For standard movement, we should only be able to move up and down a limited range of slopes
+						double gradient = (double)(antagonist.Z - source.Z)/Constants.MaximumMoveZ;
+						interaction.Log+=(string.Format("Gradient: {0}", gradient));
 						if (gradient != 0)
 						{
 							if (gradient > 0) 
 							{
-								if (!interaction.ProtagonistCache.SkillCheck("Climb", gradient))
+								switch(interaction.ProtagonistCache.SkillCheck("Climb", gradient, gradient * 0.25 * interaction.Impedance, gradient * interaction.Impedance, EnergyType.Strength  ))
 								{
-									//it's beyond your climb skill; make this climb much more difficult
-									interaction.Impedance+=gradient * interaction.Impedance;
-									interaction.Log += "The ascent is punishing. You scramble up as best you can. ";
-								}
-								else
-								{
-									//you can climb this without it taking *that* much more energy	
-									interaction.Impedance+=gradient * 0.25 * interaction.Impedance;
+								case SkillResult.PassExhausted: 	interaction.Failure( "The ascent is punishing. You are forced to give up.", false);
+																	break;
+								case SkillResult.PassSufficient: 	interaction.Log += "The ascent is punishing. You scramble up as best you can. ";
+																	break;
+								case SkillResult.FailExhausted: 	interaction.Failure( "The ascent is punishing. You are forced to give up.", false);
+																	break;
+								case SkillResult.FailSufficient: 	interaction.Log += "The ascent is punishing. You scramble up as best you can, trying not to think of how you're going to get down again. ";
+																	break;
 								}
 							}
 							else
 							{
-								if (interaction.ProtagonistCache.SkillCheck("Climb", -gradient))
+								gradient = -gradient;
+								SkillResult check = interaction.ProtagonistCache.SkillCheck("Climb", gradient, 0, 0, EnergyType.None  );
+								
+								if (check == SkillResult.PassSufficient)
 								{
 									//you're comfortable charging down this slope - impedance will drop
 									//as a result (max reduction is to halve the impedance)
-									interaction.Impedance+=gradient * interaction.Impedance;
+									interaction.Impedance-=gradient * interaction.Impedance;
 								}
 								else
 								{
 									//You're going to have to climb down this
-									if (interaction.ProtagonistCache.SkillCheck("Climb", -gradient * 0.75))
+									
+									switch (interaction.ProtagonistCache.SkillCheck("Climb", gradient * 0.75, gradient * interaction.Impedance, 0, EnergyType.Strength))
 									{
-										interaction.Impedance -= gradient * interaction.Impedance;
-										interaction.Log += "The descent is difficult; you are forced to climb down. ";
+										case SkillResult.PassSufficient: interaction.Log += "The descent is difficult; you scramble down carefully. ";
+																		 break;
+										case SkillResult.PassExhausted: interaction.Failure("The precipitous descent is exhausting; you are forced to give up", false);
+																		 break;
+										default: interaction.Failure("The descent is too intimidating for you to attempt", false); break;
 									}
-									else
-									{
-										//What are you, insane? I'm not climbing down that!
-										interaction.Failure("The descent is too intimidating for you to attempt", false);
-									}	
-										
+												
 								}
 							}
 						}
-						interaction.Log+=string.Format("Total move cost: {0} ", interaction.Impedance);
-						if (interaction.ProtagonistCache.UseEnergy(interaction.Impedance))
+						if (!interaction.Finished)
 						{
-							this.ApplyInteraction(interaction, interaction.Protagonist, antagonist);
-							// Now everything that was trying to impede progress is going to have to take damage I suppose...?
-						}
-						else 
-						{
-							if (interaction.Impedance > interaction.ProtagonistCache.Strength * interaction.Protagonist.Traits["Energy"].Maximum)
+							//interaction.Log+=string.Format("Total move cost: {0} ", interaction.Impedance);
+							if (interaction.ProtagonistCache.UseEnergy(interaction.Impedance, EnergyType.Fitness))
 							{
-								interaction.Failure(string.Format("{0}Your chosen route seems impassable.", interaction.Log), false);
+								this.ApplyInteraction(interaction, interaction.Protagonist, antagonist);
+								// Now everything that was trying to impede progress is going to have to take damage I suppose...?
 							}
-							else interaction.Failure(string.Format("{0}You are unable to summon sufficient energy to make it to your destination.", interaction.Log), false);
+							else 
+							{
+								if (interaction.Impedance > interaction.ProtagonistCache.Strength * interaction.Protagonist.Traits["Energy"].Maximum)
+								{
+									interaction.Failure(string.Format("{0}Your chosen route seems impassable.", interaction.Log), false);
+								}
+								else interaction.Failure(string.Format("{0}You are unable to summon sufficient energy to make it to your destination.", interaction.Log), false);
+							}
 						}
 					}
-					else interaction.Failure("Out of range", true);
+					else interaction.Failure("You cannot move that far", true);
 				}
 			}
 	
@@ -127,7 +134,7 @@ namespace Henge.Rules.Protagonist.Move
 					avatar.Location = target;
 				}
 					
-				interaction.Success(string.Format("{0}You reach your destination", interaction.Log));	
+				interaction.Success(string.Format("{0}You reach your destination, a {1}", interaction.Log, target.Inspect(avatar).ShortDescription));	
 			}
 			else
 			{

@@ -29,28 +29,37 @@ namespace Henge.Rules.Protagonist.Search
 				List<Component> items	= interaction.Arguments["Items"] as List<Component>;
 				
 				int i = 0;
-				while (interaction.ProtagonistCache.BurnEnergy(Constants.SearchCost, false))
+				bool stillLooking = true;
+				do
 				{
 					if (i < items.Count)
 					{
-						//need to do a search-based skill check for each item
 						Item item = items[i] as Item;
-						
-						if (interaction.ProtagonistCache.SkillCheck("Search", this.CalculateDifficulty(item)))
+						switch (interaction.ProtagonistCache.SkillCheck("Search", this.CalculateDifficulty(item), Constants.SearchCost, Constants.SearchCost, EnergyType.Concentration))
 						{
-							// Found something, set its visibility
-							using (interaction.Lock(item.Traits["Visibility"]))
-							{
-								item.Traits["Visibility"].SetValue(Constants.HighVisibility);
-							}
-
-							interaction.Success(string.Format("You found something! You put the {0} in plain view", item.Inspect(protagonist).ShortDescription));
-							break;
+							case SkillResult.PassSufficient:
+								using (interaction.Lock(item.Traits["Visibility"])) item.Traits["Visibility"].SetValue(Constants.HighVisibility);
+								interaction.Success(string.Format("You found something! You put the {0} in plain view", item.Inspect(protagonist).ShortDescription));
+								stillLooking = false;
+								break;
+							case SkillResult.FailSufficient:
+								i++;
+								break;
+							default: 
+								interaction.Failure("Exhausted, you give up the search.", false);
+								stillLooking = false;
+								break;
 						}
 					}
-					i++;
-				}
-				if (!interaction.Finished) interaction.Failure("Exhausted, you give up the search", false);
+					else
+					{
+						if(!interaction.ProtagonistCache.UseEnergy(Constants.SearchCost, EnergyType.Concentration))
+						{
+							interaction.Failure("Exhausted, you give up the search.", false);
+							stillLooking = false;
+						}
+					}
+				} while (stillLooking);
 			}
 			return interaction;
 		}

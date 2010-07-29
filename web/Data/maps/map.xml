@@ -3,6 +3,7 @@
 <world>
   <key>
     <type id="terrain.0">
+	  <trait name="Movement" flavour="Swim" />
 	  <trait name="Impede" minimum="0" value="7.0" />
       <appearance type="ocean" description="deep ocean" short_description="ocean" >
 		<parameter name="colour" value="#0800ff" />
@@ -10,7 +11,8 @@
     </type>
     <type id="terrain.1">
       <trait name="Impede" minimum="0" value="5.0" />
-      <appearance type="shallows" description="shallow coastal waters" short_description="shallow seawater" >
+      <trait name="Movement" flavour="Swim" />
+         <appearance type="shallows" description="shallow coastal waters" short_description="shallow seawater" >
 		<parameter name="colour" value="#bfbdff" />
 	  </appearance>
     </type>
@@ -22,6 +24,7 @@
     </type>
     <type id="terrain.3">
       <trait name="Impede" minimum="0" value="5.0" />
+      <trait name="Movement" flavour="Climb" />
       <appearance type="cliff" description="steep, rocky cliff" short_description="rocky cliff" >
 		<parameter name="colour" value="#ffffff" />
 	  </appearance>

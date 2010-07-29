@@ -8,8 +8,25 @@ using Henge.Data.Entities;
 
 namespace Henge.Rules
 {
+	public enum SkillResult
+	{
+		PassSufficient,
+		PassExhausted,
+		FailSufficient,
+		FailExhausted
+	}
+	
 	public class PropertyCache
 	{
+
+		
+		private enum Success
+		{
+			Full,
+			Partial,
+			Fail
+		}
+		
 		Component subject;
 		Actor actor;
 		private Trait energy	= null;
@@ -76,7 +93,7 @@ namespace Henge.Rules
 				if (this.energy!=null)
 				{
 					Console.WriteLine(string.Format("Setting energy to {0}", value));
-					this.energy.SetValue(value);	
+					using (db.Lock(this.energy)) this.energy.SetValue(value);	
 				}
 			}
 			
@@ -109,30 +126,22 @@ namespace Henge.Rules
 		}
 		
 		
-		// Attempt to use the specified amount of energy of the actor. Return false if the actor is already at zero energy or less,
-		// or if the amount of energy to be used is greater than the actorts strength skill.
-		public bool UseEnergy(double amount)
-		{
-			if (this.actor != null)
-			{
-				if (this.Energy > 0)
-				{
-					Console.WriteLine(string.Format("Energy at {0}, using {1}", this.Energy, amount));
-					if (this.SkillCheck("Strength", amount / this.energy.Maximum))
-					{
-						using (this.db.Lock(this.energy))
-						{
-							this.Energy-=amount;
-						}
-						Console.WriteLine(string.Format("Energy now at {0}", energy.Value));
-						return true;
-					}
-				}
-				
-			}
-			
-			return false;
-		}
+//		// Attempt to use the specified amount of energy of the actor. Return false if the actor is already at zero energy or less,
+//		// or if the amount of energy to be used is greater than the actorts strength skill.
+//		public bool UseEnergy(double amount)
+//		{
+//			if (this.actor != null)
+//			{
+//				if (this.Energy > 0)
+//				{
+//					Console.WriteLine(string.Format("Energy at {0}, using {1}", this.Energy, amount));
+//					return this.SkillCheck("Strength", amount / this.energy.Maximum, amount, amount/10.0);
+//				}
+//				
+//			}
+//			
+//			return false;
+//		}
 		
 		//Method for burning energy in non-Strength related activities
 		//Unlike Strength-based energy usage, this *doesn't* perform a 
@@ -140,62 +149,102 @@ namespace Henge.Rules
 		//requisite amount of energy. If you set overdraw to true, this function
 		//will blindly use the amount of energy you specified (handy if the Rule
 		//is checking energy levels first)
-		public bool BurnEnergy(double amount, bool overdraw)
+		public bool UseEnergy(double amount, EnergyType limitingFactor)
 		{
-			if (this.actor != null)
+			bool result = false;
+			if (amount==0) return true;
+			if ( (this.Energy>0) && (this.actor != null) )
 			{
-				if (overdraw || this.Energy >= amount)
-				{					
-					Console.WriteLine(string.Format("Energy at {0}, using {1}", this.Energy, amount));
-					
-					using (this.db.Lock(energy))
+				double increase = 0;
+				string skilltype = limitingFactor.ToString();
+				if (skilltype != "None")
+				{
+					Success success = this.SkillCheck(skilltype, amount / this.energy.Maximum, out increase);
+					if (success != PropertyCache.Success.Fail)
 					{
-						this.Energy-=amount;
+						
+						if (success == PropertyCache.Success.Full)
+						{
+							result = true;	
+						}
+						if (increase!=0)
+						{
+							Skill skill		= this.actor.Skills[skilltype];
+							increase*=Constants.BaseEnergyUseSkillMultiplier * amount/Constants.EnergySpan;
+							if (!this.SkillBonuses.ContainsKey(skill))		this.SkillBonuses.Add(skill, increase);
+							else if (increase > this.SkillBonuses[skill])	this.SkillBonuses[skill] = increase;
+						}
 					}
 					
-					return true;
 				}
+				else result = true;
 				
+				if (result == true ) this.Energy-=amount;
 			}
-			
-			return false;
+			return result;
 		}
 		
 		
+		private Success SkillCheck(string name, double difficulty, out double increase)
+		{
+			Success result = Success.Fail;
+			increase	= 0;
+			if (difficulty < 0 ) difficulty = 0;
+			if (this.actor.Skills.ContainsKey(name))
+			{
+				Skill skill		= this.actor.Skills[name];
+				if (skill.Value >= difficulty)
+				{
+					increase	= Constants.SkillAcquisition * ((skill.Value > 0) ?  difficulty / skill.Value : Constants.AlmostPassed);
+					result		= Success.Full;	
+				}
+				else
+				{			
+					double miss = difficulty - skill.Value;
+					if (miss < Constants.AlmostPassed)
+					{
+						increase = Constants.CommiserationPrize * (Constants.AlmostPassed - miss) / Constants.AlmostPassed;
+						result = PropertyCache.Success.Partial;
+					}
+				}
+			}
+			return result;
+		}	
+			
 		// Performs a SkillCheck. actor is the entity whose skill is being tested, name is the name of the skill and difficulty is 
 		// the difficulty of the task (and should be in the range 0.0-1.0). If the test is passed the function returns true and increases
 		// the skill of the actor. If the test is failed, the function returns false. If it's only just failed, the actor gets a small
 		// skill increase.
-		public bool SkillCheck(string name, double difficulty)
+		public SkillResult SkillCheck(string name, double difficulty, double successTariff, double failTariff, EnergyType energyType)
 		{
-			bool result = false;
-			
+			SkillResult result = SkillResult.FailExhausted;
+			double tariff = failTariff;
+			double increase = 0;
 			if (this.actor != null)
 			{
-				if (difficulty < 0 ) difficulty = 0;
-				
-				if (this.actor.Skills.ContainsKey(name))
+				Success success = this.SkillCheck(name, difficulty, out increase);
+				if (success!=Success.Fail)
 				{
-					double increase	= 0;
-					Skill skill		= this.actor.Skills[name];
-					
-					if (skill.Value >= difficulty)
+					if (success == Success.Full)
 					{
-						increase	= Constants.SkillAcquisition * ((skill.Value > 0) ?  difficulty / skill.Value : Constants.AlmostPassed);
-						result		= true;	
+						tariff = successTariff;
+						result = SkillResult.PassExhausted;
+						
 					}
-					else
+
+				}
+				if (this.UseEnergy(tariff, energyType))
+				{
+					result--;
+					if (increase!=0)
 					{
-						double miss = difficulty - skill.Value;
-						if (miss < Constants.AlmostPassed) increase = Constants.CommiserationPrize * (Constants.AlmostPassed - miss) / Constants.AlmostPassed;
-					}
-					
-					if (increase > 0)
-					{
+						Skill skill = this.actor.Skills[name];
+						increase*=tariff/Constants.EnergySpan;
 						if (!this.SkillBonuses.ContainsKey(skill))		this.SkillBonuses.Add(skill, increase);
 						else if (increase > this.SkillBonuses[skill])	this.SkillBonuses[skill] = increase;
 					}
-				}	
+					
+				}
 			}
 			
 			return result;

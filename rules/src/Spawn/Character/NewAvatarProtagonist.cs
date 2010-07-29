@@ -31,6 +31,7 @@ namespace Henge.Rules.Protagonist.Spawn.Character
 				avatar.Skills.Add("Strength",	new Skill() { Value = Constants.StartingSkill });
 				avatar.Skills.Add("Climb",		new Skill() { Value = Constants.StartingSkill });
 				avatar.Skills.Add("Fitness",	new Skill() { Value = Constants.StartingSkill });
+				avatar.Skills.Add("Concentration", new Skill() { Value = Constants.StartingSkill });
 			}
 			
 			return interaction.Success("Spawned");

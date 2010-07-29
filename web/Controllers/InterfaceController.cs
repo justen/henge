@@ -30,7 +30,7 @@ namespace Henge.Web.Controllers
 				
 				if (location != null && location != this.avatar.Location) 
 				{
-					string movement = location.Traits.ContainsKey("Movement") ? movement = string.Format("Move.{0}", location.Traits["Movement"]) : "Move";
+					string movement = location.Traits.ContainsKey("Movement") ? movement = string.Format("Move.{0}", location.Traits["Movement"].Flavour) : "Move";
 					IInteraction result = Interactor.Instance.Interact(this.avatar, location, movement, null);
 					
 					if (result.Succeeded)

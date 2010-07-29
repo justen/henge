@@ -26,7 +26,7 @@ namespace Henge.Rules.Protagonist.Inspect
 		{
 			if (!interaction.Finished)
 			{
-				if (interaction.AntagonistCache.BurnEnergy(Constants.InspectionCharge, false))
+				if (interaction.AntagonistCache.UseEnergy(Constants.InspectionCharge, EnergyType.Concentration))
 				{
 					interaction.Success(string.Format("You examine it closely and see: {0}", interaction.Antagonist.Inspect(interaction.Protagonist).Description));					
 				} 

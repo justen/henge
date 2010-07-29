@@ -25,7 +25,7 @@ namespace Henge.Rules.Protagonist.Communicate.Talk
 		{
 			if (!interaction.Finished)
 			{
-				if (interaction.ProtagonistCache.BurnEnergy(Constants.TalkCost, false))
+				if (interaction.ProtagonistCache.UseEnergy(Constants.TalkCost, EnergyType.None))
 				{
 					if (interaction.Arguments.ContainsKey("Message"))
 					{
