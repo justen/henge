@@ -45,7 +45,9 @@ namespace Henge.Rules
 		// Multiplier for skill gain when it's one of the base skills being used within another skill check
 		public const double BaseEnergyUseSkillMultiplier = 0.1;
 		// How close you need to be to passing a (failed) skill check to get a little bit of skill anyway
-		public const double AlmostPassed = 0.01;
+		// This is used: almostPassed = Constants.AlmostPassed + Constants.AlmostPassed * (Constants.RandomNumber - 0.5);
+		// I.e. ranges from AlmostPassed/2 to AlmostPassed * 1.5
+		public const double AlmostPassed = 0.15;
 		// How much skill you get for passing a barely-failed skill check
 		public const double CommiserationPrize = 0.001;
 		// Value of a newly-granted child skill
@@ -64,9 +66,8 @@ namespace Henge.Rules
 		// things that have a visibility of less than this may be invisible to some characters
 		public const double StandardVisibility = 0.5;
 		
-		//Maximum Z-difference someone can move down on a base-move action.
-		//You can actually scramble up steeper terrain (it costs you a lot)
-		public const double MaximumMoveZ = 99;
+		//Maximum Z-difference someone can move on a base-move action.
+		public const double MaximumMoveZ = 120;
 		
 		public const double HighVisibility = 0.75;
 		
@@ -90,7 +91,9 @@ namespace Henge.Rules
 		
 		public const double StartingSkill = 0.5;
 		
-
+		//Default climb difficulty - makes climbing a tiny bit harder
+		//This is only really used when the climb difficulty trait hasn't been set for an edifice.
+		public const double DefaultClimbDifficulty = 1.01;
 		
 		
 		private static Random rng = new Random();

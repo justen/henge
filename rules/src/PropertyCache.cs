@@ -201,6 +201,7 @@ namespace Henge.Rules
 				else
 				{			
 					double miss = difficulty - skill.Value;
+					double almostPassed = Constants.AlmostPassed + Constants.AlmostPassed * (Constants.RandomNumber - 0.5);
 					if (miss < Constants.AlmostPassed)
 					{
 						increase = Constants.CommiserationPrize * (Constants.AlmostPassed - miss) / Constants.AlmostPassed;

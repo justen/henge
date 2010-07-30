@@ -32,7 +32,7 @@ namespace Henge.Rules
 			this.Interferers		= new List<Component>();
 			this.Protagonist		= protagonist;
 			this.Antagonist			= antagonist;
-			this.Arguments			= arguments;
+			this.Arguments			= (arguments==null)? new Dictionary<string, object>() : arguments;
 			this.Results 			= new Dictionary<string, object>();
 			//this.PendingDeletions	= new List<Entity>();
 		}		

@@ -6,7 +6,7 @@ using Henge.Data.Entities;
 
 namespace Henge.Rules.Protagonist.Move
 {
-	public class BasicMove : HengeRule, IProtagonist
+	public class MoveRule : HengeRule, IProtagonist
 	{
 		public override bool Valid (Component subject)
 		{
@@ -21,6 +21,11 @@ namespace Henge.Rules.Protagonist.Move
 		}
 		
 		protected override IInteraction Apply(HengeInteraction interaction)
+		{
+			return this.Move(interaction);
+		}	
+		
+		protected IInteraction Move(HengeInteraction interaction)
 		{
 			// structure of this rule is
 			//
@@ -38,47 +43,28 @@ namespace Henge.Rules.Protagonist.Move
 					{
 						//For standard movement, we should only be able to move up and down a limited range of slopes
 						double gradient = (double)(antagonist.Z - source.Z)/Constants.MaximumMoveZ;
-						interaction.Log+=(string.Format("Gradient: {0}", gradient));
 						if (gradient != 0)
 						{
 							if (gradient > 0) 
 							{
-								switch(interaction.ProtagonistCache.SkillCheck("Climb", gradient, gradient * 0.25 * interaction.Impedance, gradient * interaction.Impedance, EnergyType.Strength  ))
+								if (gradient > 1) interaction.Failure("The slope is too steep to walk up", false);
+								else
 								{
-								case SkillResult.PassExhausted: 	interaction.Failure( "The ascent is punishing. You are forced to give up.", false);
-																	break;
-								case SkillResult.PassSufficient: 	interaction.Log += "The ascent is punishing. You scramble up as best you can. ";
-																	break;
-								case SkillResult.FailExhausted: 	interaction.Failure( "The ascent is punishing. You are forced to give up.", false);
-																	break;
-								case SkillResult.FailSufficient: 	interaction.Log += "The ascent is punishing. You scramble up as best you can, trying not to think of how you're going to get down again. ";
-																	break;
+									if (gradient >0.5) interaction.Log += "You struggle to climb the steep incline";
+									interaction.Impedance += interaction.Impedance * gradient;
 								}
 							}
 							else
 							{
 								gradient = -gradient;
-								SkillResult check = interaction.ProtagonistCache.SkillCheck("Climb", gradient, 0, 0, EnergyType.None  );
-								
-								if (check == SkillResult.PassSufficient)
-								{
-									//you're comfortable charging down this slope - impedance will drop
-									//as a result (max reduction is to halve the impedance)
-									interaction.Impedance-=gradient * interaction.Impedance;
-								}
+								if (gradient > 1) interaction.Failure("The slope is too steep to walk down", false);
 								else
 								{
-									//You're going to have to climb down this
-									
-									switch (interaction.ProtagonistCache.SkillCheck("Climb", gradient * 0.75, gradient * interaction.Impedance, 0, EnergyType.Strength))
+									if (gradient >0.5)
 									{
-										case SkillResult.PassSufficient: interaction.Log += "The descent is difficult; you scramble down carefully. ";
-																		 break;
-										case SkillResult.PassExhausted: interaction.Failure("The precipitous descent is exhausting; you are forced to give up", false);
-																		 break;
-										default: interaction.Failure("The descent is too intimidating for you to attempt", false); break;
+										interaction.Log += "You struggle to descend the steep slope";
 									}
-												
+									interaction.Impedance += interaction.Impedance * (gradient-0.5);
 								}
 							}
 						}
@@ -105,21 +91,24 @@ namespace Henge.Rules.Protagonist.Move
 			}
 	
 			return interaction;
-		}	
-		
-		
-		private int CalculateDistance(Location source, Location destination)
-		{
-			int deltaX = source.X - destination.X;
-			int deltaY = source.Y - destination.Y;
-			// currently can't run in z, so don't bother calculating it.
-			// int deltaZ = source.Coordinates.Z - destination.Coordinates.Z;
-			
-			return deltaX * deltaX + deltaY * deltaY;
 		}
 		
 		
-		private void ApplyInteraction (HengeInteraction interaction, Actor actor, Location target)
+		protected int CalculateDistance(Location source, Location destination)
+		{
+			if (source.Map == destination.Map)
+			{
+				int deltaX = source.X - destination.X;
+				int deltaY = source.Y - destination.Y;
+				// currently can't run in z, so don't bother calculating it.
+				// int deltaZ = source.Coordinates.Z - destination.Coordinates.Z;
+				return deltaX * deltaX + deltaY * deltaY;
+			}
+			else return int.MaxValue;
+		}
+		
+		
+		protected void ApplyInteraction (HengeInteraction interaction, Actor actor, Location target)
 		{
 			// We would apply any charges built up in interaction here, but there are none at present so
 			// it's not going to be used.
