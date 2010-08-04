@@ -10,22 +10,20 @@ namespace Avebury
 {
 	public class Loader
 	{
-		private Dictionary<string, ComponentType> Types;
-		private List<Location> Locations;
-		private List<Entity> Maps;
-		private List<Entity> UnlinkedEntities = new List<Entity>();
+		private Dictionary<string, ComponentType> KeyTypes	= new Dictionary<string, ComponentType>();
+		private List<ComponentType> GeneralTypes			= new List<ComponentType>();
+		private List<Location> Locations					= new List<Location>();
+		private List<Entity> Maps							= new List<Entity>();
 		
 		public List<Entity> Data 
 		{
 			get
 			{	
 				List<Entity> result = new List<Entity>();
-				
-				result.AddRange(this.UnlinkedEntities.Cast<Entity>());
+				result.AddRange(this.GeneralTypes.Cast<Entity>());
 				result.AddRange(this.Maps.Cast<Entity>());
 				result.AddRange(this.Locations.Cast<Entity>());
-				//this.Maps.AddRange(UnlinkedEntities);
-				//this.UnlinkedEntities = new List<Entity>();
+
 				return result;
 			}
 		}
@@ -33,9 +31,6 @@ namespace Avebury
 		
 		public Loader(string applicationPath)
 		{
-			this.Types			= new Dictionary<string, ComponentType>();
-			this.Locations		= new List<Location>();
-			this.Maps			= new List<Entity>();
 			string path			= Path.Combine(applicationPath, "maps");
 			DirectoryInfo info	= new DirectoryInfo(path);
 			List<XmlNode> maps	= new List<XmlNode>();
@@ -49,13 +44,14 @@ namespace Avebury
 				{
 					foreach (XmlNode child in map.DocumentElement)
 					{
-						if (child.Name == "key") this.ParseKey(child);
-						if (child.Name == "map") maps.Add(child);
+						switch (child.Name)
+						{
+							case "key":		this.ParseKey(child);		break;
+							case "general": this.ParseGeneral(child);	break;
+							case "map":		maps.Add(child);			break;
+						}
 					}
-					foreach (XmlNode node in maps)
-					{
-						this.ParseMap(node);	
-					}
+					foreach (XmlNode node in maps) this.ParseMap(node);	
 				}
 			}
 		}
@@ -65,82 +61,103 @@ namespace Avebury
 		{
 			foreach(XmlNode child in root)
 			{
-				if (child.Name=="type")
+				if (child.Name == "type") this.KeyTypes.Add(child.Attributes["id"].Value, this.ParseType(child));
+			}
+		}
+		
+		
+		private void ParseGeneral(XmlNode root)
+		{
+			foreach (XmlNode child in root)
+			{
+				if (child.Name == "type") this.GeneralTypes.Add(this.ParseType(child));
+			}
+		}
+		
+		
+		private ComponentType ParseType(XmlNode node)
+		{
+			ComponentType result = new ComponentType() { Id = node.Attributes["id"].Value };
+					
+			foreach (XmlNode subnode in node)
+			{
+				if (subnode.Name == "appearance")
 				{
-					ComponentType type = new ComponentType() { Id = child.Attributes["id"].Value };
-					foreach (XmlNode subnode in child)
+					Dictionary<string, string> parameters = new Dictionary<string, string>();
+					
+					foreach (XmlNode param in subnode)
 					{
-						if (subnode.Name=="appearance")
+						if (param.Name == "parameter") parameters.Add(param.Attributes["name"].Value, param.Attributes["value"].Value);
+					}
+					
+					Appearance appearance = new Appearance(){ 	
+						Description			= subnode.Attributes["description"].Value, 
+						ShortDescription	= subnode.Attributes["short_description"].Value, 
+						Type				= subnode.Attributes["type"].Value,
+						Priority			= (subnode.Attributes["priority"] != null) ? int.Parse(subnode.Attributes["priority"].Value) : -1,
+						Parameters			= parameters 
+					};
+					
+					foreach (XmlNode condition in subnode)
+					{
+						if (subnode.Name=="condition")
 						{
-							
-							Dictionary<string, string> parameters = new Dictionary<string, string>();
-							foreach (XmlNode param in subnode)
-							{
-								if (param.Name=="parameter") parameters.Add(param.Attributes["name"].Value, param.Attributes["value"].Value);
-							}
-							Appearance appearance = new Appearance(){ 	Description = subnode.Attributes["description"].Value, 
-																	ShortDescription = subnode.Attributes["short_description"].Value, 
-																	Type = subnode.Attributes["type"].Value,
-																	Parameters = parameters };
-							foreach (XmlNode condition in subnode)
-							{
-								if (subnode.Name=="condition")
-								{
-									appearance.Conditions.Add(new Condition(){ 	Invert 	= condition.Attributes["invert"]!=null,
-																			   	Maximum = double.Parse(condition.Attributes["maximum"].Value),
-																				Minimum = double.Parse(condition.Attributes["minimum"].Value),
-																				Trait	= condition.Attributes["trait"].Value});																													
-								}
-							}
-							type.Appearance.Add(appearance);
+							appearance.Conditions.Add(new Condition(){ 	
+								Invert 	= condition.Attributes["invert"] != null,
+							   	Maximum = double.Parse(condition.Attributes["maximum"].Value),
+								Minimum = double.Parse(condition.Attributes["minimum"].Value),
+								Trait	= condition.Attributes["trait"].Value
+							});																													
 						}
 					}
-					type.BaseTraits = this.GetTraits(child);
-					this.Types.Add(child.Attributes["id"].Value, type);
-					this.UnlinkedEntities.Add(type);
+					result.Appearance.Add(appearance);
 				}
 			}
+			result.BaseTraits = this.GetTraits(node);
 			
+			return result;
 		}
+		
 		
 		private void ParseMap(XmlNode root)
 		{
-			Map map = new Map() { Name = root.Attributes["name"].Value };
+			Map map 			= new Map() { Name = root.Attributes["name"].Value };
+			map.LocationTypes 	= (from t in this.KeyTypes select t.Value).ToList();
+			
 			foreach (XmlNode child in root)
 			{
 				if (child.Name=="location")
 				{
-					ComponentType type = this.Types[child.Attributes["type"].Value];
-					if (this.UnlinkedEntities.Contains(type)) this.UnlinkedEntities.Remove(type);
-					string[]coords = child.Attributes["coordinates"].Value.Split(new Char[] {','});
+					ComponentType type	= this.KeyTypes[child.Attributes["type"].Value];
+					string []coords 	= child.Attributes["coordinates"].Value.Split(new Char[] {','});
 		
-					Location location = new Location( int.Parse(coords[0]),int.Parse(coords[1]), int.Parse(coords[2]),  type  ) 
-														{	Detail = child.Attributes["detail"].Value,
-															Map = map,
-															Name = child.Attributes["name"].Value};
+					Location location = new Location(int.Parse(coords[0]), int.Parse(coords[1]), int.Parse(coords[2]),  type) {
+						Name 	= child.Attributes["name"].Value,
+						Detail	= child.Attributes["detail"].Value,
+						Map		= map
+					};
 
 					Dictionary<string, Trait> traits = this.GetTraits(child);
 					foreach(KeyValuePair<string, Trait> trait in traits)
 					{
-						if (location.Traits.ContainsKey(trait.Key))
-						{
-							location.Traits[trait.Key] = trait.Value;
-						}
-						else location.Traits.Add(trait);
+						if (location.Traits.ContainsKey(trait.Key)) location.Traits[trait.Key] = trait.Value;
+						else 										location.Traits.Add(trait);
 					}
-					//map.Locations.Add(location.Coordinates, location);
+
 					this.Locations.Add(location);
 				}
 			}
 			this.Maps.Add(map);
 		}
 		
+		
 		private Dictionary<string, Trait> GetTraits(XmlNode source)
 		{
 			Dictionary<string, Trait> result = new Dictionary<string, Trait>();
+			
 			foreach (XmlNode child in source)
 			{
-				if (child.Name=="trait")
+				if (child.Name == "trait")
 				{
 					double max = double.MaxValue;
 					double min = double.MinValue;
@@ -171,6 +188,7 @@ namespace Avebury
 					result.Add(child.Attributes["name"].Value, trait); 	
 				}
 			}
+			
 			return result;
 		}
 	}

@@ -39,11 +39,13 @@ namespace Henge.Data.Entities
 	{
 		//public virtual IDictionary<Coordinates, Location> Locations	{ get; set; }
 	    public virtual string Name									{ get; set; }
+		public virtual IList<ComponentType> LocationTypes { get; set; }
 		
 		
 		public Map()
 		{
 			//this.Locations = new Dictionary<Coordinates, Location>();
+			this.LocationTypes = new List<ComponentType>();
 		}
 		
 		

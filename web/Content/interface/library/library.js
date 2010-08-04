@@ -8,17 +8,31 @@ var giLibrary = new Class(
 	initialize: function()
 	{
 		this.images = null;
+		this.types	= null;
+		
 		dialog.show('Loading images...', 1);
-		
-		
+
 		new Request.JSON({
+			url:	root + 'Map/TypeList',
+			onSuccess:	this.loadTypes.bind(this)
+		}).send();
+		
+		
+    },
+    
+    
+    loadTypes: function(data)
+    {
+    	this.types = data;
+    	
+    	new Request.JSON({
 			url:		root + 'Map/AssetList',
-			onSuccess:	this.load.bind(this)
+			onSuccess:	this.loadAssets.bind(this)
 		}).send();
     },
     
     
-    load: function(data)
+    loadAssets: function(data)
     {
     	this.images = data;
     	dialog.show('Loading images...', this.images.length);

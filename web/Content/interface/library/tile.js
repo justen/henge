@@ -10,7 +10,7 @@ var giTile = new Class(
 		this.x			= x;
 		this.y			= y;
 		this.visible 	= false;
-		this.type 		= -1;
+		this.type 		= null;
 		this.name		= "";
 		this.parent		= parent;
 
@@ -24,13 +24,8 @@ var giTile = new Class(
 			}
 		});
 		
-		this.transitions = new Element('div', {
-			'class': 'transition'
-		});
-		
-		this.edge = new Element('div', {
-			'class': 'transition'
-		});
+		this.transitions	= new Element('div', { 'class': 'transition' });
+		this.edge			= new Element('div', { 'class': 'transition' });
 		
 		this.transitions.hide();
 		this.transitions.inject(this.tile);
@@ -68,25 +63,21 @@ var giTile = new Class(
 
 	handleData: function(data)
 	{
-		this.type = data.Type;
-		
-		if (this.type != -1)
+		if (data.Type)
 		{
-			//this.locationIcon 	= new giIcon(this.tile, library.icons[0]);
-			//this.peopleIcon 	= new giIcon(this.tile, library.icons[1]);
-			//this.animalsIcon 	= new giIcon(this.tile, library.icons[2]);
-			//this.structuresIcon = new giIcon(this.tile, library.icons[3]);
-			this.name		= data.Name;
-			this.priority 	= data.Priority;
+			var type 		= library.types[data.Type];
+			this.type		= data.Type;
+			this.name		= type.Name;
+			this.priority 	= type.Priority;
 			
-			this.tile.addClass('tile-' + data.Name);
+			this.tile.addClass('tile-' + type.Name);
 			this.tile.setStyles({
-				'background-color': data.Colour
+				'background-color': type.Colour
 			});
-			this.tile.set('title', data.Name);
+			this.tile.set('title', type.Name);
 			
 			this.parent.neighbours(this.x, this.y).each(function(item) {
-				if (item.tile && item.tile.type != -1 && item.tile.name != this.name)
+				if (item.tile && item.tile.type && item.tile.type != this.type)
 				{
 					if (item.tile.priority > this.priority) this.addTransition(item.side, item.tile.name);
 					else									item.tile.addTransition(item.opposite, this.name);

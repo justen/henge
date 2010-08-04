@@ -14,26 +14,31 @@ namespace Henge.Web.Controllers
 	[Authorize][HandleError]
 	public class MapController : MasterController
 	{
+		private static int RANGE = 10;
+		
 		[AcceptVerbs(HttpVerbs.Post)]
 		public JsonResult Tile(int [] x, int [] y)
 		{
 			List<object> result = new List<object>();
 			
-			if (x != null && y != null)
+			if (this.avatar != null && x != null && y != null)
 			{
-				Location origin = Session["Origin"] as Location;
+				Location origin 	= Session["Origin"] as Location;
+				Location current 	= this.avatar.Location;
 				
 				for (int i=0; i<x.Length; i++)
 				{
-					ulong index			= ((ulong)(origin.X + x[i]) << 32) | (ulong)(origin.Y + y[i]);
-					Location location	= this.db.Get<Location>(l => l.Index == index);
+					int ax = origin.X + x[i];
+					int ay = origin.Y + y[i];
 					
-					if (location != null)
+					if (Math.Abs(current.X - ax) <= RANGE && Math.Abs(current.Y - ay) <= RANGE)
 					{
-						Appearance appearance = location.Appearance();
-						result.Add(new { Type = 0, Name = appearance.Type, Colour = appearance.Parameters["colour"], Priority = this.GetPriority(appearance.Type) });
+						ulong index			= ((ulong)ax << 32) | (ulong)ay;
+						Location location	= this.db.Get<Location>(l => l.Index == index);
+						
+						result.Add(new { Type = (location != null) ? location.Type.Id : null });
 					}
-					else result.Add(new { Type = -1 });
+					else throw new Exception("Attempted to access tile outside of permitted range");
 				}
 			}
 			
@@ -41,22 +46,21 @@ namespace Henge.Web.Controllers
 		}
 		
 		
-		// This is a temporary hack until priorities are properly encoded in the map appearance information (and types are handled separately with the client).
-		private int GetPriority(string name)
+		[AcceptVerbs(HttpVerbs.Post)]
+		public JsonResult TypeList()
 		{
-			switch (name)
+			Dictionary<string, object> result = new Dictionary<string, object>();
+			
+			if (this.avatar != null)
 			{
-				case "cliff":		return 8;
-				case "forest":		return 7;
-				case "woodland":	return 6;
-				case "shallows":	return 5;
-				case "ocean":		return 4;
-				case "plain":		return 3;
-				case "dunes":		return 2;
-				case "beach":		return 1;
+				foreach (ComponentType type in this.avatar.Location.Map.LocationTypes)
+				{
+					Appearance appearance = type.Appearance.FirstOrDefault();
+					result.Add(type.Id, new { Name = appearance.Type, Colour = appearance.Parameters["colour"], Priority = appearance.Priority });
+				}
 			}
 			
-			return 0;
+			return Json(result);
 		}
 		
 		
@@ -67,7 +71,7 @@ namespace Henge.Web.Controllers
 		}
 		
 		
-		private List<string> Find(List<string> list, string directory)//, string basePath)
+		private List<string> Find(List<string> list, string directory)
 		{
 			foreach (string f in Directory.GetFiles(directory, "*.png"))	list.Add(Url.Content(f.Replace(Server.MapPath("~"), "~/")));  
 			foreach (string d in Directory.GetDirectories(directory))		this.Find(list, d);
