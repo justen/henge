@@ -18,7 +18,7 @@ var giCanvas = new Class(
 		});
 		
 		this.canvas.set('morph', { duration: 150, onComplete: this.refresh.bind(this) });
-		this.avatar = new giAvatar(this.canvas, library.icons[4]);
+		this.avatar = new giAvatar(this.canvas);
 		
 		this.canvas.inject(this.map);
 

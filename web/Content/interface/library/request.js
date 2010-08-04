@@ -7,7 +7,7 @@ var giRequest = new Class(
 {
 	initialize: function()
 	{
-		this.queue = new Request.Queue({ concurrent: 4 });
+		//this.queue = new Request.Queue({ concurrent: 4 });
 	},
 
 	defend: function(dx, dy, duration)

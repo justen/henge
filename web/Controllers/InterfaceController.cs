@@ -22,11 +22,11 @@ namespace Henge.Web.Controllers
 			
 			if (this.avatar != null)
 			{
-				// Can't compare references at the moment (since they are proxied
+				// Can't compare references at the moment (since they are proxied)
+				Location origin		= Session["Origin"] as Location;
 				Location current	= this.avatar.Location;
 				ulong index			= ((ulong)(current.X + dx) << 32) | (ulong)(current.Y + dy);
 				Location location	= this.db.Get<Location>(l => l.Index == index);
-				//Location location	= this.db.Get<Location>(l => l.X == (current.X + dx) && l.Y == (current.Y + dy)); // && l.Map == m);
 				
 				if (location != null && location != this.avatar.Location) 
 				{
@@ -36,7 +36,7 @@ namespace Henge.Web.Controllers
 					if (result.Succeeded)
 					{
 						//this.db.Store<LogEntry>(new LogEntry { Occurred = DateTime.Now, Entry = "We moved!" });
-						return Json(new { Valid = true, X = location.X, Y = location.Y, Message = result.Conclusion });
+						return Json(new { Valid = true, X = location.X - origin.X, Y = location.Y - origin.Y, Message = result.Conclusion });
 					}
 					else error = result.Conclusion;
 				}

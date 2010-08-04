@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -20,9 +21,11 @@ namespace Henge.Web.Controllers
 			
 			if (x != null && y != null)
 			{
+				Location origin = Session["Origin"] as Location;
+				
 				for (int i=0; i<x.Length; i++)
 				{
-					ulong index			= ((ulong)x[i] << 32) | (ulong)y[i];
+					ulong index			= ((ulong)(origin.X + x[i]) << 32) | (ulong)(origin.Y + y[i]);
 					Location location	= this.db.Get<Location>(l => l.Index == index);
 					
 					if (location != null)
@@ -35,6 +38,22 @@ namespace Henge.Web.Controllers
 			}
 			
 			return Json(result);
+		}
+		
+		
+		[AcceptVerbs(HttpVerbs.Post)]
+		public JsonResult AssetList()
+		{
+			return Json(this.Find(new List<string>(), Path.Combine(Server.MapPath("~"), "Content/interface/images"))); 
+		}
+		
+		
+		private List<string> Find(List<string> list, string directory)//, string basePath)
+		{
+			foreach (string f in Directory.GetFiles(directory, "*.png"))	list.Add(Url.Content(f.Replace(Server.MapPath("~"), "~/")));  
+			foreach (string d in Directory.GetDirectories(directory))		this.Find(list, d);
+			
+			return list;
 		}
 	}
 }

@@ -5,7 +5,7 @@
 
 var giAvatar = new Class(
 {
-	initialize: function(container, image)
+	initialize: function(container)
 	{
 		this.icon = new Element('div', {
 			'class': 	'avatar',
@@ -57,12 +57,8 @@ var giAvatar = new Class(
 				}
 			}
 		}
-		
-		
-		
-		image.clone().inject(this.icon);
+
 		this.icon.inject(container);
-		
 		this.icon.set('tween', { duration: 150 });
 		this.icon.set('morph', { duration: 150 });
 		this.icon.addEvents({
@@ -127,3 +123,4 @@ var giAvatar = new Class(
 		else					this.arrows.each(function(arrow) { arrow.set({ left: cx - 12, top: cy - 12 }); }); 
 	}
 });
+

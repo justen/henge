@@ -7,17 +7,26 @@ var giLibrary = new Class(
 {
 	initialize: function()
 	{
-		/*var myImages = new Asset.images(['/images/myImage.png', '/images/myImage2.gif'], {
-    	onComplete: function(){
-        alert('All images loaded!');*/
-        
-        this.icons = new Asset.images([
-        	root + 'Content/interface/images/icons/location.png',
-			root + 'Content/interface/images/icons/people.png',
-			root + 'Content/interface/images/icons/animals.png',
-			root + 'Content/interface/images/icons/structures.png',
-			root + 'Content/interface/images/icons/avatar.png',
-		]);
+		this.images = null;
+		dialog.show('Loading images...', 1);
+		
+		
+		new Request.JSON({
+			url:		root + 'Map/AssetList',
+			onSuccess:	this.load.bind(this)
+		}).send();
+    },
+    
+    
+    load: function(data)
+    {
+    	this.images = data;
+    	dialog.show('Loading images...', this.images.length);
+    	
+    	new Asset.images(this.images, {
+    		onProgress: function(counter) { dialog.update(counter); },
+    		onComplete: boot
+    	});
     }
 });
 

@@ -6,6 +6,7 @@
 
 var map 		= null;
 var log			= null;
+var dialog		= null;
 //var menu		= null;
 var request 	= null;
 var interface	= null;
@@ -29,17 +30,28 @@ var assets		= [
 
 function boot()
 {
+	if (!dialog)
+	{
+		dialog = new giDialog();
+		dialog.show('Loading scripts...', assets.length);
+	}
+	
 	if (asset = assets.pop())
 	{
+		dialog.increment();
 		switch (asset.type)
 		{
 			case 'css':	new Asset.css(root + 'Content/interface/' + asset.path);								boot();			break;				
 			case 'js':	new Asset.javascript(root + 'Content/interface/' + asset.path, { onload: function() { 	boot(); }});	break;
 		}
 	}
+	else if (!library)
+	{
+		library	= new giLibrary();
+	}
 	else if (!map)
 	{
-		library		= new giLibrary();
+		dialog.hide();
 		request 	= new giRequest();
 		log			= new giLog();
 		map 		= new giMap();
@@ -63,7 +75,8 @@ function resize()
 }
 
 
-window.addEvent('domready', boot);
+//window.addEvent('domready', boot);
+window.addEvent('domready', function () { new Asset.javascript(root + 'Content/interface/library/dialog.js', { onload: boot }); });
 window.addEvent('resize', resize);
 
 
