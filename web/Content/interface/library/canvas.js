@@ -127,7 +127,7 @@ var giCanvas = new Class(
 	
 						if (!tile)
 						{ 
-							queue[i++] = this.tiles[y][x] = tile = new giTile(this.canvas, x, y, opacity);
+							queue[i++] = this.tiles[y][x] = tile = new giTile(this, x, y, opacity);
 						}
 						
 						tile.show(opacity);
@@ -138,6 +138,16 @@ var giCanvas = new Class(
 		}
 		
 		if (queue.length > 0) request.getTileData(queue);
-	},	
+	},
+	
+	neighbours: function(x, y)
+	{
+		return [
+			{ side: 'left',		opposite: 'right',  tile: this.tiles[y][x-1] },
+			{ side: 'right',	opposite: 'left',	tile: this.tiles[y][x+1] },
+			{ side: 'top',		opposite: 'bottom', tile: this.tiles[y-1] ? this.tiles[y-1][x] : null },
+			{ side: 'bottom',	opposite: 'top',	tile: this.tiles[y+1] ? this.tiles[y+1][x] : null }
+		];
+	}
 });
 

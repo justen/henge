@@ -31,13 +31,32 @@ namespace Henge.Web.Controllers
 					if (location != null)
 					{
 						Appearance appearance = location.Appearance();
-						result.Add(new { Type = 0, Name = appearance.Type, Colour = appearance.Parameters["colour"] });
+						result.Add(new { Type = 0, Name = appearance.Type, Colour = appearance.Parameters["colour"], Priority = this.GetPriority(appearance.Type) });
 					}
 					else result.Add(new { Type = -1 });
 				}
 			}
 			
 			return Json(result);
+		}
+		
+		
+		// This is a temporary hack until priorities are properly encoded in the map appearance information (and types are handled separately with the client).
+		private int GetPriority(string name)
+		{
+			switch (name)
+			{
+				case "cliff":		return 8;
+				case "forest":		return 7;
+				case "woodland":	return 6;
+				case "shallows":	return 5;
+				case "ocean":		return 4;
+				case "plain":		return 3;
+				case "dunes":		return 2;
+				case "beach":		return 1;
+			}
+			
+			return 0;
 		}
 		
 		
