@@ -12,6 +12,13 @@ div.tile
 	z-index: 1;
 }
 
+div.transition
+{
+	position: absolute;
+	width: 100%;
+	height: 100%;
+}
+
 div.icon
 {
 	display: inline;
