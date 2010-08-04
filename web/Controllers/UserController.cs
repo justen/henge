@@ -171,10 +171,11 @@ namespace Henge.Web.Controllers
 		[Authorize][AcceptVerbs(HttpVerbs.Post)]
 		public ActionResult ConnectAvatar(int index)
 		{
-			using (this.db.Lock(this.user))
+			using (this.db.Lock(this.user, avatar))
 			{
 				this.user.CurrentAvatar = this.user.Avatars.ElementAtOrDefault(index);
 			}
+			
 			return RedirectToAction ("", "");	
 		}
 		

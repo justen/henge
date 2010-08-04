@@ -118,5 +118,6 @@
     <None Include="Content\interface\library\widget\bar.js" />
     <None Include="Content\interface\library\widget\avatar.js" />
     <None Include="Content\interface\library\widget\icon.js" />
+    <None Include="Content\interface\library\dialog.js" />
   </ItemGroup>
 </Project>

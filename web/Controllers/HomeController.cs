@@ -15,7 +15,7 @@ namespace Henge.Web.Controllers
 		{
 			if (this.avatar != null)
 			{
-				
+				Session["Origin"] = this.avatar.Location;
 				return View ();
 			}
 			

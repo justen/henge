@@ -6,51 +6,51 @@
 	  <trait name="Movement" flavour="Swim" value="1.0"/>
 	  <trait name="Impede" minimum="0" value="0.9" />
       <appearance type="ocean" description="deep ocean" short_description="patch of ocean" >
-		<parameter name="colour" value="#0800ff" />
+		<parameter name="colour" value="#6a6aff" />
 	  </appearance>
     </type>
     <type id="terrain.1">
       <trait name="Impede" minimum="0" value="5.0" />
       <trait name="Movement" flavour="Swim" value="0.2"/>
          <appearance type="shallows" description="shallow coastal waters" short_description="shallow area of salty water" >
-		<parameter name="colour" value="#bfbdff" />
+		<parameter name="colour" value="#99beff" />
 	  </appearance>
     </type>
     <type id="terrain.2">
       <trait name="Impede" minimum="0" value="1.5" />
       <appearance type="beach" description="golden, sandy beach" short_description="sandy beach" >
-		<parameter name="colour" value="#f0ff00" />
+		<parameter name="colour" value="#d7c66c" />
 	  </appearance>
     </type>
     <type id="terrain.3">
       <trait name="Impede" minimum="0" value="5.0" />
       <trait name="Movement" flavour="Climb" value="0.9"/>
       <appearance type="cliff" description="steep, rocky cliff" short_description="rocky cliff" >
-		<parameter name="colour" value="#ffffff" />
+		<parameter name="colour" value="#7f7f7f" />
 	  </appearance>
     </type>
     <type id="terrain.4">
       <trait name="Impede" minimum="0" value="1.0" />
       <appearance type="plain" description="wide, open plain" short_description="grassy plain" >
-		<parameter name="colour" value="#00ff18" />
+		<parameter name="colour" value="#94d890" />
 	  </appearance>
     </type>
     <type id="terrain.5">
       <trait name="Impede" minimum="0" value="1.2" />
       <appearance type="woodland" description="light, airy woodland" short_description="light woodland" >
-		<parameter name="colour" value="#003e00" />
+		<parameter name="colour" value="#6ca870" />
 	  </appearance>
     </type>
     <type id="terrain.6">
       <trait name="Impede" minimum="0" value="3.0" />
       <appearance type="forest" description="dark, dense forest" short_description="dense forest" >
-		<parameter name="colour" value="#051700" />
+		<parameter name="colour" value="#3f5439" />
 	  </appearance>
 	</type>
     <type id="terrain.7">
       <trait name="Impede" minimum="0" value="1.7" />
       <appearance type="dunes" description="rolling dunes" short_description="dune field">
-		<parameter name="colour" value="#f0c500" />
+		<parameter name="colour" value="#bca941" />
 	  </appearance>
     </type>
     <type id="avatar">

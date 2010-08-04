@@ -23,6 +23,7 @@ div.icon
 
 div.avatar
 {
+	background-image: url('../images/icons/avatar.png');
 	position: absolute;
 	width: 48px;
 	height: 48px;

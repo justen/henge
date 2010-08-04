@@ -8,7 +8,8 @@ var giIcon = new Class(
 	initialize: function(container, image)
 	{
 		this.icon = new Element('div', {
-			'class': 	'icon',
+			'background-image': "url('../images/icons/" + image + "')",
+			'class': 'icon',
 			opacity:	0.5,
 		});
 		
