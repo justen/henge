@@ -4,10 +4,15 @@ using System.Collections.Generic;
 using Henge.Data.Entities;
 using Henge.Rules.Protagonist.Move;
 
-namespace Henge.Rules.Protagonist.Move.Swim
+namespace Henge.Rules.Protagonist.Move.Autodetect
 {
+	
 	public class SwimProtagonist : MoveRule
 	{
+		public override bool Valid (Component subject)
+		{
+			return ( (subject is Actor)&&((Actor)subject).Location.Traits.ContainsKey("Movement") && ((Actor)subject).Location.Traits["Movement"].Flavour=="Swim");
+		}
 		
 		protected override IInteraction Apply(HengeInteraction interaction)
 		{

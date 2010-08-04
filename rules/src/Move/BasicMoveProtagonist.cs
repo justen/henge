@@ -10,7 +10,7 @@ namespace Henge.Rules.Protagonist.Move
 	{
 		public override bool Valid (Component subject)
 		{
-			return subject is Actor;
+			return (subject is Actor);// && !((Actor)subject).Location.Traits.ContainsKey("Movement");
 		}
 		
 		protected override double Visibility (HengeInteraction interaction, out Component subject)

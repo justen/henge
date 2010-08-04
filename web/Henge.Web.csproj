@@ -42,7 +42,7 @@
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Web.Mvc, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
+    <Reference Include="System.Web.Mvc, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\" />
