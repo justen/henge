@@ -41,5 +41,11 @@ namespace Henge.Data.Entities
 		{
 			return this.Value = value > this.Maximum ? this.Maximum : (value < this.Minimum ? this.Minimum : value);
 		}
+		
+		
+		public int Percentage()
+		{
+			return (int)Math.Round(100.0 * (this.Value - this.Minimum) / (this.Maximum - this.Minimum));
+		}
 	}
 }
