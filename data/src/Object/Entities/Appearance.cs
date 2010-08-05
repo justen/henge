@@ -15,6 +15,8 @@ namespace Henge.Data.Entities
 	    public virtual string Description 		{ get; set; }
 		// Apparent brief description of this object
 	    public virtual string ShortDescription 	{ get; set; }
+		
+		public virtual int Priority				{ get; set; }
 	    
 	    // This is going to store Other Stuff depending upon what type of entity this is
 	    // (for example, icons, colourschemes, etc) - dictionary is (Parameter, Payload)

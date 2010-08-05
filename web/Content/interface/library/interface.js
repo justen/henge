@@ -13,11 +13,13 @@ var giInterface = new Class(
 		this.health			= new giBar(status, 'Health');
 		this.energy			= new giBar(status, 'Energy');
 		this.constitution	= new giBar(status, 'Constitution');
-		
-		// Debug
-		this.health.set(50);
-		this.energy.set(100);
-		this.constitution.set(25);
+		this.statusPoll		= new Request.JSON({
+			url:		root + 'Interface/GetStatus',
+			initialDelay: 1000,
+			delay: 5000,
+			limit: 10000,
+			onSuccess: this.handleStatus.bind(this)
+		}).startTimer();
 	},
 	
 	
@@ -34,10 +36,14 @@ var giInterface = new Class(
 	handleMove: function(data)
 	{
 		log.add(data.Message);
-		if (data.Valid)
-		{
-			map.canvas.setLocation(data.X, data.Y);
-			//$('description').set('text', 'You are standing at ' + data.X + ', ' + data.Y);
-		}
+		
+		if (data.Valid) map.canvas.setLocation(data.X, data.Y);
 	},
+	
+	handleStatus: function(data)
+	{
+		this.health.set(data.Health);
+		this.energy.set(data.Energy);
+		this.constitution.set(data.Constitution);
+	}
 });

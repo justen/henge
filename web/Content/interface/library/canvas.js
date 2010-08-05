@@ -62,21 +62,8 @@ var giCanvas = new Class(
 	},
 	
 	
-	// Update is called to update elements within the map on a regular tick
 	update: function()
 	{
-		/* Previous jquery code:
-			request.beginBatch();
-
-			for (var i=0; i<this.visible.length; i++)
-			{
-				var tile = this.visible[i];
-		
-				request.map.getTileUpdate(tile.x, tile.y, tile.bound.handleUpdate);
-			}
-		
-			request.endBatch();
-		*/
 	},
 
 
@@ -102,7 +89,7 @@ var giCanvas = new Class(
 		this.visible.length = 0;
 		
 		
-		var x, y, dx, dy, opacity, tile, i=0;
+		var x, y, dx, dy, opacity, tile, status;
 		var queue = new Array();
 	
 		for (y=startY; y<=endY; y++)
@@ -119,18 +106,14 @@ var giCanvas = new Class(
 	
 					if (dx <= MAP_RANGE)
 					{
-						opacity = 1.0;
-						if (dx >= MAP_RANGE - 1 || dy >= MAP_RANGE - 1) opacity -= 0.5;
-						if (dx == MAP_RANGE || dy == MAP_RANGE)			opacity -= 0.3;
+						status = '';
+						if (dy == MAP_RANGE) status += (y < this.avatar.y) ? '-top' : '-bottom';
+						if (dx == MAP_RANGE) status += (x < this.avatar.x) ? '-left' : '-right';
 	
 						tile = this.tiles[y][x];
-	
-						if (!tile)
-						{ 
-							queue[i++] = this.tiles[y][x] = tile = new giTile(this, x, y, opacity);
-						}
+						if (!tile) queue.push(this.tiles[y][x] = tile = new giTile(this, x, y));
 						
-						tile.show(opacity);
+						tile.show(status);
 						this.visible.push(tile);
 					}
 				}

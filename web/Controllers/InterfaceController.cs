@@ -76,5 +76,20 @@ namespace Henge.Web.Controllers
 			
 			return Json(new { Valid = false, Message = error });
 		}
+		
+		[AcceptVerbs(HttpVerbs.Post)]
+		public JsonResult GetStatus()
+		{
+			if (this.avatar != null)
+			{
+				return Json(new { 
+					Health 			= this.avatar.Traits["Health"].Percentage(), 
+					Energy			= this.avatar.Traits["Reserve"].Percentage(), 
+					Constitution 	= this.avatar.Traits["Constitution"].Percentage() 
+				});
+			}
+			
+			return Json(new { Message = "Error: You are not connected to an avatar" });
+		}
 	}
 }

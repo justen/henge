@@ -5,16 +5,15 @@
 
 var giTile = new Class(
 {
-	initialize: function(parent, x, y, opacity)
+	initialize: function(parent, x, y)
 	{
 		this.x			= x;
 		this.y			= y;
-		this.visible 	= true;
-		this.type 		= -1;
+		this.visible 	= false;
+		this.type 		= null;
 		this.name		= "";
 		this.parent		= parent;
 
-		this.transitions = new Array();
 		this.tile = new Element('div', {
 			'class': 'tile',
 			styles: {
@@ -22,22 +21,31 @@ var giTile = new Class(
 				top:		this.y * TILE_SIZE,
 				width:		TILE_SIZE,
 				height: 	TILE_SIZE,
-				opacity:	opacity
 			}
 		});
-
+		
+		this.transitions	= new Element('div', { 'class': 'transition' });
+		this.edge			= new Element('div', { 'class': 'transition' });
+		
+		this.transitions.hide();
+		this.transitions.inject(this.tile);
+		this.edge.inject(this.tile);
 		this.tile.inject(parent.canvas);	
 	},
 
 
-	show: function(opacity)
+	show: function(status)
 	{
 		if (!this.visible)
 		{
-			this.tile.setStyles({
-				display: '',
-				opacity: opacity
-			});
+			if (status)
+			{
+				this.edge.set('class', 'transition border' + status);
+				this.edge.show();
+			}
+			else this.edge.hide();
+
+			this.tile.show();
 			this.visible = true;
 		}
 	},
@@ -47,7 +55,7 @@ var giTile = new Class(
 	{
 		if (this.visible)
 		{
-			this.tile.setStyle('display', 'none');
+			this.tile.hide();
 			this.visible = false;
 		}
 	},
@@ -55,25 +63,21 @@ var giTile = new Class(
 
 	handleData: function(data)
 	{
-		this.type = data.Type;
-		
-		if (this.type != -1)
+		if (data.Type)
 		{
-			//this.locationIcon 	= new giIcon(this.tile, library.icons[0]);
-			//this.peopleIcon 	= new giIcon(this.tile, library.icons[1]);
-			//this.animalsIcon 	= new giIcon(this.tile, library.icons[2]);
-			//this.structuresIcon = new giIcon(this.tile, library.icons[3]);
-			this.name		= data.Name;
-			this.priority 	= data.Priority;
+			var type 		= library.types[data.Type];
+			this.type		= data.Type;
+			this.name		= type.Name;
+			this.priority 	= type.Priority;
 			
-			this.tile.addClass('tile-' + data.Name);
+			this.tile.addClass('tile-' + type.Name);
 			this.tile.setStyles({
-				'background-color': data.Colour
+				'background-color': type.Colour
 			});
-			this.tile.set('title', data.Name);
+			this.tile.set('title', type.Name);
 			
 			this.parent.neighbours(this.x, this.y).each(function(item) {
-				if (item.tile && item.tile.type != -1 && item.tile.name != this.name)
+				if (item.tile && item.tile.type && item.tile.type != this.type)
 				{
 					if (item.tile.priority > this.priority) this.addTransition(item.side, item.tile.name);
 					else									item.tile.addTransition(item.opposite, this.name);
@@ -91,15 +95,9 @@ var giTile = new Class(
 	
 	addTransition: function(side, name)
 	{
-		var trans = new Element('div', {
-			'class': 'transition',
-			styles: {
-				'background-image': "url('" + root + "Content/interface/images/tiles/" + name + "-" + side + ".png')"
-			}
-		});
-		
-		this.transitions.push(trans);
-		trans.inject(this.tile);
+		var images = this.transitions.getStyle('background-image');
+		this.transitions.setStyle('background-image', (images ? images + ", " : "") + "url('" + root + "Content/interface/images/tiles/" + name + "-" + side + ".png')");
+		this.transitions.show();
 	}
 });
 

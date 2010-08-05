@@ -65,6 +65,14 @@ div#youarehere
 	margin: 43px;
 }
 
+.border-top				{ background-image: url('../images/tiles/border-top.png');		z-index: 16; }
+.border-right			{ background-image: url('../images/tiles/border-right.png');	z-index: 16; }
+.border-bottom			{ background-image: url('../images/tiles/border-bottom.png');	z-index: 16; }
+.border-left			{ background-image: url('../images/tiles/border-left.png');		z-index: 16; }
+.border-top-right		{ background-image: url('../images/tiles/border-top.png'), url('../images/tiles/border-right.png');	z-index: 16; }
+.border-bottom-right	{ background-image: url('../images/tiles/border-bottom.png'), url('../images/tiles/border-right.png');	z-index: 16; }
+.border-bottom-left		{ background-image: url('../images/tiles/border-bottom.png'), url('../images/tiles/border-left.png');	z-index: 16; }
+.border-top-left		{ background-image: url('../images/tiles/border-top.png'), url('../images/tiles/border-left.png');	z-index: 16; }
 
 .tile-plain 	{ background-image: url('../images/tiles/plain.png');		}
 .tile-woodland	{ background-image: url('../images/tiles/woodland.png');	}
