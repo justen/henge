@@ -21,9 +21,14 @@ namespace Henge.Rules.Interference.Move
 		
 		protected override IInteraction Apply(HengeInteraction interaction)
 		{
-			// Basic impedance rule for any impeding structure - just use the impedance value in "Impede"	
-			interaction.Impedance += interaction.Subject.Traits["Impede"].Value;
-			interaction.Log+=string.Format("A {0} hinders your progress", interaction.Subject.Inspect(interaction.Protagonist).ShortDescription);
+			// Basic impedance rule for any impeding structure - just use the impedance value in "Impede"
+			if (this.Validate(interaction))
+			{
+
+				interaction.Impedance += interaction.Subject.Traits["Impede"].Value;
+				interaction.Log+=string.Format("A {0} hinders your progress", interaction.Subject.Inspect(interaction.Protagonist).ShortDescription);
+
+			}
 			return interaction;
 			
 		}

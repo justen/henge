@@ -28,6 +28,23 @@ namespace Henge.Rules
 			return interaction;
 		}
 	
+		protected bool Validate (HengeInteraction interaction)
+		{	
+			bool result = false;
+			if (!interaction.Finished)
+			{
+				if (interaction.Protagonist != null && interaction.Antagonist != null)
+				{
+						if (interaction.Protagonist.Traits.ContainsKey("Health") && interaction.Protagonist.Traits["Health"].Flavour=="Dead")
+						{
+							interaction.Failure("You are dead", false);
+						}
+						else result = true;
+				}
+				else interaction.Failure("Interactors are invalid", true);
+			}
+			return result;
+		}
 		
 		protected abstract IInteraction Apply(HengeInteraction interaction);
 		protected abstract double Visibility(HengeInteraction interaction, out Component subject);

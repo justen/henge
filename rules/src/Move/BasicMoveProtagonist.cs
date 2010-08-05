@@ -25,6 +25,26 @@ namespace Henge.Rules.Protagonist.Move
 			return this.Move(interaction);
 		}	
 		
+		protected new bool Validate(HengeInteraction interaction)
+		{
+			bool result = false;
+			if (!interaction.Finished)
+			{
+				Location antagonist	= interaction.Antagonist as Location;
+				Location source		= interaction.Protagonist.Location;
+				if (base.Validate(interaction))
+				{
+					if (this.CalculateDistance(source, antagonist) <= 2)
+					{
+						result = true;	
+					}
+					else interaction.Failure("You cannot move that far", true);
+				}
+				
+			}
+			return result;
+		}
+		
 		protected IInteraction Move(HengeInteraction interaction)
 		{
 			// structure of this rule is
@@ -32,61 +52,34 @@ namespace Henge.Rules.Protagonist.Move
 			//  IF (ConditionsMet(protagonist, antagonists, interaction))
 			//  THEN ApplyChanges (protagonist, antagonists, interaction)
 			//
-			if (!interaction.Finished)
+			if (this.Validate(interaction))
 			{
 				Location antagonist	= interaction.Antagonist as Location;
 				Location source		= interaction.Protagonist.Location;
-				
-				if (interaction.Protagonist != null && antagonist != null)
+				double impedance = 0.25 * (source.Traits.ContainsKey("Impede") ? source.Traits["Impede"].Value : Constants.Impedance);
+				if (!interaction.ProtagonistCache.UseEnergy(impedance, EnergyType.Fitness))
 				{
-					if (this.CalculateDistance(source, antagonist) <= 2)
+					interaction.Log = string.Empty;
+					if (impedance > interaction.ProtagonistCache.Strength * interaction.Protagonist.Traits["Energy"].Maximum)
 					{
-						//For standard movement, we should only be able to move up and down a limited range of slopes
-						double gradient = (double)(antagonist.Z - source.Z)/Constants.MaximumMoveZ;
-						if (gradient != 0)
-						{
-							if (gradient > 0) 
-							{
-								if (gradient > 1) interaction.Failure("The slope is too steep to walk up", false);
-								else
-								{
-									if (gradient >0.5) interaction.Log += "You struggle to climb the steep incline";
-									interaction.Impedance += interaction.Impedance * gradient;
-								}
-							}
-							else
-							{
-								gradient = -gradient;
-								if (gradient > 1) interaction.Failure("The slope is too steep to walk down", false);
-								else
-								{
-									if (gradient >0.5)
-									{
-										interaction.Log += "You struggle to descend the steep slope";
-									}
-									interaction.Impedance += interaction.Impedance * (gradient-0.5);
-								}
-							}
-						}
-						if (!interaction.Finished)
-						{
-							//interaction.Log+=string.Format("Total move cost: {0} ", interaction.Impedance);
-							if (interaction.ProtagonistCache.UseEnergy(interaction.Impedance, EnergyType.Fitness))
-							{
-								this.ApplyInteraction(interaction, interaction.Protagonist, antagonist);
-								// Now everything that was trying to impede progress is going to have to take damage I suppose...?
-							}
-							else 
-							{
-								if (interaction.Impedance > interaction.ProtagonistCache.Strength * interaction.Protagonist.Traits["Energy"].Maximum)
-								{
-									interaction.Failure(string.Format("{0}Your chosen route seems impassable.", interaction.Log), false);
-								}
-								else interaction.Failure(string.Format("{0}You are unable to summon sufficient energy to make it to your destination.", interaction.Log), false);
-							}
-						}
+						
+						interaction.Failure("You seem to be trapped.", false);
 					}
-					else interaction.Failure("You cannot move that far", true);
+					else interaction.Failure("You are unable to summon sufficient energy to set out", false);
+					
+				}
+				else
+				{
+					interaction.Log = string.Format("You set off through the {0}. {1}", source.Inspect(interaction.Protagonist).ShortDescription, interaction.Log);
+					foreach (Action action in interaction.Actions)
+					{
+						if (interaction.Finished) break;
+						else action.Invoke();
+					}
+				}
+				if (!interaction.Finished)
+				{
+					this.ApplyInteraction(interaction, interaction.Protagonist, antagonist);	
 				}
 			}
 	
@@ -110,8 +103,7 @@ namespace Henge.Rules.Protagonist.Move
 		
 		protected void ApplyInteraction (HengeInteraction interaction, Actor actor, Location target)
 		{
-			// We would apply any charges built up in interaction here, but there are none at present so
-			// it's not going to be used.
+
 			if (actor is Avatar)
 			{
 				Avatar avatar = actor as Avatar;
@@ -123,7 +115,7 @@ namespace Henge.Rules.Protagonist.Move
 					avatar.Location = target;
 				}
 					
-				interaction.Success(string.Format("{0}You reach your destination, a {1}", interaction.Log, target.Inspect(avatar).ShortDescription));	
+				interaction.Success(string.Format("You reach your destination, a {0}", target.Inspect(avatar).ShortDescription));	
 			}
 			else
 			{

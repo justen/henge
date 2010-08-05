@@ -26,6 +26,7 @@ namespace Henge.Rules
 					{
 						foreach (Type type in asm.GetExportedTypes())
 						{
+							Console.WriteLine(type.ToString());
 							if (type.GetInterface("Henge.Rules.IRule") != null && !type.IsAbstract)
 							{
 								IRule rule = (IRule)Activator.CreateInstance(type);

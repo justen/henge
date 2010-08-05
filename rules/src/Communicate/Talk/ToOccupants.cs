@@ -23,7 +23,7 @@ namespace Henge.Rules.Antagonist.Communicate.Talk
 		#region implemented abstract members of Henge.Rules.HengeRule
 		protected override IInteraction Apply (HengeInteraction interaction)
 		{
-			interaction.Arguments.Add("Recipients", (interaction.Antagonist as Edifice).Inhabitants);
+			if (this.Validate(interaction))	interaction.Arguments.Add("Recipients", (interaction.Antagonist as Edifice).Inhabitants);
 			return interaction;
 		}
 		#endregion

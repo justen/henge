@@ -24,23 +24,25 @@ namespace Henge.Rules.Antagonist.Take
 		
 		protected override IInteraction Apply(HengeInteraction interaction)
 		{
-			Location venue	= ((Actor)interaction.Protagonist).Location;
-			Item antagonist = interaction.Antagonist as Item;
-			
-			//check no one is guarding the item, if they are then add them to the interferers list
-			if (venue.Inventory.Contains(antagonist))
+			if (this.Validate(interaction))
 			{
-				venue.Fauna
-					.Where(c => c.Traits.ContainsKey("Guard") && c.Traits["Guard"].Subject == antagonist).ToList()
-					.ForEach(c => interaction.Interferers.Add(c));
-				venue.Inhabitants
-					.Where(c => c.Traits.ContainsKey("Guard") && c.Traits["Guard"].Subject == antagonist).ToList()
-					.ForEach(c => interaction.Interferers.Add(c));
-
-				if (interaction.Interferers.Any()) Constants.Randomise(interaction.Interferers);
+				Location venue	= ((Actor)interaction.Protagonist).Location;
+				Item antagonist = interaction.Antagonist as Item;
+				
+				//check no one is guarding the item, if they are then add them to the interferers list
+				if (venue.Inventory.Contains(antagonist))
+				{
+					venue.Fauna
+						.Where(c => c.Traits.ContainsKey("Guard") && c.Traits["Guard"].Subject == antagonist).ToList()
+						.ForEach(c => interaction.Interferers.Add(c));
+					venue.Inhabitants
+						.Where(c => c.Traits.ContainsKey("Guard") && c.Traits["Guard"].Subject == antagonist).ToList()
+						.ForEach(c => interaction.Interferers.Add(c));
+	
+					if (interaction.Interferers.Any()) Constants.Randomise(interaction.Interferers);
+				}
+				else interaction.Failure("The item is no longer here", false);
 			}
-			else interaction.Failure("The item is no longer here", false);
-			
 			return interaction;
 		}
 	}

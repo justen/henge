@@ -3,15 +3,15 @@
 <world>
   <key>
     <type id="terrain.0">
-	  <trait name="Movement" flavour="Swim" value="1.0"/>
-	  <trait name="Impede" minimum="0" value="0.9" />
+	  <trait name="Movement" flavour="Swim" value="100"/>
+	  <trait name="Impede" minimum="0" value="5" />
       <appearance type="ocean" description="deep ocean" short_description="patch of ocean" >
 		<parameter name="colour" value="#6a6aff" />
 	  </appearance>
     </type>
     <type id="terrain.1">
-      <trait name="Impede" minimum="0" value="5.0" />
-      <trait name="Movement" flavour="Swim" value="0.2"/>
+      <trait name="Impede" minimum="0" value="3.0" />
+      <trait name="Movement" flavour="Swim" value="25"/>
          <appearance type="shallows" description="shallow coastal waters" short_description="shallow area of salty water" >
 		<parameter name="colour" value="#99beff" />
 	  </appearance>
@@ -23,9 +23,9 @@
 	  </appearance>
     </type>
     <type id="terrain.3">
-      <trait name="Impede" minimum="0" value="5.0" />
-      <trait name="Movement" flavour="Climb" value="0.9"/>
-      <appearance type="cliff" description="steep, rocky cliff" short_description="rocky cliff" >
+      <trait name="Impede" minimum="0" value="3.0" />
+      <trait name="Movement" flavour="Climb" value="50"/>
+      <appearance type="barren rock" description="weathered, rough, rocky outcrop. Little life can be seen here." short_description="rocky outcrop" >
 		<parameter name="colour" value="#7f7f7f" />
 	  </appearance>
     </type>

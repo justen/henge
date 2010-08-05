@@ -30,9 +30,7 @@ namespace Henge.Web.Controllers
 				
 				if (location != null && location != this.avatar.Location) 
 				{
-					string movement = location.Traits.ContainsKey("Movement") ? movement = string.Format("Move.{0}", location.Traits["Movement"].Flavour) : "Move";
-					IInteraction result = Interactor.Instance.Interact(this.avatar, location, movement, null);
-					
+					IInteraction result = Interactor.Instance.Interact(this.avatar, location, "Move.Autodetect", null);
 					if (result.Succeeded)
 					{
 						//this.db.Store<LogEntry>(new LogEntry { Occurred = DateTime.Now, Entry = "We moved!" });

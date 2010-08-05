@@ -30,7 +30,7 @@ namespace Henge.Rules.Protagonist.Hide
 		
 		protected override IInteraction Apply(HengeInteraction interaction)
 		{
-			if (!interaction.Finished)
+			if (!interaction.Finished && this.Validate(interaction))
 			{
 				Actor protagonist		= interaction.Protagonist as Actor;
 				Component antagonist	= interaction.Antagonist;

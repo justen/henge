@@ -23,9 +23,12 @@ namespace Henge.Rules.Antagonist.Communicate.Talk
 		#region implemented abstract members of Henge.Rules.HengeRule
 		protected override IInteraction Apply (HengeInteraction interaction)
 		{
-			List<Avatar> target = new List<Avatar>();
-			target.Add(interaction.Antagonist as Avatar);
-			interaction.Arguments.Add("Recipients", target);
+			if (this.Validate(interaction))
+			{
+				List<Avatar> target = new List<Avatar>();
+				target.Add(interaction.Antagonist as Avatar);
+				interaction.Arguments.Add("Recipients", target);
+			}
 			return interaction;
 		}
 		#endregion

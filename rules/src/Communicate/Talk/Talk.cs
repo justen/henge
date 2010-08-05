@@ -23,7 +23,7 @@ namespace Henge.Rules.Protagonist.Communicate.Talk
 
 		protected override IInteraction Apply(HengeInteraction interaction)
 		{
-			if (!interaction.Finished)
+			if (!interaction.Finished && this.Validate(interaction))
 			{
 				if (interaction.ProtagonistCache.UseEnergy(Constants.TalkCost, EnergyType.None))
 				{

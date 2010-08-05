@@ -23,6 +23,7 @@ namespace Henge.Rules.Antagonist.Metabolise
 		protected override IInteraction Apply (HengeInteraction interaction)
 		{
 			//Nothing to do
+			this.Validate(interaction);
 			return interaction;
 		}
 		#endregion

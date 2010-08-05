@@ -50,7 +50,6 @@
   <ItemGroup>
     <Compile Include="src\Move\ActorImpede.cs" />
     <Compile Include="src\Move\EdificeImpede.cs" />
-    <Compile Include="src\Move\ImpedeMovementAntagonist.cs" />
     <Compile Include="src\Constants.cs" />
     <Compile Include="src\HengeInteraction.cs" />
     <Compile Include="src\HengeRule.cs" />
@@ -85,8 +84,11 @@
     <Compile Include="src\Move\BasicMoveProtagonist.cs" />
     <Compile Include="src\Move\Autodetect\SwimProtagonist.cs" />
     <Compile Include="src\Move\Autodetect\ClimbProtagonist.cs" />
-    <Compile Include="src\Move\ClimbInterferer.cs" />
-    <Compile Include="src\Move\DiveInterferer.cs" />
+    <Compile Include="src\Move\GenericMovementAntagonist.cs" />
+    <Compile Include="src\Move\ScaleInterferer.cs" />
+    <Compile Include="src\Move\Autodetect\DiveInterferer.cs" />
+    <Compile Include="src\Move\Autodetect\ClimbAntagonist.cs" />
+    <Compile Include="src\Move\Autodetect\SwimAntagonist.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\data\Henge.Data.csproj">

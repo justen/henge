@@ -21,42 +21,55 @@ namespace Henge.Rules.Protagonist.Move.Autodetect
 		
 		protected IInteraction Swim(HengeInteraction interaction)
 		{
-			if(! interaction.Finished)
+			if(this.Validate(interaction))
 			{
+				
+				
+							Location antagonist	= interaction.Antagonist as Location;
 				Actor protagonist = interaction.Protagonist;
-				Location antagonist	= interaction.Antagonist as Location;
-				if (interaction.Protagonist != null && antagonist != null)
+				double tariff = 0.25 * (protagonist.Location.Traits.ContainsKey("Impede")? protagonist.Location.Traits["Impede"].Value : Constants.Impedance);
+				double difficulty = 0.5 * protagonist.Location.Traits["Movement"].Value / Constants.MaxMovementDifficulty;
+				double successTariff = tariff - (1-tariff) * (protagonist.Skills.ContainsKey("Swim")? protagonist.Skills["Swim"].Value : 0);
+				switch (interaction.ProtagonistCache.SkillCheck("Swim", difficulty, successTariff, tariff, EnergyType.Fitness))
 				{
-					
-					Location source		= interaction.Protagonist.Location;
-					
-					if (this.CalculateDistance(source, antagonist) <= 2)
+				case SkillResult.PassExhausted:
+					interaction.Log = string.Empty;
+					interaction.Failure("You are too weak to continue, and tread water while your strength returns.", false);		
+					break;
+				case SkillResult.PassSufficient:
+					interaction.Log=string.Format("You swim strongly through the water. {0}", interaction.Log);
+					break;
+				default:
+					interaction.Log= ("The currents are too strong for you and pull you back. You cough and splutter, panicking, as you realise you can't breathe. ");
+					Trait health = interaction.Protagonist.Traits["Health"];
+					Trait constitution = interaction.Protagonist.Traits["Constitution"];
+					using (interaction.Lock(interaction.Protagonist, health, constitution))
 					{
-	
-						if (protagonist.Skills.ContainsKey("Swim"))
-						{
-							interaction.Log += string.Format("Swim; {0} ", protagonist.Skills["Swim"].Value);
-							switch(interaction.ProtagonistCache.SkillCheck("Swim", antagonist.Traits["Movement"].Value, (interaction.Impedance - interaction.Impedance * protagonist.Skills["Swim"].Value)/2, interaction.Impedance/2, EnergyType.Fitness) )
-							{
-								case SkillResult.PassSufficient: interaction.Log += "You swim through the water. "; this.ApplyInteraction(interaction, protagonist, antagonist); break;
-								case SkillResult.PassExhausted: interaction.Failure( "You feel too weak to continue, and are forced to tread water", false); break;
-								default: interaction.Log += "You begin to panic as you struggle to keep your head above water "; 
-															interaction.Impedance = interaction.Impedance / 2; this.Move(interaction); break;
-							}									
-						}
-						else 
-						{
-							this.Move(interaction);
-							if (interaction.Succeeded)
-							{
-								using (interaction.Lock(protagonist.Skills)) protagonist.Skills.Add("Swim", new Skill(){ Value = Constants.SkillGrantDefault});	
-							}
-						}
-							                                        
+						health.Value -= 2;
+						constitution.Value -= 4;
+						if (health.Value<=0) health.Flavour = "Dead";
 					}
-					else interaction.Failure("That is too far away", true);
+					if (health.Flavour=="Dead")	interaction.Failure("The light of the surface fades above you. Your struggles subside as your breath runs out. You have died.", false);
+					else interaction.Failure("As you flounder, the currents carry you back the way you came", false);
+					break;
 				}
-				else interaction.Failure("Invalid swim", true);
+			
+				if (!interaction.Finished)
+				{
+					foreach (Action action in interaction.Actions)
+					{
+						if (interaction.Finished) break;
+						else action.Invoke();
+					}
+				}
+				if (!interaction.Finished)
+				{
+					this.ApplyInteraction(interaction, interaction.Protagonist, antagonist);	
+				}
+				
+				
+				
+				
 			}
 			return interaction;
 		}

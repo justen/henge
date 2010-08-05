@@ -22,7 +22,7 @@ namespace Henge.Rules.Protagonist.Eat
 		#region implemented abstract members of Henge.Rules.HengeRule
 		protected override IInteraction Apply (HengeInteraction interaction)
 		{
-			if (!interaction.Finished)
+			if (!interaction.Finished && this.Validate(interaction))
 			{
 				Item food			= interaction.Antagonist as Item;
 				Actor actor 		= interaction.Protagonist as Actor;

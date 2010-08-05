@@ -23,7 +23,7 @@ namespace Henge.Rules.Protagonist.Search
 
 		protected override IInteraction Apply(HengeInteraction interaction)
 		{
-			if (!interaction.Finished)
+			if (!interaction.Finished && this.Validate(interaction))
 			{
 				Actor protagonist		= interaction.Protagonist as Actor;
 				List<Component> items	= interaction.Arguments["Items"] as List<Component>;

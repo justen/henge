@@ -20,42 +20,42 @@ namespace Henge.Rules.Protagonist.Move.Autodetect
 		
 		protected IInteraction Climb(HengeInteraction interaction)
 		{
-			if(! interaction.Finished)
+			if(this.Validate(interaction))
 			{
-				Location antagonist	= interaction.Antagonist as Location;
-				Location source		= interaction.Protagonist.Location;
-				if (interaction.Protagonist != null && antagonist != null)
-				{
-					if (this.CalculateDistance(source, antagonist) <= 2)
-					{
 
-						double difficulty = interaction.Antagonist.Traits["Movement"].Value * (double)(antagonist.Z - source.Z)/255;
-						if (difficulty<0) difficulty = -difficulty;
-			
-						if (interaction.Arguments.ContainsKey("Climb")) difficulty *= (double)interaction.Arguments["Climb"];
-						interaction.Log+=string.Format("Climb  {0}. " , interaction.Protagonist.Skills["Climb"].Value);
-			
-						double cost = interaction.Impedance * 2 - interaction.Antagonist.Traits["Impede"].Value * 1;
-						switch(interaction.ProtagonistCache.SkillCheck("Climb", difficulty, cost, cost, EnergyType.Strength))
-						{
-						case SkillResult.PassSufficient: 
-								interaction.Log+="You climb confidently. ";
-								this.ApplyInteraction(interaction, interaction.Protagonist, antagonist);
-								break;
-						case SkillResult.PassExhausted:
-								interaction.Failure("You start climbing up a likely route but are not strong enough to follow it", false);
-								break;
-						case SkillResult.FailSufficient:
-								interaction.Failure("You are outmatched by the climb", false);
-								break;
-						case SkillResult.FailExhausted: 
-								interaction.Failure("The climb is totally beyond you", false);
-								break;
-						}
+				Location antagonist	= interaction.Antagonist as Location;
+				Actor protagonist = interaction.Protagonist;
+				double tariff = 0.25 * (protagonist.Location.Traits.ContainsKey("Impede")? protagonist.Location.Traits["Impede"].Value : Constants.Impedance);
+				double difficulty = 0.5 * protagonist.Location.Traits["Movement"].Value / Constants.MaxMovementDifficulty;
+				double successTariff = tariff - (1-tariff) * (protagonist.Skills.ContainsKey("Climb")? protagonist.Skills["Climb"].Value : 0);
+				switch (interaction.ProtagonistCache.SkillCheck("Climb", difficulty, successTariff, tariff, EnergyType.Strength))
+					{
+					case SkillResult.PassExhausted:
+						interaction.Log = string.Empty;
+						interaction.Failure("You feel too weak to set out; you pause to gather your strength.", false);		
+						break;
+					case SkillResult.PassSufficient:
+						interaction.Log=string.Format("You climb across the {0}. {1}", interaction.Protagonist.Location.Inspect(interaction.Protagonist).ShortDescription, interaction.Log);
+					
+						break;
+					default:
+						interaction.Log = string.Empty;
+						interaction.Failure("The terrain is too difficult for you to climb through. You appear to be trapped", false);
+						break;
 					}
-					else interaction.Failure("That is too far away", true);
+		
+				if (!interaction.Finished)
+				{
+					foreach (Action action in interaction.Actions)
+					{
+						if (interaction.Finished) break;
+						else action.Invoke();
+					}
 				}
-				else interaction.Failure("Invalid climb", true);
+				if (!interaction.Finished)
+				{
+					this.ApplyInteraction(interaction, interaction.Protagonist, antagonist);	
+				}
 			}
 			return interaction;
 		}

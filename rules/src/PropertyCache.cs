@@ -105,6 +105,16 @@ namespace Henge.Rules
 			get { return (this.actor != null) ? (this.actor.Skills.ContainsKey("Strength") ? this.actor.Skills["Strength"].Value : Constants.DefaultSkill) : 0.0; }
 		}
 		
+		public double Health
+		{
+			get { return this.subject.Traits.ContainsKey("Health") ? this.subject.Traits["Health"].Value : 0; }
+		}
+		
+		public double Constitution
+		{
+			get { return this.subject.Traits.ContainsKey("Constitution") ? this.subject.Traits["Constitution"].Value : 0; }
+		}
+		
 		public double Conspicuousness
 		{
 			get { return this.subject.Traits.ContainsKey("Conspicuousness") ? this.subject.Traits["Conspicuousness"].Value : Constants.BaseConspicuousness; }
@@ -201,7 +211,7 @@ namespace Henge.Rules
 				else
 				{			
 					double miss = difficulty - skill.Value;
-					double almostPassed = Constants.AlmostPassed + Constants.AlmostPassed * (Constants.RandomNumber - 0.5);
+				//	double almostPassed = Constants.AlmostPassed + Constants.AlmostPassed * (Constants.RandomNumber - 0.5);
 					if (miss < Constants.AlmostPassed)
 					{
 						increase = Constants.CommiserationPrize * (Constants.AlmostPassed - miss) / Constants.AlmostPassed;

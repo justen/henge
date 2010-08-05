@@ -25,50 +25,54 @@ namespace Henge.Rules.Protagonist.Defend.Guard
 		
 		protected override IInteraction Apply(HengeInteraction interaction)
 		{
-			string impede				= string.Empty;
-			Actor subject				= interaction.Protagonist;
-			Component target			= interaction.Antagonist;
-			Nullable<DateTime> expiry	= interaction.Arguments.ContainsKey("expiry")? interaction.Arguments["expiry"]as Nullable<DateTime> : null;
-			
-			if (interaction.Arguments.ContainsKey("Impede"))
+			if (this.Validate(interaction))
 			{
-				int dx		= interaction.Arguments.ContainsKey("dx") ? (int)interaction.Arguments["dx"] : 0; 
-				int dy		= interaction.Arguments.ContainsKey("dy") ? (int)interaction.Arguments["dy"] : 0;
-				impede		= string.Format("{1}{0}", (dx > 0) ? 'e' : (dx < 0) ? 'w' : '-', (dy > 0) ? 's' : (dy < 0) ? 'n' : '-' );
+				string impede				= string.Empty;
+				Actor subject				= interaction.Protagonist;
+				Component target			= interaction.Antagonist;
+				Nullable<DateTime> expiry	= interaction.Arguments.ContainsKey("expiry")? interaction.Arguments["expiry"]as Nullable<DateTime> : null;
 				
-				using (interaction.Lock(subject.Traits)) 
+				if (interaction.Arguments.ContainsKey("Impede"))
 				{
-					if (!subject.Traits.ContainsKey("Impede")) subject.Traits.Add("Impede", new Trait(double.MaxValue, 0, 0));
+					int dx		= interaction.Arguments.ContainsKey("dx") ? (int)interaction.Arguments["dx"] : 0; 
+					int dy		= interaction.Arguments.ContainsKey("dy") ? (int)interaction.Arguments["dy"] : 0;
+					impede		= string.Format("{1}{0}", (dx > 0) ? 'e' : (dx < 0) ? 'w' : '-', (dy > 0) ? 's' : (dy < 0) ? 'n' : '-' );
+					
+					using (interaction.Lock(subject.Traits)) 
+					{
+						if (!subject.Traits.ContainsKey("Impede")) subject.Traits.Add("Impede", new Trait(double.MaxValue, 0, 0));
+					}
+					
+					Trait trait = subject.Traits["Impede"];
+					using (interaction.Lock(trait))
+					{
+						trait.Expiry	= expiry;
+						trait.Flavour	= impede;
+						trait.Subject	= target;
+					}
 				}
 				
-				Trait trait = subject.Traits["Impede"];
-				using (interaction.Lock(trait))
+				if (interaction.Arguments.ContainsKey("Guard"))
 				{
-					trait.Expiry	= expiry;
-					trait.Flavour	= impede;
-					trait.Subject	= target;
+					using (interaction.Lock(subject.Traits))
+					{
+						if (!subject.Traits.ContainsKey("Guard")) subject.Traits.Add("Guard", new Trait(double.MaxValue, 0, 0));
+					}
+					
+					Trait trait = subject.Traits["Guard"];
+					using (interaction.Lock(trait))
+					{
+						trait.Expiry	= expiry;
+						trait.Flavour	= string.Empty;
+						trait.Subject	= target;
+					}
 				}
+				
+				return impede.Length > 0 ?
+					interaction.Success(string.Format("Defending {0} from the {1}", target.Inspect(subject).ShortDescription, impede)) :
+					interaction.Success(string.Format("Defending {0}", target.Inspect(subject).ShortDescription));
 			}
-			
-			if (interaction.Arguments.ContainsKey("Guard"))
-			{
-				using (interaction.Lock(subject.Traits))
-				{
-					if (!subject.Traits.ContainsKey("Guard")) subject.Traits.Add("Guard", new Trait(double.MaxValue, 0, 0));
-				}
-				
-				Trait trait = subject.Traits["Guard"];
-				using (interaction.Lock(trait))
-				{
-					trait.Expiry	= expiry;
-					trait.Flavour	= string.Empty;
-					trait.Subject	= target;
-				}
-			}
-			
-			return impede.Length > 0 ?
-				interaction.Success(string.Format("Defending {0} from the {1}", target.Inspect(subject).ShortDescription, impede)) :
-				interaction.Success(string.Format("Defending {0}", target.Inspect(subject).ShortDescription));
+			return interaction;
 		}
 	}
 }

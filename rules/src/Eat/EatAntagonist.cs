@@ -22,8 +22,11 @@ namespace Henge.Rules.Antagonist.Eat
 		#region implemented abstract members of Henge.Rules.HengeRule
 		protected override IInteraction Apply (HengeInteraction interaction)
 		{
-			if (!interaction.Antagonist.Traits.ContainsKey("Nutrition"))
-				interaction.Failure("After a mighty struggle with yourself, you are forced to admit that you cannot bring yourself to try to eat that", false);
+			if (this.Validate(interaction))
+			{
+				if (!interaction.Antagonist.Traits.ContainsKey("Nutrition"))
+					interaction.Failure("After a mighty struggle with yourself, you are forced to admit that you cannot bring yourself to try to eat that", false);
+			}
 			return interaction;
 		}
 		#endregion

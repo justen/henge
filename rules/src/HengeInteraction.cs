@@ -11,17 +11,24 @@ namespace Henge.Rules
 	public class HengeInteraction : Interaction
 	{
 		public double Impedance { get; set; }
+		public double Difficulty { get; set; }
+		
 		public string Log 		{ get; set; }
 		
 		public PropertyCache ProtagonistCache	{ get; private set; }
 		public PropertyCache AntagonistCache	{ get; private set; }
 		public PropertyCache SubjectCache		{ get; private set; }
 		
+		public IList<Action> Actions			{get; private set;}
+		
 		
 		public HengeInteraction(DataProvider db, Actor protagonist, Component antagonist, Dictionary<string, object> arguments) : base(db, protagonist, antagonist, arguments)
 		{
+			this.Actions = new List<Action>();
 			this.ProtagonistCache	= new PropertyCache(db, protagonist);
 			this.AntagonistCache	= new PropertyCache(db, antagonist);
+			this.Difficulty = 0;
+			this.Impedance = 0;
 		}
 		
 		
@@ -63,6 +70,15 @@ namespace Henge.Rules
 			return this as IInteraction;
 		}
 		
+		public new IInteraction Failure(string message, bool illegal)
+		{
+			return base.Failure(string.Format("{0}{1}", this.Log, message), illegal);	
+		}
+		
+		public new IInteraction Success(string message)
+		{
+			return base.Success(string.Format("{0}{1}", this.Log, message));	
+		}
 		
 		private void ApplyBonuses(Dictionary<Skill, double> bonuses, Actor actor)
 		{

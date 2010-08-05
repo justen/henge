@@ -95,6 +95,7 @@ namespace Henge.Rules
 		//This is only really used when the climb difficulty trait hasn't been set for an edifice.
 		public const double DefaultClimbDifficulty = 1.01;
 		
+		public const double MaxMovementDifficulty = 255;
 		
 		private static Random rng = new Random();
 		

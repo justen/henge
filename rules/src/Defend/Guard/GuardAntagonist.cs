@@ -24,18 +24,20 @@ namespace Henge.Rules.Antagonist.Defend.Guard
 		
 		protected override IInteraction Apply(HengeInteraction interaction)
 		{
-			//put the appropriate guarding trait into the interaction
-			if (interaction.Antagonist is Location || interaction.Antagonist is Edifice)
+			if (this.Validate(interaction))
 			{
-				//for Locations and Edifices, we want to impede entry
-				interaction.Arguments.Add("Impede", null);
+				//put the appropriate guarding trait into the interaction
+				if (interaction.Antagonist is Location || interaction.Antagonist is Edifice)
+				{
+					//for Locations and Edifices, we want to impede entry
+					interaction.Arguments.Add("Impede", null);
+				}
+				if (!(interaction.Antagonist is Location))
+				{
+					//for everything *except* Locations we want to stop people from stealing or attacking
+					interaction.Arguments.Add("Guard", null);
+				}
 			}
-			if (!(interaction.Antagonist is Location))
-			{
-				//for everything *except* Locations we want to stop people from stealing or attacking
-				interaction.Arguments.Add("Guard", null);
-			}
-			
 			return interaction;
 		}
 		

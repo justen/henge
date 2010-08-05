@@ -24,7 +24,7 @@ namespace Henge.Rules.Protagonist.Inspect
 		
 		protected override IInteraction Apply(HengeInteraction interaction)
 		{
-			if (!interaction.Finished)
+			if (!interaction.Finished && this.Validate(interaction))
 			{
 				if (interaction.AntagonistCache.UseEnergy(Constants.InspectionCharge, EnergyType.Concentration))
 				{

@@ -26,17 +26,20 @@ namespace Henge.Rules.Antagonist.Search
 
 		protected override IInteraction Apply(HengeInteraction interaction)
 		{
-			Actor protagonist = interaction.Protagonist as Actor;
-			if (protagonist.Location == interaction.Antagonist)
+			if (this.Validate(interaction))
 			{
-				//potentially want to check for interferers here
-				IList<Component> hiddenItems = new List<Component>();
-				double perception = 1 - (protagonist.Skills.ContainsKey("Perception")? protagonist.Skills["Perception"].Value : Constants.DefaultSkill);
-				this.PrepareFindList(interaction, perception);
-				Constants.Randomise(hiddenItems);
-				interaction.Arguments.Add("Items", hiddenItems);
+				Actor protagonist = interaction.Protagonist as Actor;
+				if (protagonist.Location == interaction.Antagonist)
+				{
+					//potentially want to check for interferers here
+					IList<Component> hiddenItems = new List<Component>();
+					double perception = 1 - (protagonist.Skills.ContainsKey("Perception")? protagonist.Skills["Perception"].Value : Constants.DefaultSkill);
+					this.PrepareFindList(interaction, perception);
+					Constants.Randomise(hiddenItems);
+					interaction.Arguments.Add("Items", hiddenItems);
+				}
+				else interaction.Failure("You're unable to search a location you aren't in", true);
 			}
-			else interaction.Failure("You're unable to search a location you aren't in", true);
 			return interaction;
 		}
 
