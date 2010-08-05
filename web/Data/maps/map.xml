@@ -5,14 +5,14 @@
    <type id="tr0">
 	  <trait name="Movement" flavour="Swim" value="100"/>
 	  <trait name="Impede" minimum="0" value="5" />
-      <appearance type="ocean" description="deep ocean" short_description="patch of ocean" >
+      <appearance type="ocean" description="deep ocean" short_description="patch of ocean" priority="4">
 		<parameter name="colour" value="#6a6aff" />
 	  </appearance>
     </type>
     <type id="tr1">
       <trait name="Impede" minimum="0" value="3.0" />
       <trait name="Movement" flavour="Swim" value="25"/>
-      <appearance type="shallows" description="shallow coastal waters" short_description="shallow area of salty water" >
+      <appearance type="shallows" description="shallow coastal waters" short_description="shallow area of salty water" priority="5">
 		<parameter name="colour" value="#99beff" />
 	  </appearance>
     </type>
@@ -25,7 +25,7 @@
    <type id="tr3">
       <trait name="Impede" minimum="0" value="3.0" />
       <trait name="Movement" flavour="Climb" value="50"/>
-      <appearance type="barren rock" description="weathered, rough, rocky outcrop. Little life can be seen here." short_description="rocky outcrop" >
+      <appearance type="rock" description="weathered, rough, rocky outcrop. Little life can be seen here." short_description="rocky outcrop" priority="8">
 		<parameter name="colour" value="#7f7f7f" />
 	  </appearance>
     </type>
