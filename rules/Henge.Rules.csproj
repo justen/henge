@@ -46,6 +46,7 @@
     <Folder Include="src\Communicate\" />
     <Folder Include="src\Communicate\Talk\" />
     <Folder Include="src\Move\Autodetect\" />
+    <Folder Include="src\Modifiers\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\Move\ActorImpede.cs" />
@@ -89,6 +90,8 @@
     <Compile Include="src\Move\Autodetect\DiveInterferer.cs" />
     <Compile Include="src\Move\Autodetect\ClimbAntagonist.cs" />
     <Compile Include="src\Move\Autodetect\SwimAntagonist.cs" />
+    <Compile Include="src\Modifiers\EnergyModifier.cs" />
+    <Compile Include="src\HengeModifier.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\data\Henge.Data.csproj">

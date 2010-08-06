@@ -34,7 +34,7 @@ namespace Henge.Web.Controllers
 					if (result.Succeeded)
 					{
 						//this.db.Store<LogEntry>(new LogEntry { Occurred = DateTime.Now, Entry = "We moved!" });
-						return Json(new { Valid = true, X = location.X - origin.X, Y = location.Y - origin.Y, Message = result.Conclusion });
+						return Json(new { Valid = true, X = location.X - origin.X, Y = location.Y - origin.Y, Energy = this.avatar.Traits["Energy"].Value, Message = result.Conclusion });
 					}
 					else error = result.Conclusion;
 				}
@@ -83,12 +83,13 @@ namespace Henge.Web.Controllers
 			if (this.avatar != null)
 			{
 				return Json(new { 
-					Health 			= this.avatar.Traits["Health"].Percentage(), 
-					Energy			= this.avatar.Traits["Reserve"].Percentage(), 
-					Constitution 	= this.avatar.Traits["Constitution"].Percentage() 
+					Health 			= this.avatar.Traits["Health"].Value, 
+					Reserve			= this.avatar.Traits["Reserve"].Percentage(), 
+					Constitution 	= this.avatar.Traits["Constitution"].Percentage(),
+					Energy			= Interactor.Instance.UpdateTrait("Energy", this.avatar).Value
 				});
 			}
-			
+
 			return Json(new { Message = "Error: You are not connected to an avatar" });
 		}
 	}

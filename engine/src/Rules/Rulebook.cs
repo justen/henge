@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 using Henge.Data;
@@ -12,8 +13,10 @@ namespace Henge.Rules
 		private Type interactionType = null;
 		private SortedDictionary<string, Section> rules = new SortedDictionary<string, Section>();
 		
+		public Dictionary<string, IModifier> Modifiers { get; private set; }
 		
-		public Rulebook(List<IRule> rules, Type interactionType)
+		
+		public Rulebook(List<IRule> rules, List<IModifier> modifiers, Type interactionType)
 		{
 			this.interactionType = interactionType;
 			
@@ -24,6 +27,10 @@ namespace Henge.Rules
 				if (!this.rules.ContainsKey(interaction)) 	this.rules.Add(interaction, new Section(rule));
 				else 										this.rules[interaction].Add(rule);					
 			}
+			
+			this.Modifiers = modifiers.ToDictionary<IModifier, string>(i => i.Target);
+
+			                               
 			
 			// Merge sections that descend from other sections. This means that the hierarchy does not
 			// need to be negotiated when looking up rules in a section. For example, if you have some

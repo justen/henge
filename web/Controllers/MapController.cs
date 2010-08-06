@@ -71,6 +71,13 @@ namespace Henge.Web.Controllers
 		}
 		
 		
+		/*public JsonResult Constants()
+		{
+			return Json(new {
+				MapRange	= RANGE,
+				Energy		= new {*/
+		
+		
 		private List<string> Find(List<string> list, string directory)
 		{
 			foreach (string f in Directory.GetFiles(directory, "*.png"))	list.Add(Url.Content(f.Replace(Server.MapPath("~"), "~/")));  

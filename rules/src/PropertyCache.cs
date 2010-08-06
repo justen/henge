@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 using Henge.Data;
 using Henge.Data.Entities;
+using Henge.Engine;
 
 
 namespace Henge.Rules
@@ -16,10 +17,9 @@ namespace Henge.Rules
 		FailExhausted
 	}
 	
+	
 	public class PropertyCache
 	{
-
-		
 		private enum Success
 		{
 			Full,
@@ -49,48 +49,14 @@ namespace Henge.Rules
 		{
 			get
 			{
-				double result = 0;
-				if (this.energy == null)
-				{
-					if (this.actor.Traits.ContainsKey("Energy"))
-					{
-						// Get the protagonist energy level here accounting for transferal since the last modification time
-						this.energy 	= this.actor.Traits["Energy"];
-						Skill fitness	= this.actor.Skills.ContainsKey("Fitness") ? this.actor.Skills["Fitness"] : null;
-					
-						Console.WriteLine(string.Format("Caching Energy: Starting with energy {0} and fitness {1}", this.energy.Value, fitness.Value));
-						if (fitness != null && fitness.Value > 0)
-						{
-							
-							double time		= (DateTime.Now - this.actor.LastModified).TotalSeconds;
-							double gain 	= Constants.MaxEnergyGain * fitness.Value * time;
-							Trait reserve 	= this.actor.Traits["Reserve"];
-							Console.WriteLine(string.Format("Incrementing energy by MaxGain of {0} by fitness {1} by time {2}", Constants.MaxEnergyGain, fitness.Value, time));	
-							if ((this.energy.Value + gain) > this.energy.Maximum) gain = this.energy.Maximum - this.energy.Value;
-							if (gain > reserve.Value)					gain = reserve.Value;
-							
-							double newReserve	= reserve.Value - gain;
-							double newEnergy	= this.energy.Value + gain;
-							
-							using (this.db.Lock(this.actor, reserve, this.energy))
-							{
-								reserve.SetValue(newReserve);
-								this.energy.SetValue(newEnergy);
-								this.actor.LastModified = DateTime.Now;
-								result = this.energy.Value;
-							}
-							Console.WriteLine(string.Format("New Energy {0}", result));	
-						}
-					}
-				}
-				else result = this.energy.Value;
+				if (this.energy == null) this.energy = Interactor.Instance.UpdateTrait("Energy", this.actor);
 				
-				return result;
+				return this.energy.Value;
 			}
 			
 			protected set
 			{
-				if (this.energy!=null)
+				if (this.energy != null)
 				{
 					Console.WriteLine(string.Format("Setting energy to {0}", value));
 					using (db.Lock(this.energy)) this.energy.SetValue(value);	
@@ -162,25 +128,27 @@ namespace Henge.Rules
 		public bool UseEnergy(double amount, EnergyType limitingFactor)
 		{
 			bool result = false;
-			if (amount==0) return true;
-			if ( (this.Energy>0) && (this.actor != null) )
+			
+			if (amount == 0) return true;
+			
+			if (this.Energy > 0 && this.actor != null)
 			{
-				double increase = 0;
-				string skilltype = limitingFactor.ToString();
+				double increase		= 0;
+				string skilltype	= limitingFactor.ToString();
+				
 				if (skilltype != "None")
 				{
 					Success success = this.SkillCheck(skilltype, amount / this.energy.Maximum, out increase);
+					
 					if (success != PropertyCache.Success.Fail)
 					{
-						
-						if (success == PropertyCache.Success.Full)
+						result = success == PropertyCache.Success.Full;
+
+						if (increase != 0)
 						{
-							result = true;	
-						}
-						if (increase!=0)
-						{
-							Skill skill		= this.actor.Skills[skilltype];
-							increase*=Constants.BaseEnergyUseSkillMultiplier * amount/Constants.EnergySpan;
+							Skill skill	= this.actor.Skills[skilltype];
+							increase *= Constants.BaseEnergyUseSkillMultiplier * amount/Constants.EnergySpan;
+							
 							if (!this.SkillBonuses.ContainsKey(skill))		this.SkillBonuses.Add(skill, increase);
 							else if (increase > this.SkillBonuses[skill])	this.SkillBonuses[skill] = increase;
 						}
@@ -189,7 +157,7 @@ namespace Henge.Rules
 				}
 				else result = true;
 				
-				if (result == true ) this.Energy-=amount;
+				if (result) this.Energy -= amount;
 			}
 			return result;
 		}
@@ -197,12 +165,14 @@ namespace Henge.Rules
 		
 		private Success SkillCheck(string name, double difficulty, out double increase)
 		{
-			Success result = Success.Fail;
-			increase	= 0;
-			if (difficulty < 0 ) difficulty = 0;
+			Success result	= Success.Fail;
+			increase		= 0;
+			difficulty		= (difficulty < 0) ? 0 : difficulty;
+
 			if (this.actor.Skills.ContainsKey(name))
 			{
-				Skill skill		= this.actor.Skills[name];
+				Skill skill	= this.actor.Skills[name];
+				
 				if (skill.Value >= difficulty)
 				{
 					increase	= Constants.SkillAcquisition * ((skill.Value > 0) ?  difficulty / skill.Value : Constants.AlmostPassed);
@@ -228,29 +198,31 @@ namespace Henge.Rules
 		// skill increase.
 		public SkillResult SkillCheck(string name, double difficulty, double successTariff, double failTariff, EnergyType energyType)
 		{
-			SkillResult result = SkillResult.FailExhausted;
-			double tariff = failTariff;
-			double increase = 0;
+			SkillResult result	= SkillResult.FailExhausted;
+			double tariff		= failTariff;
+			double increase		= 0;
+			
 			if (this.actor != null)
 			{
 				Success success = this.SkillCheck(name, difficulty, out increase);
-				if (success!=Success.Fail)
+				
+				if (success != Success.Fail)
 				{
 					if (success == Success.Full)
 					{
 						tariff = successTariff;
 						result = SkillResult.PassExhausted;
-						
 					}
-
 				}
+				
 				if (this.UseEnergy(tariff, energyType))
 				{
 					result--;
-					if (increase!=0)
+					if (increase != 0)
 					{
 						Skill skill = this.actor.Skills[name];
-						increase*=tariff/Constants.EnergySpan;
+						increase *= tariff/Constants.EnergySpan;
+						
 						if (!this.SkillBonuses.ContainsKey(skill))		this.SkillBonuses.Add(skill, increase);
 						else if (increase > this.SkillBonuses[skill])	this.SkillBonuses[skill] = increase;
 					}

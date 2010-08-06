@@ -12,6 +12,10 @@ var giAvatar = new Class(
 			opacity:	0.7,
 		});
 		
+		this.energy = new Element('div', {
+			'class':	'energy'
+		});
+		
 		this.bound = {
 			mouseOver:		this.mouseOver.bind(this),
 			mouseOut:		this.mouseOut.bind(this),
@@ -57,7 +61,8 @@ var giAvatar = new Class(
 				}
 			}
 		}
-
+		
+		this.energy.inject(this.icon);
 		this.icon.inject(container);
 		this.icon.set('tween', { duration: 150 });
 		this.icon.set('morph', { duration: 150 });
@@ -66,6 +71,9 @@ var giAvatar = new Class(
 			mouseout:	function(event) { $(event.target).tween('opacity', 0.7) },
 			mouseup:	this.bound.avatarClick
 		});
+
+		this.width = 0;
+		this.morph = new Fx.Morph(this.energy);
 		
 		this.setLocation(0, 0);
 	},
@@ -121,6 +129,20 @@ var giAvatar = new Class(
 		this.icon.morph({ left: cx - 24, top: cy - 24 });
 		if (this.navigation) 	this.arrows.each(function(arrow) { arrow.morph({ left: cx + arrow.ox, top: cy + arrow.oy}); });
 		else					this.arrows.each(function(arrow) { arrow.set({ left: cx - 12, top: cy - 12 }); }); 
+	},
+	
+	setEnergy: function(value)
+	{
+		if (!this.width) this.width = this.icon.getSize().x;
+		
+		this.morph.cancel();
+		this.energy.setStyle('width', this.width * value / 10);
+		
+		if (value < 10 && interface.reserve.value > 0)
+		{
+			this.morph.options.duration = 1000 * (10 - value) / ENERGY_GAIN;
+			this.morph.start({ width: this.width });
+		}
 	}
 });
 

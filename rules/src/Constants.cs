@@ -35,7 +35,7 @@ namespace Henge.Rules
 		// Maximum skill level
 		public const double SkillMax = 1.0;
 		// Maximum energy gain per second
-		public const double MaxEnergyGain = 1.0;
+		public const double EnergyGain = 1.0;
 		// Maximum energy
 		public const double MaxEnergy = 10.0; 
 		//span of max energy to min energy

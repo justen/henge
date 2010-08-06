@@ -10,6 +10,7 @@ var giBar = new Class(
 		this.outer	= new Element('div', { 'class': 'bar' });
 		this.label	= new Element('label', { text: label });
 		this.bar	= new Element('div');
+		this.value	= 0;
 		
 		this.label.inject(this.outer);
 		this.bar.inject(this.outer);
@@ -19,6 +20,8 @@ var giBar = new Class(
 	
 	set: function(value)
 	{
+		this.value = value;
+		
 		this.bar.setStyles({
 			width:				value + '%',
 			'background-color': (value < 50) ? '#c00' : '#0c0',

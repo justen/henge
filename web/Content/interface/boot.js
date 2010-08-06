@@ -81,5 +81,6 @@ window.addEvent('resize', resize);
 
 
 /*-------------------------------------- Constants ------------------------------------------*/
-var TILE_SIZE = 128;
-var MAP_RANGE = 10;
+var TILE_SIZE	= 128;
+var MAP_RANGE	= 10;
+var ENERGY_GAIN = 1.0;

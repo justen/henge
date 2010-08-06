@@ -46,6 +46,7 @@
     <Compile Include="src\Interfaces\IAntagonist.cs" />
     <Compile Include="src\Interfaces\IInterferer.cs" />
     <Compile Include="src\Rules\Rule.cs" />
+    <Compile Include="src\Interfaces\IModifier.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />

@@ -8,11 +8,10 @@ var giInterface = new Class(
 {
 	initialize: function()
 	{
-		var status = $('status');
-		
-		this.health			= new giBar(status, 'Health');
-		this.energy			= new giBar(status, 'Energy');
-		this.constitution	= new giBar(status, 'Constitution');
+		this.status 		= $('status');
+		this.health			= new giBar(this.status, 'Health');
+		this.reserve		= new giBar(this.status, 'Energy');
+		this.constitution	= new giBar(this.status, 'Constitution');
 		this.statusPoll		= new Request.JSON({
 			url:		root + 'Interface/GetStatus',
 			initialDelay: 1000,
@@ -37,13 +36,23 @@ var giInterface = new Class(
 	{
 		log.add(data.Message);
 		
-		if (data.Valid) map.canvas.setLocation(data.X, data.Y);
+		if (data.Valid) 
+		{
+			map.canvas.setLocation(data.X, data.Y);
+			map.canvas.avatar.setEnergy(data.Energy);
+		}
 	},
 	
 	handleStatus: function(data)
 	{
-		this.health.set(data.Health);
-		this.energy.set(data.Energy);
-		this.constitution.set(data.Constitution);
+		if (data.Health >= 0)
+		{
+			this.health.set(data.Health);
+			this.reserve.set(data.Reserve);
+			this.constitution.set(data.Constitution);
+			
+			map.canvas.avatar.setEnergy(data.Energy);
+		}
+		//else show respawn button??
 	}
 });

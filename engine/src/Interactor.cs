@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 using Henge.Rules;
@@ -23,7 +24,7 @@ namespace Henge.Engine
 		
 		public void Initialise(string applicationPath, DataProvider db)
 		{
-			this.rulebook 	= Loader.LoadRules(applicationPath);
+			this.rulebook 	= Loader.LoadRules(db, applicationPath);
 			this.db			= db;
 		}
 		
@@ -35,28 +36,12 @@ namespace Henge.Engine
 			if (interaction != null)
 			{
 				this.rulebook.Section(interactionType).ApplyRules(interaction);
+				
 				interaction.Conclude();
+				
 				if (interaction.Finished && !interaction.Illegal)
 				{
-					/*// while not failing to commit
-					// {
-						foreach (var delta in interaction.Deltas)
-						{
-							if (!delta(interaction.Succeeded)) break;
-						}
-						foreach (Entity entity in interaction.PendingDeletions)
-						{
-							db.Delete(entity);
-						}
-						//try
-						//{
-							db.Flush();	
-						//}
-						//catch // ----- Db4o commit exception?
-						//{
-							
-						//}
-					//}	*/	
+					// Hurray?
 				}
 				else
 				{
@@ -65,6 +50,12 @@ namespace Henge.Engine
 			}
 
 			return interaction;
+		}
+		
+		
+		public Trait UpdateTrait(string target, Actor actor)
+		{
+			return (this.rulebook.Modifiers.ContainsKey(target)) ? this.rulebook.Modifiers[target].Apply(actor) : null;
 		}
 	}
 }
