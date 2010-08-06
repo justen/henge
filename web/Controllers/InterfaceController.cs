@@ -86,7 +86,7 @@ namespace Henge.Web.Controllers
 					Health 			= this.avatar.Traits["Health"].Value, 
 					Reserve			= this.avatar.Traits["Reserve"].Percentage(), 
 					Constitution 	= this.avatar.Traits["Constitution"].Percentage(),
-					Energy			= Interactor.Instance.UpdateTrait("Energy", this.avatar).Value
+					Energy			= Interactor.Instance.Modifier("Energy").Apply(this.avatar).Value
 				});
 			}
 

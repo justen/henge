@@ -137,13 +137,10 @@ namespace Henge.Web.Controllers
 		[Authorize][AcceptVerbs(HttpVerbs.Post)]
 		public ActionResult Clan(string clan)
 		{
-			//if (this.db.CreateCriteria<User>().Add(Restrictions.Eq("Clan", clan)).UniqueResult<User>() == null)
-			if ( (from u in this.db.Query<User>() where u.Clan == clan select true).Any() )
+			if (!this.db.Query<User>().Where(u => u.Clan == clan).Any())
 			{
-				using (this.db.Lock(this.user))
-				{
-					this.user.Clan = clan;
-				}
+				using (this.db.Lock(this.user)) this.user.Clan = clan;
+				this.SetMessage("Clan name successfully updated");
 			}
 			else this.SetError("A clan with the same name already exists");	
 
@@ -158,10 +155,14 @@ namespace Henge.Web.Controllers
 			
 			if (avatar != null)
 			{
-				if (this.user.CurrentAvatar == avatar) this.user.CurrentAvatar = null;
-				avatar.Location.Inhabitants.Remove(avatar);
-				this.user.Avatars.Remove(avatar);
-				this.db.Delete(avatar);
+				if (this.avatar == avatar) Session.Remove("Avatar");
+				
+				using (this.db.Lock(avatar.Location.Inhabitants, this.user.Avatars))
+				{
+					avatar.Location.Inhabitants.Remove(avatar);
+					this.user.Avatars.Remove(avatar);
+					this.db.Delete(avatar);
+				}
 			}
 			
 			return RedirectToAction ("Account");	
@@ -171,11 +172,7 @@ namespace Henge.Web.Controllers
 		[Authorize][AcceptVerbs(HttpVerbs.Post)]
 		public ActionResult ConnectAvatar(int index)
 		{
-			using (this.db.Lock(this.user, avatar))
-			{
-				this.user.CurrentAvatar = this.user.Avatars.ElementAtOrDefault(index);
-			}
-			
+			Session["Avatar"] = this.user.Avatars.ElementAtOrDefault(index);
 			return RedirectToAction ("", "");	
 		}
 		
@@ -183,10 +180,7 @@ namespace Henge.Web.Controllers
 		[Authorize]
 		public ActionResult DisconnectAvatar()
 		{
-			using (this.db.Lock(this.user))
-			{
-				this.user.CurrentAvatar = null;
-			}
+			Session.Remove("Avatar");
 			return RedirectToAction("Account");
 		}
 		

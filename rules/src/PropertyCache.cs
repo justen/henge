@@ -49,7 +49,7 @@ namespace Henge.Rules
 		{
 			get
 			{
-				if (this.energy == null) this.energy = Interactor.Instance.UpdateTrait("Energy", this.actor);
+				if (this.energy == null) this.energy = Interactor.Instance.Modifier("Energy").Apply(this.actor);
 				
 				return this.energy.Value;
 			}

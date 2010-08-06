@@ -53,9 +53,9 @@ namespace Henge.Engine
 		}
 		
 		
-		public Trait UpdateTrait(string target, Actor actor)
+		public IModifier Modifier(string target)
 		{
-			return (this.rulebook.Modifiers.ContainsKey(target)) ? this.rulebook.Modifiers[target].Apply(actor) : null;
+			return this.rulebook.Modifiers.ContainsKey(target) ? this.rulebook.Modifiers[target] : null;
 		}
 	}
 }

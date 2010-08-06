@@ -16,7 +16,7 @@ namespace Henge.Data.Entities
 		public virtual bool Enabled 			{ get; set; }
 		public virtual IList<Avatar> Avatars 	{ get; set; }
 		public virtual IList<string> Roles		{ get; set; }
-		public virtual Avatar CurrentAvatar		{ get; set; }
+		//public virtual Avatar CurrentAvatar		{ get; set; }
 		//public IList<Account> Account	{ get; set; }
 		
 		

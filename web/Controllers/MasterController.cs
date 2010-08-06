@@ -35,7 +35,8 @@ namespace Henge.Web.Controllers
 		    if (this.User.Identity.IsAuthenticated)
 			{
 				this.user					= this.db.Get<User>(x => x.Name == this.User.Identity.Name);
-				this.avatar					= this.user.CurrentAvatar;
+				this.avatar					= Session["Avatar"] as Avatar; //this.user.CurrentAvatar;
+
 				this.ViewData["User"] 		= this.User.Identity.Name;
 				this.ViewData["Character"]	= (this.avatar != null) ? string.Format("{0} of {1}", this.avatar.Name, this.user.Clan) : null;
 			}
