@@ -82,5 +82,12 @@ window.addEvent('resize', resize);
 
 /*-------------------------------------- Constants ------------------------------------------*/
 var TILE_SIZE	= 128;
+var HALF_TILE	= TILE_SIZE / 2;
 var MAP_RANGE	= 10;
 var ENERGY_GAIN = 1.0;
+var SIDES		= [ 'left', '', 'top', '', 'right', '', 'bottom' ];
+var OPPOSITES	= [ 'right', '', 'bottom', '', 'left', '', 'top' ];
+//var LIGHT		= { x: -0.577, y: -0.577, z: 0.577 };
+var LIGHT		= { x: -0.696, y: -0.696, z: 0.174 };
+//var LIGHT		= { x: 0, y: 0, z: 1.0 };
+//var LIGHT		= { x: -0.707, y: -0.707, z: 0 };

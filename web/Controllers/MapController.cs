@@ -36,7 +36,8 @@ namespace Henge.Web.Controllers
 						ulong index			= ((ulong)ax << 32) | (ulong)ay;
 						Location location	= this.db.Get<Location>(l => l.Index == index);
 						
-						result.Add(new { Type = (location != null) ? location.Type.Id : null });
+						if (location != null) 	result.Add(new { Type = location.Type.Id, Z = location.Z });
+						else 					result.Add(new { Type = 0 });
 					}
 					else throw new Exception("Attempted to access tile outside of permitted range");
 				}

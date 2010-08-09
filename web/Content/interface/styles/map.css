@@ -12,12 +12,17 @@ div.tile
 	z-index: 1;
 }
 
-div.transition
+.transition
 {
 	position: absolute;
 	width: 100%;
 	height: 100%;
 }
+
+.quad0 { position:absolute; width: 50%; height: 50%; left: 0; top: 0 }
+.quad1 { position:absolute; width: 50%; height: 50%; right: 0; top: 0 }
+.quad2 { position:absolute; width: 50%; height: 50%; right: 0; bottom: 0 }
+.quad3 { position:absolute; width: 50%; height: 50%; left: 0; bottom: 0 }
 
 div.icon
 {
@@ -75,16 +80,43 @@ div#youarehere
 	margin: 43px;
 }
 
-.border-top				{ background-image: url('../images/tiles/border-top.png');		z-index: 16; }
-.border-right			{ background-image: url('../images/tiles/border-right.png');	z-index: 16; }
-.border-bottom			{ background-image: url('../images/tiles/border-bottom.png');	z-index: 16; }
-.border-left			{ background-image: url('../images/tiles/border-left.png');		z-index: 16; }
-.border-top-right		{ background-image: url('../images/tiles/border-top.png'), url('../images/tiles/border-right.png');	z-index: 16; }
-.border-bottom-right	{ background-image: url('../images/tiles/border-bottom.png'), url('../images/tiles/border-right.png');	z-index: 16; }
-.border-bottom-left		{ background-image: url('../images/tiles/border-bottom.png'), url('../images/tiles/border-left.png');	z-index: 16; }
-.border-top-left		{ background-image: url('../images/tiles/border-top.png'), url('../images/tiles/border-left.png');	z-index: 16; }
 
-.tile-plain 	{ background-image: url('../images/tiles/plain.png');		}
+
+.border-top	{ 
+	background: -moz-linear-gradient(top, rgba(238,238,238,1), rgba(238,238,238,0));
+	background: -webkit-gradient(linear, left top, left bottom, from(rgba(238,238,238,255)), to(rgba(238,238,238,0)));
+}
+.border-right {
+	background: -moz-linear-gradient(right, rgba(238,238,238,1), rgba(238,238,238,0));
+	background: -webkit-gradient(linear, right top, left top, from(rgba(238,238,238,255)), to(rgba(238,238,238,0)));
+}
+.border-bottom { 
+	background: -moz-linear-gradient(bottom, rgba(238,238,238,1), rgba(238,238,238,0));
+	background: -webkit-gradient(linear, left bottom, left top, from(rgba(238,238,238,255)), to(rgba(238,238,238,0)));
+}
+.border-left {
+	background: -moz-linear-gradient(left, rgba(238,238,238,1), rgba(238,238,238,0));
+	background: -webkit-gradient(linear, left top, right top, from(rgba(238,238,238,255)), to(rgba(238,238,238,0)));
+}
+.border-top-right {
+	background: -moz-radial-gradient(bottom left, circle, rgba(238,238,238,0), rgba(238,238,238,1) 70%);
+	background: -webkit-gradient(radial, left bottom, 0, left bottom, 128, from(rgba(238,238,238,0)), to(rgba(238,238,238,255)));
+}
+.border-bottom-right { 
+	background: -moz-radial-gradient(top left, circle, rgba(238,238,238,0), rgba(238,238,238,1) 70%);
+	background: -webkit-gradient(radial, left top, 0, left top, 128, from(rgba(238,238,238,0)), to(rgba(238,238,238,255)));
+}
+.border-bottom-left { 
+	background: -moz-radial-gradient(top right, circle, rgba(238,238,238,0), rgba(238,238,238,1) 70%);
+	background: -webkit-gradient(radial, right top, 0, right top, 128, from(rgba(238,238,238,0)), to(rgba(238,238,238,255)));
+}
+.border-top-left {
+	background: -moz-radial-gradient(bottom right, circle, rgba(238,238,238,0), rgba(238,238,238,1) 70%);
+	background: -webkit-gradient(radial, right bottom, 0, right bottom, 128, from(rgba(238,238,238,0)), to(rgba(238,238,238,255)));
+}
+				
+
+.tile-plain 	{ background-image: url('../images/tiles/plain.png'); 		}
 .tile-woodland	{ background-image: url('../images/tiles/woodland.png');	}
 .tile-forest	{ background-image: url('../images/tiles/forest.png');		}
 .tile-rock		{ background-image: url('../images/tiles/rock.png');		}
@@ -92,3 +124,8 @@ div#youarehere
 .tile-dunes		{ background-image: url('../images/tiles/dunes.png');		}
 .tile-shallows	{ background-image: url('../images/tiles/shallows.png');	}
 .tile-ocean		{ background-image: url('../images/tiles/ocean.png');		}
+
+/*
+.tile-plain {
+	background: -moz-linear-gradient(left, rgba(238,238,238,255), rgba(238,238,238,0) 50%), -moz-linear-gradient(top, rgba(238,238,238,255), rgba(238,238,238,0) 50%);
+}*/

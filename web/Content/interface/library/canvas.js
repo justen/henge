@@ -125,12 +125,14 @@ var giCanvas = new Class(
 	
 	neighbours: function(x, y)
 	{
+		var above = this.tiles[y - 1];
+		var below = this.tiles[y + 1];
 		return [
-			{ side: 'left',		opposite: 'right',  tile: this.tiles[y][x-1] },
-			{ side: 'right',	opposite: 'left',	tile: this.tiles[y][x+1] },
-			{ side: 'top',		opposite: 'bottom', tile: this.tiles[y-1] ? this.tiles[y-1][x] : null },
-			{ side: 'bottom',	opposite: 'top',	tile: this.tiles[y+1] ? this.tiles[y+1][x] : null }
+			this.tiles[y][x-1],	above ? above[x-1]	: null,	above ? above[x]	: null,	above ? above[x+1] 	: null,
+			this.tiles[y][x+1],	below ? below[x+1]	: null,	below ? below[x]	: null,	below ? below[x-1]	: null
 		];
 	}
 });
+
+
 
