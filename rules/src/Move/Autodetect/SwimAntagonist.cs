@@ -25,7 +25,9 @@ namespace Henge.Rules.Antagonist.Move.Autodetect
 				switch (interaction.ProtagonistCache.SkillCheck("Swim", difficulty+interaction.Difficulty, successTariff+interaction.Impedance, tariff+interaction.Impedance, EnergyType.Strength))
 				{
 				case SkillResult.PassExhausted:
-					interaction.Failure("You feel you are too weak to make it to your destination, and tread water while your strength returns.", false);		
+					if (interaction.Protagonist.Location.Traits.ContainsKey("Movement") && (interaction.Protagonist.Location.Traits["Movement"].Flavour=="Swim"))
+						interaction.Failure("You feel you are too weak to swim that far, and tread water while your strength returns.", false);		
+					else interaction.Failure("You begin to swim, but realise you are too tired to swim that far. You return to dry land while you gather your strength", false);		
 					break;
 				case SkillResult.PassSufficient:
 					interaction.Log+=("You swim strongly through the water. ");
@@ -41,7 +43,12 @@ namespace Henge.Rules.Antagonist.Move.Autodetect
 						if (health.Value<=0) health.Flavour = "Dead";
 					}
 					if (health.Flavour=="Dead")	interaction.Failure("The light of the surface fades above you. Your struggles subside as your breath runs out. You have died.", false);
-					else interaction.Failure("As you flounder, the currents carry you back the way you came", false);
+					else
+					{
+						if (interaction.Protagonist.Location.Traits.ContainsKey("Movement") && (interaction.Protagonist.Location.Traits["Movement"].Flavour=="Swim"))
+							interaction.Failure("As you flounder, the currents carry you back the way you came", false);
+						else interaction.Failure("As you flounder, the currents carry you back to shore. You haul yourself back out of the water, gasping for breath", false);
+					}
 					break;
 				}
 				});

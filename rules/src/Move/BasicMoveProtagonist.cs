@@ -81,6 +81,7 @@ namespace Henge.Rules.Protagonist.Move
 				{
 					this.ApplyInteraction(interaction, interaction.Protagonist, antagonist);	
 				}
+
 			}
 	
 			return interaction;

@@ -112,7 +112,7 @@ namespace Henge.Rules.Antagonist.Move
 					{
 						interaction.Failure("Your chosen route seems impassable.", false);
 					}
-					else interaction.Failure("You are unable to summon sufficient energy to make it to your destination.", false);
+					else interaction.Failure("Exhausted, you turn back.", false);
 					
 				}
 			});
