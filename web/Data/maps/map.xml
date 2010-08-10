@@ -63,6 +63,10 @@
 		<trait name="Health" maximum="100" minimum="-100" value="50" />
 		<appearance type="avatar" short_description="person" description = "person" />
     </type>
+    <type id="item.stick">
+		<trait name="Weight"	minimum="0" value="1" />
+		<appearance type="stick" short_description="stick" description = "not just any stick. It's Mr. Sticky!" />
+    </type>
   </general>
   <map name="Testopia">
     <location type="tr0" coordinates="0,0,0" name="" detail="" />
@@ -5114,8 +5118,13 @@
     <location type="tr6" coordinates="50,46,44" name="" detail="" />
     <location type="tr6" coordinates="50,47,44" name="" detail="" />
     <location type="tr6" coordinates="50,48,44" name="" detail="" />
-    <location type="tr6" coordinates="50,49,45" name="" detail="" />
-    <location type="tr6" coordinates="50,50,48" name="" detail="" />
+    <location type="tr6" coordinates="50,49,45" name="" detail="" >
+		<region name="spawning ground" description="where you start" />
+	</location>
+    <location type="tr6" coordinates="50,50,48" name="" detail="" >
+		<region name="spawning ground" description="where you start" />
+		<item type="item.stick" name="mr. sticky" detail="the specialest stick in the world" />
+    </location>
     <location type="tr6" coordinates="50,51,50" name="" detail="" />
     <location type="tr6" coordinates="50,52,52" name="" detail="" />
     <location type="tr5" coordinates="50,53,55" name="" detail="" />

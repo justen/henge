@@ -11,16 +11,19 @@ namespace Avebury
 	public class Loader
 	{
 		private Dictionary<string, ComponentType> KeyTypes	= new Dictionary<string, ComponentType>();
-		private List<ComponentType> GeneralTypes			= new List<ComponentType>();
+		private Dictionary<string, ComponentType> GeneralTypes	= new Dictionary<string, ComponentType>();
+		private Dictionary<string, ComponentType> AbstractTypes = new Dictionary<string, ComponentType>();
 		private List<Location> Locations					= new List<Location>();
 		private List<Entity> Maps							= new List<Entity>();
+		private Dictionary<string, string> orphanRegions	= new Dictionary<string, string>();
+		private Dictionary <string, Henge.Data.Entities.Region> mapRegions 		= new Dictionary<string, Henge.Data.Entities.Region>();
 		
 		public List<Entity> Data 
 		{
 			get
 			{	
 				List<Entity> result = new List<Entity>();
-				result.AddRange(this.GeneralTypes.Cast<Entity>());
+				result.AddRange(this.AbstractTypes.Values.Cast<Entity>());
 				result.AddRange(this.Maps.Cast<Entity>());
 				result.AddRange(this.Locations.Cast<Entity>());
 
@@ -34,6 +37,7 @@ namespace Avebury
 			string path			= Path.Combine(applicationPath, "maps");
 			DirectoryInfo info	= new DirectoryInfo(path);
 			List<XmlNode> maps	= new List<XmlNode>();
+			
 			
 			foreach(FileInfo file in info.GetFiles("*.xml"))
 			{
@@ -68,9 +72,18 @@ namespace Avebury
 		
 		private void ParseGeneral(XmlNode root)
 		{
+			//Gets "abstract" regions - i.e., regions not currently mapped to any locations.
+			//These can be used as parents of real regions.
+			//Orphaned abstract regions won't end up in the db.
+			this.GetRegions(root);
+			
 			foreach (XmlNode child in root)
 			{
-				if (child.Name == "type") this.GeneralTypes.Add(this.ParseType(child));
+				if (child.Name == "type")
+				{
+					ComponentType type = this.ParseType(child);
+					this.AbstractTypes.Add(type.Id, type);
+				}
 			}
 		}
 		
@@ -119,6 +132,7 @@ namespace Avebury
 		}
 		
 		
+		
 		private void ParseMap(XmlNode root)
 		{
 			Map map 			= new Map() { Name = root.Attributes["name"].Value };
@@ -132,22 +146,117 @@ namespace Avebury
 					string []coords 	= child.Attributes["coordinates"].Value.Split(new Char[] {','});
 		
 					Location location = new Location(int.Parse(coords[0]), int.Parse(coords[1]), int.Parse(coords[2]),  type) {
-						Name 	= child.Attributes["name"].Value,
-						Detail	= child.Attributes["detail"].Value,
 						Map		= map
 					};
-
-					Dictionary<string, Trait> traits = this.GetTraits(child);
-					foreach(KeyValuePair<string, Trait> trait in traits)
+				
+					location = this.CommonParameters(location, child);
+					
+					List<string> regions = this.GetRegions(child);
+					foreach(string region in regions)
 					{
-						if (location.Traits.ContainsKey(trait.Key)) location.Traits[trait.Key] = trait.Value;
-						else 										location.Traits.Add(trait);
+						location.Regions.Add(this.mapRegions[region]);
+						this.mapRegions[region].Locations.Add(location);
 					}
-
 					this.Locations.Add(location);
 				}
 			}
+			foreach (string orphan in this.orphanRegions.Keys)
+			{
+				if (this.mapRegions.ContainsKey(orphan) && this.mapRegions.ContainsKey(this.orphanRegions[orphan]))
+			   	{
+					this.mapRegions[orphan].Parent = this.mapRegions[this.orphanRegions[orphan]];					
+				}
+			}
 			this.Maps.Add(map);
+		}
+		
+		private T CommonParameters<T> (T component, XmlNode definition) where T : Component
+		{
+			if (definition.Attributes["created"]!=null)
+			{
+				component.Created = DateTime.Parse(definition.Attributes["created"].Value);
+			}
+			
+			if (definition.Attributes["modified"]!=null)
+			{
+			 	component.LastModified = DateTime.Parse(definition.Attributes["modified"].Value);
+			}
+			if (definition.Attributes["name"]!=null)
+			{
+				component.Name = definition.Attributes["name"].Value;
+			}
+			if (definition.Attributes["detail"]!=null)
+			{
+				component.Detail = definition.Attributes["detail"].Value;	
+			}
+			Dictionary<string, Trait> traits = this.GetTraits(definition);
+			foreach(KeyValuePair<string, Trait> trait in traits)
+			{
+				if (component.Traits.ContainsKey(trait.Key)) 	component.Traits[trait.Key] = trait.Value;
+				else 											component.Traits.Add(trait);
+			}
+			List<Item> contents = this.GetInventory(definition);
+			foreach (Item thing in contents)
+			{
+					thing.Owner = component;
+					component.Inventory.Add(thing);
+			}
+			return component;
+		}
+		
+		private List<Item> GetInventory(XmlNode owner)
+		{
+			List<Item> result = new List<Item>();
+			foreach (XmlNode child in owner)
+			{
+				if (child.Name == "item")
+				{
+					string typename = child.Attributes["type"].Value;
+					if (this.AbstractTypes.ContainsKey(typename) )
+					{
+						this.GeneralTypes.Add(typename, this.AbstractTypes[typename]);
+						this.AbstractTypes.Remove(typename);
+					}
+					ComponentType type	= this.GeneralTypes[typename];
+					Item item =  new Item(type);
+					item = this.CommonParameters(item, child);
+					result.Add(item);
+				}
+			}
+			return result;
+		}
+		
+		private List<string> GetRegions(XmlNode location)
+		{
+			List<string> result = new List<string>();
+			foreach	(XmlNode child in location)
+			{
+				if (child.Name == "region")
+				{
+					string description = child.Attributes["description"]==null? string.Empty : child.Attributes["description"].Value;
+					string name = child.Attributes["name"]==null? string.Empty : child.Attributes["name"].Value;
+					string parent = child.Attributes["parent"]==null? string.Empty : child.Attributes["parent"].Value;
+					if (name!=null)
+					{
+						if (!this.mapRegions.ContainsKey(name))
+						{
+							Henge.Data.Entities.Region region = new Henge.Data.Entities.Region()
+							{	
+								Description = description,
+								Name = name	
+							};
+							if (this.mapRegions.ContainsKey(parent))
+							{
+								region.Parent = mapRegions[parent];	
+							}
+							else this.orphanRegions.Add(name, parent);
+							this.mapRegions.Add(region.Name, region);
+						}
+						result.Add(name);
+					}
+				}
+			}
+			return result;
 		}
 		
 		
