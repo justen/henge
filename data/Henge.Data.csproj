@@ -58,7 +58,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\references\NHibernate.Linq.dll</HintPath>
     </Reference>
-    <Reference Include="Coincidental, Version=0.1.3857.23825, Culture=neutral, PublicKeyToken=null">
+    <Reference Include="Coincidental, Version=0.1.3862.28372, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\references\Coincidental.dll</HintPath>
     </Reference>
@@ -96,6 +96,7 @@
     <Compile Include="src\Object\Entities\Trait.cs" />
     <Compile Include="src\Object\Entities\Skill.cs" />
     <Compile Include="src\Object\Entities\TraitBase.cs" />
+    <Compile Include="src\Entities\IInhabitable.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />

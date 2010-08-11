@@ -6,7 +6,7 @@ using Coincidental;
 
 namespace Henge.Data.Entities
 {
-	public class Location : Component
+	public class Location : Component, IInhabitable
 	{
 		[Indexed]
 		public virtual ulong Index					{ get; set; }

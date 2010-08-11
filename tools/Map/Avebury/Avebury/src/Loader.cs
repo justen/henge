@@ -13,20 +13,36 @@ namespace Avebury
 		private Dictionary<string, ComponentType> KeyTypes	= new Dictionary<string, ComponentType>();
 		private Dictionary<string, ComponentType> GeneralTypes	= new Dictionary<string, ComponentType>();
 		private Dictionary<string, ComponentType> AbstractTypes = new Dictionary<string, ComponentType>();
-		private List<Location> Locations					= new List<Location>();
-		private List<Entity> Maps							= new List<Entity>();
+		private Dictionary<Map, Dictionary<string, Location>> Locations					= new Dictionary<Map, Dictionary<string, Location>>();
+		private Dictionary<string, Map> Maps							= new Dictionary<string, Map>();
 		private Dictionary<string, string> orphanRegions	= new Dictionary<string, string>();
 		private Dictionary <string, Henge.Data.Entities.Region> mapRegions 		= new Dictionary<string, Henge.Data.Entities.Region>();
+		private Dictionary<string[], Edifice> pendingPortals = new Dictionary<string[], Edifice>();
+	
+
 		
 		public List<Entity> Data 
 		{
 			get
 			{	
+				
+	
+				if (this.pendingPortals.Count>0)
+				{
+					string exception = string.Format("Avebury - {0} broken portals: \n", this.pendingPortals.Count);
+					foreach (Edifice edifice in this.pendingPortals.Values)
+					{
+						exception += string.Format("{0} at {1}, {2} in {3} is invalid\n", edifice.Name, edifice.Location.X, edifice.Location.Y, edifice.Location.Map.Name);
+					}
+					throw new Exception (exception);
+				}
 				List<Entity> result = new List<Entity>();
 				result.AddRange(this.AbstractTypes.Values.Cast<Entity>());
-				result.AddRange(this.Maps.Cast<Entity>());
-				result.AddRange(this.Locations.Cast<Entity>());
-
+				result.AddRange(this.Maps.Values.Cast<Entity>());
+				foreach (Dictionary<string, Location> locationList in this.Locations.Values)
+				{
+					result.AddRange(locationList.Values.Cast<Entity>());
+				}
 				return result;
 			}
 		}
@@ -57,6 +73,27 @@ namespace Avebury
 					}
 					foreach (XmlNode node in maps) this.ParseMap(node);	
 				}
+			}
+			List<string[]> connected = new List<string[]>();
+			foreach (KeyValuePair<string[], Edifice>edifice in this.pendingPortals)
+			{
+				string mapName = edifice.Key[0];
+				string locationName = edifice.Key[1];
+				if (this.Maps.ContainsKey(mapName))
+				{
+	
+					Map map = this.Maps[mapName];
+					
+					if (this.Locations[map].ContainsKey(locationName))
+					{
+						edifice.Value.Portal = this.Locations[map][locationName];	
+						connected.Add(edifice.Key);
+					}
+				}
+			}
+			foreach(string[] key in connected)
+			{
+				this.pendingPortals.Remove(key);	
 			}
 		}
 		
@@ -150,14 +187,16 @@ namespace Avebury
 					};
 				
 					location = this.CommonParameters(location, child);
-					
+					//location = this.PopulateInhabitants(location, child);
+					location = this.PopulateEdifices(location, child);
 					List<string> regions = this.GetRegions(child);
 					foreach(string region in regions)
 					{
 						location.Regions.Add(this.mapRegions[region]);
 						this.mapRegions[region].Locations.Add(location);
 					}
-					this.Locations.Add(location);
+					if (!this.Locations.ContainsKey(location.Map)) this.Locations.Add(location.Map, new Dictionary<string, Location>());
+					this.Locations[location.Map].Add(string.Format("{0},{1}", coords[0], coords[1]), location);
 				}
 			}
 			foreach (string orphan in this.orphanRegions.Keys)
@@ -167,7 +206,32 @@ namespace Avebury
 					this.mapRegions[orphan].Parent = this.mapRegions[this.orphanRegions[orphan]];					
 				}
 			}
-			this.Maps.Add(map);
+			this.Maps.Add(map.Name, map);
+		}
+		
+		private Location PopulateEdifices(Location location, XmlNode definition)
+		{
+			foreach (XmlNode child in definition)
+			{
+				if (child.Name=="edifice")
+				{
+					Edifice edifice = new Edifice(this.Type(child));
+					edifice = this.CommonParameters(edifice, child);
+					//edifice = this.PopulateInhabitants(edifice, child);
+					foreach (XmlNode portal in child)
+					{
+						if (portal.Name=="portal")	
+						{
+						
+							this.pendingPortals.Add(new string[2]{portal.Attributes["map"].Value, portal.Attributes["coordinates"].Value}, edifice);
+							break;
+						}
+					}
+					edifice.Location = location;
+					location.Structures.Add(edifice);
+				}
+			}
+			return location;
 		}
 		
 		private T CommonParameters<T> (T component, XmlNode definition) where T : Component
@@ -204,6 +268,26 @@ namespace Avebury
 			return component;
 		}
 		
+		private ComponentType Type (XmlNode node)
+		{
+			ComponentType result = null;
+			string typename = node.Attributes["type"].Value;
+			if (this.AbstractTypes.ContainsKey(typename) )
+			{
+				this.GeneralTypes.Add(typename, this.AbstractTypes[typename]);
+				this.AbstractTypes.Remove(typename);
+			}
+			if (this.GeneralTypes.ContainsKey(typename))
+			{
+				result = this.GeneralTypes[typename];
+			}
+			else
+			{
+				throw new Exception(string.Format("Avebury loader exception: Undefined type {0} in node {1}", typename, node.ToString()));
+			}
+			return result;
+		}
+		
 		private List<Item> GetInventory(XmlNode owner)
 		{
 			List<Item> result = new List<Item>();
@@ -211,14 +295,7 @@ namespace Avebury
 			{
 				if (child.Name == "item")
 				{
-					string typename = child.Attributes["type"].Value;
-					if (this.AbstractTypes.ContainsKey(typename) )
-					{
-						this.GeneralTypes.Add(typename, this.AbstractTypes[typename]);
-						this.AbstractTypes.Remove(typename);
-					}
-					ComponentType type	= this.GeneralTypes[typename];
-					Item item =  new Item(type);
+					Item item =  new Item(this.Type(child));
 					item = this.CommonParameters(item, child);
 					result.Add(item);
 				}

@@ -67,6 +67,11 @@
 		<trait name="Weight"	minimum="0" value="1" />
 		<appearance type="stick" short_description="stick" description = "not just any stick. It's Mr. Sticky!" />
     </type>
+    <type id="edifice.trilithon">
+		<trait name="Weight"	minimum="0" value="7000" />
+		<trait name="Health" maximum="100" minimum="-100" value="50" />
+		<appearance type="trilithon" short_description="door-like trilithon" description = "huge pair of monoliths capped by an enormour stone lintel" />
+	</type>
   </general>
   <map name="Testopia">
     <location type="tr0" coordinates="0,0,0" name="" detail="" />
@@ -5124,6 +5129,9 @@
     <location type="tr6" coordinates="50,50,48" name="" detail="" >
 		<region name="spawning ground" description="where you start" />
 		<item type="item.stick" name="mr. sticky" detail="the specialest stick in the world" />
+		<edifice type="edifice.trilithon" name="Test Portal" detail="">
+			<portal map="Testopia" coordinates="50,49" />
+		</edifice>
     </location>
     <location type="tr6" coordinates="50,51,50" name="" detail="" />
     <location type="tr6" coordinates="50,52,52" name="" detail="" />
