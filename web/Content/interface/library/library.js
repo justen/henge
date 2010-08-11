@@ -34,13 +34,36 @@ var giLibrary = new Class(
     
     loadAssets: function(data)
     {
-    	this.images = data;
-    	dialog.show('Loading images...', this.images.length);
+    	this.list = data;
     	
-    	new Asset.images(this.images, {
+    	dialog.show('Loading images...', data.length);
+    	
+    	this.sources = new Asset.images(data, {
     		onProgress: function(counter) { dialog.update(counter); },
-    		onComplete: boot
+    		onComplete: this.handleAssets.bind(this)
     	});
-    }
+    },
+    
+    
+    handleAssets: function()
+    {
+    	this.images = {};
+    	var re		= /[/]([^/]+)\.png$/;
+    	
+    	for (i=0; i<this.list.length; i++)
+    	{
+    		var name = re.exec(this.list[i]);
+    		if (name) this.images[name[1]] = this.sources[i];
+    	}
+    	
+    	for (key in this.types)
+    	{
+    		type 			= this.types[key];
+    		type.Image		= this.images[type.Name];
+    		type.Transition = this.images[type.Name + '-transition'];
+    	}
+    
+    	boot();
+    },
 });
 
