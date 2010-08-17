@@ -120,7 +120,12 @@ var giCanvas = new Class(
 			}	
 		}
 		
-		if (queue.length > 0) request.getTileData(queue);
+	
+		if (queue.length > 0) request.send(
+			'Map/Tile', 
+			queue.map(function(item) { return 'x=' + item.x + '&y=' + item.y }).join('&'), 
+			function (data) { if (data.length == queue.length) data.each(function(item, index) { queue[index].initialise(item) }) }
+		);
 	},
 	
 	neighbours: function(x, y)
