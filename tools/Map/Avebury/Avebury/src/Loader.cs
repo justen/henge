@@ -18,8 +18,11 @@ namespace Avebury
 		private Dictionary<string, string> orphanRegions	= new Dictionary<string, string>();
 		private Dictionary <string, Henge.Data.Entities.Region> mapRegions 		= new Dictionary<string, Henge.Data.Entities.Region>();
 		private Dictionary<string[], Edifice> pendingPortals = new Dictionary<string[], Edifice>();
-	
-
+		private Dictionary<Npc, string> orphanedNPCs = new Dictionary<Npc, string>();
+		private Dictionary<string, Avatar> avatars = new Dictionary<string, Avatar>();
+		private Dictionary<string, User> users = new Dictionary<string, User>();
+		private Dictionary<string, Component> traitRefs = new Dictionary<string, Component>();
+		private Dictionary<Trait, string> traits = new Dictionary<Trait, string>();
 		
 		public List<Entity> Data 
 		{
@@ -38,6 +41,7 @@ namespace Avebury
 				}
 				List<Entity> result = new List<Entity>();
 				result.AddRange(this.AbstractTypes.Values.Cast<Entity>());
+				result.AddRange(this.users.Values.Cast<Entity>());
 				result.AddRange(this.Maps.Values.Cast<Entity>());
 				foreach (Dictionary<string, Location> locationList in this.Locations.Values)
 				{
@@ -68,6 +72,7 @@ namespace Avebury
 						{
 							case "key":		this.ParseKey(child);		break;
 							case "general": this.ParseGeneral(child);	break;
+							case "users": this.ParseUsers(child);		break;
 							case "map":		maps.Add(child);			break;
 						}
 					}
@@ -95,8 +100,52 @@ namespace Avebury
 			{
 				this.pendingPortals.Remove(key);	
 			}
+			
+			foreach(KeyValuePair<Npc, string> pair in this.orphanedNPCs)
+			{
+				if (this.avatars.ContainsKey(pair.Value))
+				{
+					this.avatars[pair.Value].Pets.Add(pair.Key);
+					pair.Key.Master = this.avatars[pair.Value];
+				}
+			}
 		}
 		
+
+		
+		private void ParseUsers(XmlNode users)
+		{
+			foreach(XmlNode user in users)
+			{
+				if (user.Name=="user")
+				{
+					string name = user.Attributes["name"].Value;
+					User instance =  new User()
+					{ 
+						Name = name,
+						Clan = (user.Attributes["clan"]!=null)? user.Attributes["clan"].Value : name,
+						Email = (user.Attributes["email"]!=null)? user.Attributes["email"].Value : string.Empty,
+						Enabled = user.Attributes["enabled"]!=null,
+						Password = user.Attributes["password"].Value
+					};
+					foreach (XmlNode child in user)
+					{
+						if (child.Name=="role")
+						{
+							instance.Roles.Add(child.Attributes["name"].Value);
+						}
+						if (child.Name=="avatar")
+						{
+							Avatar avatar = this.ParseAvatar(child);	
+							instance.Avatars.Add(avatar);
+							this.avatars.Add(avatar.Name, avatar);
+						}
+					}
+					this.users.Add(name, instance);
+						
+				}
+			}
+		}
 		
 		private void ParseKey(XmlNode root)
 		{
@@ -185,9 +234,17 @@ namespace Avebury
 					Location location = new Location(int.Parse(coords[0]), int.Parse(coords[1]), int.Parse(coords[2]),  type) {
 						Map		= map
 					};
-				
 					location = this.CommonParameters(location, child);
-					//location = this.PopulateInhabitants(location, child);
+					location = this.PopulateInhabitants(location, child);
+					foreach (Avatar character in location.Inhabitants)
+					{
+						character.Location = location;
+						
+					}
+					foreach (Npc animal in location.Fauna)
+					{
+						animal.Location = location;
+					}
 					location = this.PopulateEdifices(location, child);
 					List<string> regions = this.GetRegions(child);
 					foreach(string region in regions)
@@ -206,7 +263,99 @@ namespace Avebury
 					this.mapRegions[orphan].Parent = this.mapRegions[this.orphanRegions[orphan]];					
 				}
 			}
+			foreach(KeyValuePair<Trait, string> trait in this.traits)
+			{
+				if (this.traitRefs.ContainsKey(trait.Value))
+				{
+					trait.Key.Subject = this.traitRefs[trait.Value];	
+				}
+			}
 			this.Maps.Add(map.Name, map);
+		}
+		
+		private Avatar ParseAvatar(XmlNode definition)
+		{
+			Avatar result = new Avatar(this.Type(definition));
+			this.ParseActor(result, definition);
+			foreach (XmlNode child in definition)
+			{
+				if (child.Name=="ancestor")
+				{
+					result.Ancestors.Add(child.Attributes["details"].Value);
+				}
+			}
+			return result;
+		}
+		
+		private T ParseActor<T> (T actor, XmlNode definition) where T : Actor
+		{
+			actor =  this.CommonParameters(actor, definition);
+			actor = this.ParseSkills(actor, definition);	
+			
+			return actor;
+		}
+		
+		private Npc ParseNPC(XmlNode definition)
+		{
+			Npc result = new Npc(this.Type(definition));
+			result = this.ParseActor(result, definition);
+			if (definition.Attributes["master"]!=null)
+			{
+				this.orphanedNPCs.Add(result, definition.Attributes["master"].Value);	
+			}
+			return result;
+		}
+		
+		private T ParseSkills<T> (T actor, XmlNode definition) where T : Actor
+		{
+			T result = actor;
+			
+			foreach (XmlNode child in definition)
+			{
+				if (child.Name=="skill")
+				{
+					result = this.AddSkill(result, child);
+				}
+			}
+			
+			return result;
+		}
+		
+		private T AddSkill<T> (T owner, XmlNode definition) where T : Actor
+		{
+			Skill skill = new Skill()
+			{
+				Value = (definition.Attributes["value"]==null)? 0.0 : double.Parse(definition.Attributes["value"].Value)
+			};
+			foreach (XmlNode child in definition)
+			{
+				if (child.Name=="skill")
+				{
+					skill.Children.Add(child.Attributes["name"].Value);
+					owner = this.AddSkill(owner, child);
+				}
+			}
+			owner.Skills.Add(definition.Attributes["name"].Value, skill);
+			return 	owner;
+		}
+		
+		private T PopulateInhabitants<T> (T component, XmlNode definition) where T : Component, IInhabitable
+		{
+			T result = component;
+			foreach (XmlNode child in definition)
+			{
+				if (child.Name=="avatar")
+				{
+					result.Inhabitants.Add(this.avatars[child.Attributes["name"].Value]);
+					this.avatars.Remove(child.Attributes["name"].Value);
+				}
+				
+				if (child.Name=="npc")
+				{
+					result.Fauna.Add(this.ParseNPC(child));
+				}
+			}
+			return result;
 		}
 		
 		private Location PopulateEdifices(Location location, XmlNode definition)
@@ -217,7 +366,6 @@ namespace Avebury
 				{
 					Edifice edifice = new Edifice(this.Type(child));
 					edifice = this.CommonParameters(edifice, child);
-					//edifice = this.PopulateInhabitants(edifice, child);
 					foreach (XmlNode portal in child)
 					{
 						if (portal.Name=="portal")	
@@ -229,6 +377,16 @@ namespace Avebury
 					}
 					edifice.Location = location;
 					location.Structures.Add(edifice);
+					
+					edifice = this.PopulateInhabitants(edifice, child);
+					foreach (Avatar character in edifice.Inhabitants)
+					{
+						character.Location = edifice.Location;
+					}
+					foreach (Npc animal in location.Fauna)
+					{
+						animal.Location = edifice.Location;
+					}
 				}
 			}
 			return location;
@@ -236,6 +394,11 @@ namespace Avebury
 		
 		private T CommonParameters<T> (T component, XmlNode definition) where T : Component
 		{
+			if (definition.Attributes["reference"]!=null)
+			{
+				//this is component which is referenced by a Trait
+				this.traitRefs.Add(definition.Attributes["reference"].Value, component);
+			}
 			if (definition.Attributes["created"]!=null)
 			{
 				component.Created = DateTime.Parse(definition.Attributes["created"].Value);
@@ -370,7 +533,10 @@ namespace Avebury
 						trait.Expiry = DateTime.Parse(child.Attributes["expiry"].Value);
 					}
 					
-					//TODO: Setting the trait subject on import is not currently supported
+					if (child.Attributes["subject"]!=null)
+					{
+						this.traits.Add(trait, child.Attributes["subject"].Value);	
+					}
 					result.Add(child.Attributes["name"].Value, trait); 	
 				}
 			}

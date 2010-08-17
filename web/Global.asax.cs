@@ -34,19 +34,19 @@ namespace Henge.Web
 			
 			Avebury.Loader avebury = new Avebury.Loader(path);
 			DataProvider.Bootstrap(avebury.Data);
-			User user = DataProvider.Store(new User { 
-				Name = "test", 
-				Password = System.Web.Security.FormsAuthentication.HashPasswordForStoringInConfigFile("test", "sha1") 
-			});
-			
-			Location location			= DataProvider.Get<Location>(l => l.X == 56 && l.Y == 50);
-			ComponentType avatarType 	= DataProvider.Get<ComponentType>(x => x.Id == "avatar");
-			Avatar avatar				= DataProvider.Store(new Avatar(avatarType) { Name = "Og" , User  = user,  Location = location });
-			
-			using (DataProvider.Lock(user.Avatars)) user.Avatars.Add(avatar);
+//			User user = DataProvider.Store(new User { 
+//				Name = "test", 
+//				Password = System.Web.Security.FormsAuthentication.HashPasswordForStoringInConfigFile("test", "sha1") 
+//			});
+//			Console.WriteLine(System.Web.Security.FormsAuthentication.HashPasswordForStoringInConfigFile("test", "sha1"));
+//			Location location			= DataProvider.Get<Location>(l => l.X == 56 && l.Y == 50);
+//			ComponentType avatarType 	= DataProvider.Get<ComponentType>(x => x.Id == "avatar");
+//			Avatar avatar				= DataProvider.Store(new Avatar(avatarType) { Name = "Og" , User  = user,  Location = location });
+//			
+//			using (DataProvider.Lock(user.Avatars)) user.Avatars.Add(avatar);
 			
 			Henge.Engine.Interactor.Instance.Initialise(Path.Combine(Server.MapPath("~"), "bin"), DataProvider);
-			Henge.Engine.Interactor.Instance.Interact(avatar, location, "Spawn.Character", null);
+//			Henge.Engine.Interactor.Instance.Interact(avatar, location, "Spawn.Character", null);
 			
 			RegisterRoutes(RouteTable.Routes);
 		}

@@ -72,7 +72,33 @@
 		<trait name="Health" maximum="100" minimum="-100" value="50" />
 		<appearance type="trilithon" short_description="door-like trilithon" description = "huge pair of monoliths capped by an enormour stone lintel" />
 	</type>
+	<type id="npc.moose">
+	    <trait name="Weight"	minimum="0" value="70" />
+		<trait name="Reserve"	maximum="100" minimum="0" value="100" />
+		<trait name="Energy"	maximum="10" minimum="-10" value="10"/>
+		<trait name="Constitution" maximum="100" minimum="-100" value="50" />
+		<trait name="Health" maximum="100" minimum="-100" value="50" />
+		<appearance type="moose" short_description="moose" description = "moose" />
+	</type>
   </general>
+  <users>
+	<user name="test" password="A94A8FE5CCB19BA61C4C0873D391E987982FBBD3" clan="eggzemel" enabled="true" >
+		<role name="test"/>
+		<avatar name="Og" type="avatar">
+			<ancestor details="Og, killed by a big rock aged 27"/>
+			<ancestor details="Og, eaten by a tiger aged 83"/>
+			<skill name="Strength" value="0.5" />
+			<skill name="Climb" value="0.5" />
+			<skill name="Fitness" value="0.5" />
+			<skill name="Concentration" value="0.5" />
+			<skill name="ParentSkill" value="1.0" >
+				<skill name="ChildSkill" value="0.2" />
+			</skill>
+			<trait name="Health" maximum="100" minimum="-100" value="10" />
+			<trait name="Impede" subject="ref1" value="0" flavour="s"/>
+		</avatar>
+	</user>
+  </users>
   <map name="Testopia">
     <location type="tr0" coordinates="0,0,0" name="" detail="" />
     <location type="tr0" coordinates="0,1,0" name="" detail="" />
@@ -5123,11 +5149,13 @@
     <location type="tr6" coordinates="50,46,44" name="" detail="" />
     <location type="tr6" coordinates="50,47,44" name="" detail="" />
     <location type="tr6" coordinates="50,48,44" name="" detail="" />
-    <location type="tr6" coordinates="50,49,45" name="" detail="" >
+    <location type="tr6" coordinates="50,49,45" name="" detail="" reference="ref1">
+		<avatar name="Og"/>
 		<region name="spawning ground" description="where you start" />
 	</location>
     <location type="tr6" coordinates="50,50,48" name="" detail="" >
 		<region name="spawning ground" description="where you start" />
+		<npc name="Mr. Moosey" type="npc.moose" />
 		<item type="item.stick" name="mr. sticky" detail="the specialest stick in the world" />
 		<edifice type="edifice.trilithon" name="Test Portal" detail="">
 			<portal map="Testopia" coordinates="50,49" />
