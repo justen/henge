@@ -101,29 +101,64 @@ namespace Henge.Rules.Protagonist.Move
 			else return int.MaxValue;
 		}
 		
+		private void AddTracks(Location location, Actor actor, bool inbound, string flavour, double strength, HengeInteraction interaction)
+		{
+			IList<Trait> list = inbound? location.TracesIn : location.TracesOut;		
+			if (strength > 0)
+			{
+				if  (list.Count >= Constants.MaximumTracks)
+				{
+					Constants.Randomise(list);
+					Trait overwritten = list[0];
+					list.RemoveAt(0);
+					interaction.Delete(overwritten);
+				}
+				list.Add(new Trait(Constants.MaximumTrackValue, 0, strength){ Subject=actor, Flavour = flavour, Expiry = DateTime.Now + Constants.TraceLife });
+			}
+					
+		}
 		
 		protected void ApplyInteraction (HengeInteraction interaction, Actor actor, Location target)
 		{
+			int dx					= actor.Location.X - target.X;
+			int dy 					= actor.Location.Y - target.Y;
+			char [] inDirection		= new char [] {
+				(dx > 0) ? 'e' : (dx < 0) ? 'w' : '-',
+				(dy > 0) ? 's' : (dy < 0) ? 'n' : '-'
+			};
+			
+			char [] outDirection		= new char [] {
+				(dx < 0) ? 'e' : (dx > 0) ? 'w' : '-',
+				(dy < 0) ? 's' : (dy > 0) ? 'n' : '-'
+			};
+			double baseTrack =  actor.Traits.ContainsKey("Tracks")? actor.Traits["Tracks"].Value : Constants.BaseTrack;
+			double trackOut = baseTrack * (actor.Location.Traits.ContainsKey("Tracks")?actor.Location.Traits["Tracks"].Value : 0);
+			double trackIn = baseTrack * (target.Traits.ContainsKey("Tracks")?target.Traits["Tracks"].Value : 0);
 
 			if (actor is Avatar)
 			{
 				Avatar avatar = actor as Avatar;
-				
-				using (interaction.Lock(avatar, avatar.Location.Inhabitants, target.Inhabitants))
+								//potential bottleneck here - may want to do smarter locking
+				using (interaction.Lock(avatar, avatar.Location.Inhabitants, target.Inhabitants, avatar.Location.TracesOut, target.TracesIn))
 				{
+					this.AddTracks(avatar.Location, avatar, false, outDirection.ToString(), trackOut, interaction);
+					this.AddTracks(target, avatar, true, inDirection.ToString(), trackIn, interaction);
 					avatar.Location.Inhabitants.Remove(avatar);
 					target.Inhabitants.Add(avatar);
 					avatar.Location = target;
-				}
+				
 					
+				}
 				interaction.Success(string.Format("You reach your destination, a {0}", target.Inspect(avatar).ShortDescription));	
 			}
 			else
 			{
 				Npc npc = actor as Npc;
 				
-				using (interaction.Lock(npc, npc.Location.Fauna, target.Fauna))
+				using (interaction.Lock(npc, npc.Location.Fauna, target.Fauna, npc.Location.TracesOut, target.TracesIn))
 				{
+					this.AddTracks(npc.Location, npc, false, outDirection.ToString(), trackOut, interaction);
+					this.AddTracks(target, npc, true, inDirection.ToString(), trackIn, interaction);
 					npc.Location.Fauna.Remove(npc);
 					target.Fauna.Add(npc);
 					npc.Location = target;

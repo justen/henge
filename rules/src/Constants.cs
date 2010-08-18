@@ -96,6 +96,11 @@ namespace Henge.Rules
 		public const double DefaultClimbDifficulty = 1.01;
 		
 		public const double MaxMovementDifficulty = 255;
+		public const double BaseTrack = 100.0;
+		public static readonly TimeSpan TraceLife = new TimeSpan(1, 0, 0, 0);
+		
+		public const int MaximumTracks = 25;
+		public const double MaximumTrackValue = 100.0;
 		
 		private static Random rng = new Random();
 		
@@ -108,10 +113,10 @@ namespace Henge.Rules
 		}
 		
 		
-		public static void Randomise(IList<Component> list)
+		public static void Randomise<T>(IList<T> list) where T : Entity
 		{
 			int swap, count = list.Count;
-			Component temp;
+			T temp;
 			
 		    for (int i=0; i<count; i++)
 		    {

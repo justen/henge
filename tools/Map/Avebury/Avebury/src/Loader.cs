@@ -236,6 +236,21 @@ namespace Avebury
 					};
 					location = this.CommonParameters(location, child);
 					location = this.PopulateInhabitants(location, child);
+					foreach (XmlNode trace in child)
+					{
+						if (trace.Name=="trace")
+						{
+							Dictionary<string, Trait> traits = this.GetTraits(trace);	
+							if (trace.Attributes["direction"].Value=="in")
+							{
+								((List<Trait>)location.TracesIn).AddRange(traits.Values);
+							}
+							if (trace.Attributes["direction"].Value=="out")
+							{
+								((List<Trait>)location.TracesOut).AddRange(traits.Values);
+							}
+						}
+					}
 					foreach (Avatar character in location.Inhabitants)
 					{
 						character.Location = location;

@@ -20,7 +20,8 @@ namespace Henge.Data.Entities
 	    public virtual Map Map						{ get; set; }	// The Map this location exists in
 		public virtual IList<Location> Visible		{ get; set; }
 		public virtual bool InvertVisibility		{ get; set; }
-		
+		public virtual IList<Trait> TracesIn		{ get; set; }
+		public virtual IList<Trait> TracesOut		{ get; set; }
 		
 		public Location(int x, int y, int z, ComponentType type) : base(type)
 		{
@@ -33,6 +34,8 @@ namespace Henge.Data.Entities
 			this.Fauna				= new List<Npc>();
 			this.Regions 			= new List<Region>();
 			this.Visible			= new List<Location>();
+			this.TracesIn			= new List<Trait>();
+			this.TracesOut			= new List<Trait>();
 			this.InvertVisibility	= true;
 		}
 		
@@ -44,6 +47,8 @@ namespace Henge.Data.Entities
 			this.Fauna				= new List<Npc>();
 			this.Regions 			= new List<Region>();
 			this.Visible			= new List<Location>();
+			this.TracesIn			= new List<Trait>();
+			this.TracesOut			= new List<Trait>();
 			this.InvertVisibility	= true;
 		}
 		
