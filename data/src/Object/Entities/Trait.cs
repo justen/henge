@@ -8,7 +8,7 @@ namespace Henge.Data.Entities
 	    public virtual double Maximum 				{get; set;}
 	    public virtual double Minimum 				{get; set;}
 		public virtual string Flavour				{get; set;}
-		public virtual Nullable<DateTime> Expiry	{get; set;}
+		public virtual /*Nullable<*/DateTime/*>*/ Expiry	{get; set;}
 		public virtual Component Subject			{get; set;}
 		
 		
@@ -22,7 +22,7 @@ namespace Henge.Data.Entities
 			this.Maximum	= maximum;
 			this.Minimum	= minimum;
 			this.Value		= val;
-			this.Expiry		= null;
+			this.Expiry		= DateTime.MaxValue;
 		}
 		
 		
@@ -33,7 +33,7 @@ namespace Henge.Data.Entities
 			this.Value		= trait.Value;
 			this.Flavour	= trait.Flavour;
 			this.Subject	= trait.Subject;
-			this.Expiry 	= (trait.Expiry == null) ? trait.Expiry : new Nullable<DateTime>(trait.Expiry.Value);
+			this.Expiry 	= trait.Expiry;//(trait.Expiry == null) ? trait.Expiry : new Nullable<DateTime>(trait.Expiry.Value);
 		}
 		
 		

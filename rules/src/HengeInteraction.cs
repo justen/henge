@@ -46,7 +46,7 @@ namespace Henge.Rules
 			if (subject.Traits.ContainsKey(traitName))
 			{
 				Trait trait = subject.Traits[traitName];
-				if ( trait.Expiry.HasValue && trait.Expiry.Value < DateTime.Now)
+				if ( trait.Expiry<DateTime.Now)//trait.Expiry.HasValue && trait.Expiry.Value < DateTime.Now)
 				{
 					using (this.db.Lock(subject.Traits))
 					{

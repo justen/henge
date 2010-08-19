@@ -30,7 +30,7 @@ namespace Henge.Rules.Protagonist.Defend.Guard
 				string impede				= string.Empty;
 				Actor subject				= interaction.Protagonist;
 				Component target			= interaction.Antagonist;
-				Nullable<DateTime> expiry	= interaction.Arguments.ContainsKey("expiry")? interaction.Arguments["expiry"]as Nullable<DateTime> : null;
+				/*Nullable<DateTime>*/DateTime expiry	= interaction.Arguments.ContainsKey("expiry")? (DateTime)(interaction.Arguments["expiry"]) : DateTime.MaxValue;//as Nullable<DateTime> : null;
 				
 				if (interaction.Arguments.ContainsKey("Impede"))
 				{

@@ -104,6 +104,14 @@ namespace Henge.Rules.Protagonist.Move
 		private void AddTracks(Location location, Actor actor, bool inbound, string flavour, double strength, HengeInteraction interaction)
 		{
 			IList<Trait> list = inbound? location.TracesIn : location.TracesOut;		
+			foreach(Trait track in list) 
+			{
+				if ((DateTime)(track.Expiry) >= DateTime.Now)
+				{
+					list.Remove(track);
+					interaction.Delete(track);
+				}
+			}
 			if (strength > 0)
 			{
 				if  (list.Count >= Constants.MaximumTracks)
@@ -141,21 +149,27 @@ namespace Henge.Rules.Protagonist.Move
 				Dictionary<string, int> timesOut = new Dictionary<string, int>();
 				foreach(Trait track in target.TracesOut)
 				{
-					Actor person = track.Subject as Actor;
-					if (timesOut.ContainsKey(person.Name))
+					if (DateTime.Now<(DateTime)(track.Expiry))
 					{
-						timesOut[person.Name]++;
+						Actor person = track.Subject as Actor;
+						if (timesOut.ContainsKey(person.Name))
+						{
+							timesOut[person.Name]++;
+						}
+						else timesOut.Add(person.Name, 1);
 					}
-					else timesOut.Add(person.Name, 1);
 				}
 				foreach(Trait track in target.TracesIn)
 				{
-					Actor person = track.Subject as Actor;
-					if (timesIn.ContainsKey(actor.Name))
+					if(DateTime.Now<(DateTime)(track.Expiry))
 					{
-						timesIn[person.Name]++;
+						Actor person = track.Subject as Actor;
+						if (timesIn.ContainsKey(person.Name))
+						{
+							timesIn[person.Name]++;
+						}
+						else timesIn.Add(person.Name, 1);
 					}
-					else timesIn.Add(person.Name, 1);
 				}
 				bool beenHere = false;
 				foreach(string name in timesIn.Keys)
