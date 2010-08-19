@@ -137,6 +137,57 @@ namespace Henge.Rules.Protagonist.Move
 
 			if (actor is Avatar)
 			{
+				Dictionary<string, int> timesIn = new Dictionary<string, int>();
+				Dictionary<string, int> timesOut = new Dictionary<string, int>();
+				foreach(Trait track in target.TracesOut)
+				{
+					Actor person = track.Subject as Actor;
+					if (timesOut.ContainsKey(person.Name))
+					{
+						timesOut[person.Name]++;
+					}
+					else timesOut.Add(person.Name, 1);
+				}
+				foreach(Trait track in target.TracesIn)
+				{
+					Actor person = track.Subject as Actor;
+					if (timesIn.ContainsKey(actor.Name))
+					{
+						timesIn[person.Name]++;
+					}
+					else timesIn.Add(person.Name, 1);
+				}
+				bool beenHere = false;
+				foreach(string name in timesIn.Keys)
+				{
+					if (name!=actor.Name)
+					{
+						int outTimes = timesOut.ContainsKey(name)?timesOut[name] : 0;
+						int totalTraffic = timesIn[name] + outTimes;
+						if (totalTraffic <3)
+						{
+							interaction.Log += (name + " has been here. ");	
+						}
+						else 
+						{
+							if (totalTraffic < 6)
+							{
+								interaction.Log += (name + " has been here more than once. ");
+							}
+							else
+							{
+								interaction.Log += (name + " has been here frequently. ");	
+							}
+						}
+						if (outTimes < timesIn[name]) interaction.Log += "You cannot see any of their tracks leading away. ";
+					}
+					else beenHere = true;
+				}
+				if (timesOut.ContainsKey(actor.Name))
+				{
+					beenHere = true;	
+				}
+				if (beenHere) interaction.Log += " It looks like you've been here before. ";
 				Avatar avatar = actor as Avatar;
 								//potential bottleneck here - may want to do smarter locking
 				using (interaction.Lock(avatar, avatar.Location.Inhabitants, target.Inhabitants, avatar.Location.TracesOut, target.TracesIn))

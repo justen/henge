@@ -96,7 +96,7 @@ namespace Henge.Rules
 		public const double DefaultClimbDifficulty = 1.01;
 		
 		public const double MaxMovementDifficulty = 255;
-		public const double BaseTrack = 100.0;
+		public const double BaseTrack = 50.0;
 		public static readonly TimeSpan TraceLife = new TimeSpan(1, 0, 0, 0);
 		
 		public const int MaximumTracks = 25;

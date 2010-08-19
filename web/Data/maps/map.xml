@@ -18,6 +18,7 @@
     </type>
     <type id="tr2">
       <trait name="Impede" minimum="0" value="1.5" />
+      <trait name="Tracks" minimum="0" value="5.0" />
       <appearance type="beach" description="golden, sandy beach" short_description="sandy beach" priority="1">
 		<parameter name="colour" value="#d7c66c" />
 	  </appearance>
@@ -25,30 +26,35 @@
    <type id="tr3">
       <trait name="Impede" minimum="0" value="3.0" />
       <trait name="Movement" flavour="Climb" value="50"/>
+      <trait name="Tracks" minimum="0" value="0.2" />
       <appearance type="rock" description="weathered, rough, rocky outcrop. Little life can be seen here." short_description="rocky outcrop" priority="8">
 		<parameter name="colour" value="#7f7f7f" />
 	  </appearance>
     </type>
     <type id="tr4">
       <trait name="Impede" minimum="0" value="1.0" />
+      <trait name="Tracks" minimum="0" value="1.0" />
       <appearance type="plain" description="wide, open plain" short_description="grassy plain" priority="3">
 		<parameter name="colour" value="#94d890" />
 	  </appearance>
     </type>
     <type id="tr5">
       <trait name="Impede" minimum="0" value="1.2" />
+      <trait name="Tracks" minimum="0" value="1.2" />
       <appearance type="woodland" description="light, airy woodland" short_description="light woodland" priority="6">
 		<parameter name="colour" value="#6ca870" />
 	  </appearance>
     </type>
     <type id="tr6">
       <trait name="Impede" minimum="0" value="3.0" />
+      <trait name="Tracks" minimum="0" value="0.8" />
       <appearance type="forest" description="dark, dense forest" short_description="dense forest" priority="7">
 		<parameter name="colour" value="#3f5439" />
 	  </appearance>
 	</type>
     <type id="tr7">
       <trait name="Impede" minimum="0" value="1.7" />
+      <trait name="Tracks" minimum="0" value="2.0" />
       <appearance type="dunes" description="rolling dunes" short_description="dune field" priority="2">
 		<parameter name="colour" value="#bca941" />
 	  </appearance>
@@ -61,6 +67,7 @@
 		<trait name="Energy"	maximum="10" minimum="-10" value="10"/>
 		<trait name="Constitution" maximum="100" minimum="-100" value="50" />
 		<trait name="Health" maximum="100" minimum="-100" value="50" />
+		<trait name="Tracks" minimum="0" value="25.0" />
 		<appearance type="avatar" short_description="person" description = "person" />
     </type>
     <type id="item.stick">
@@ -78,6 +85,7 @@
 		<trait name="Energy"	maximum="10" minimum="-10" value="10"/>
 		<trait name="Constitution" maximum="100" minimum="-100" value="50" />
 		<trait name="Health" maximum="100" minimum="-100" value="50" />
+		<trait name="Tracks" minimum="0" value="50.0" />
 		<appearance type="moose" short_description="moose" description = "moose" />
 	</type>
   </general>
