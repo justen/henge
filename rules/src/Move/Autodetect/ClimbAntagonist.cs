@@ -42,7 +42,11 @@ namespace Henge.Rules.Antagonist.Move.Autodetect
 						{
 							health.Value -= 3;
 							constitution.Value -= 3;
-							if (health.Value<=0) health.Flavour = "Dead";
+							if (health.Value<=0) 
+							{
+								constitution.Value = constitution.Minimum;
+								health.Flavour = "Dead";
+							}
 						}
 						if (health.Flavour=="Dead")	interaction.Failure("You land badly. The fall is enough to kill you.", false);
 						else interaction.Failure("Defeated, you turn back", false);

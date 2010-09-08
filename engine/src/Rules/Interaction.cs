@@ -21,6 +21,7 @@ namespace Henge.Rules
 		public bool Illegal								{ get; private set; }
 		public Dictionary<string, object> Arguments		{ get; private set; }
 		public Dictionary<string, object> Results		{ get; set; }
+		public string Chain								{ get; set; }
 		//public List<Entity>	PendingDeletions			{ get; private set; }
 		
 		protected DataProvider db;
@@ -28,6 +29,7 @@ namespace Henge.Rules
 		
 		public Interaction(DataProvider db, Actor protagonist, Component antagonist, Dictionary<string, object> arguments)
 		{
+			this.Chain				= string.Empty;
 			this.db					= db;
 			this.Interferers		= new List<Component>();
 			this.Protagonist		= protagonist;

@@ -30,7 +30,6 @@ namespace Henge.Rules
 						foreach (Type type in asm.GetExportedTypes())
 						{
 							//Console.WriteLine(type.ToString());
-							
 							if (type.GetInterface("Henge.Rules.IRule") != null && !type.IsAbstract)
 							{
 								IRule rule = Activator.CreateInstance(type) as IRule;
@@ -56,5 +55,6 @@ namespace Henge.Rules
 			
             return new Rulebook(rules, modifiers, interaction);
         }
+		
 	}
 }

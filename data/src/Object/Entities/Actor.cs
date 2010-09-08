@@ -12,6 +12,10 @@ namespace Henge.Data.Entities
 		public Actor(ComponentType type) : base(type)
 		{
 			this.Skills	= new Dictionary<string, Skill>();
+			foreach (string skill in type.BaseSkills.Keys)
+			{
+				this.Skills.Add(skill, type.BaseSkills[skill]);	
+			}				
 		}  
 		
 		

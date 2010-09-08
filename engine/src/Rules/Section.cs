@@ -30,7 +30,8 @@ namespace Henge.Rules
 		
 		public IInteraction ApplyRules(IInteraction interaction)
 		{
-			if (!this.GetRule(this.antagonist, interaction.Antagonist).Apply(interaction).Finished)
+			IRule rule = this.GetRule(this.antagonist, interaction.Antagonist);
+			if (!rule.Apply(interaction).Finished)
 			{
 				//Now that the AntagonistRule has populated the Interaction with interferers we can work through each of them in turn
 				foreach (Component interferer in interaction.Interferers)

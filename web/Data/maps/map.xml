@@ -68,6 +68,11 @@
 		<trait name="Constitution" maximum="100" minimum="-100" value="50" />
 		<trait name="Health" maximum="100" minimum="-100" value="50" />
 		<trait name="Tracks" minimum="0" value="25.0" />
+		<skill name="Strength" value="0.5" />
+		<skill name="Climb" value="0.5" />
+		<skill name="Fitness" value="0.5" />
+		<skill name="Concentration" value="0.5" />
+		<tick name="Tick.Metabolise" offset="00:00:30" randomise="true" period="15"/>
 		<appearance type="avatar" short_description="person" description = "person" />
     </type>
     <type id="item.stick">
@@ -86,19 +91,20 @@
 		<trait name="Constitution" maximum="100" minimum="-100" value="50" />
 		<trait name="Health" maximum="100" minimum="-100" value="50" />
 		<trait name="Tracks" minimum="0" value="50.0" />
+		<skill name="Strength" value="0.5" />
+		<skill name="Climb" value="0.5" />
+		<skill name="Fitness" value="0.5" />
+		<skill name="Concentration" value="0.5" />
+		<tick name="Tick.Metabolise" offset="00:01:00" period="15"/>
 		<appearance type="moose" short_description="moose" description = "moose" />
 	</type>
   </general>
   <users>
 	<user name="test" password="A94A8FE5CCB19BA61C4C0873D391E987982FBBD3" clan="eggzemel" enabled="true" >
 		<role name="test"/>
-		<avatar name="Og" type="avatar">
+		<avatar name="Wallaby" type="avatar">
 			<ancestor details="Og, killed by a big rock aged 27"/>
 			<ancestor details="Og, eaten by a tiger aged 83"/>
-			<skill name="Strength" value="0.5" />
-			<skill name="Climb" value="0.5" />
-			<skill name="Fitness" value="0.5" />
-			<skill name="Concentration" value="0.5" />
 			<skill name="ParentSkill" value="1.0" >
 				<skill name="ChildSkill" value="0.2" />
 			</skill>
@@ -5158,7 +5164,7 @@
     <location type="tr6" coordinates="50,47,44" name="" detail="" />
     <location type="tr6" coordinates="50,48,44" name="" detail="" />
     <location type="tr6" coordinates="50,49,45" name="" detail="" reference="ref1">
-		<avatar name="Og"/>
+		<avatar name="Wallaby"/>
 		<region name="spawning ground" description="where you start" />
 	</location>
     <location type="tr6" coordinates="50,50,48" name="" detail="" >

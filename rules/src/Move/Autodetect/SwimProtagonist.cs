@@ -47,7 +47,11 @@ namespace Henge.Rules.Protagonist.Move.Autodetect
 					{
 						health.Value -= 2;
 						constitution.Value -= 4;
-						if (health.Value<=0) health.Flavour = "Dead";
+						if (health.Value<=0) 
+						{
+							constitution.Value = constitution.Minimum;
+							health.Flavour = "Dead";
+						}
 					}
 					if (health.Flavour=="Dead")	interaction.Failure("The light of the surface fades above you. Your struggles subside as your breath runs out. You have died.", false);
 					else interaction.Failure("As you flounder, the currents carry you back the way you came", false);

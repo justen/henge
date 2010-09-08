@@ -92,6 +92,7 @@
     <Compile Include="src\Move\Autodetect\SwimAntagonist.cs" />
     <Compile Include="src\Modifiers\EnergyModifier.cs" />
     <Compile Include="src\HengeModifier.cs" />
+    <Compile Include="src\Tick\TickRule.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\data\Henge.Data.csproj">

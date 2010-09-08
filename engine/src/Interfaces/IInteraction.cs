@@ -18,6 +18,8 @@ namespace Henge.Rules
 		bool Finished					{ get; }
 		bool Succeeded					{ get; }
 		bool Illegal					{ get; }
+		string Chain					{ get; }
+		Dictionary<string, object> Arguments		{ get;}
 		
 		IInteraction Conclude();
 		IInteraction Success(string message);

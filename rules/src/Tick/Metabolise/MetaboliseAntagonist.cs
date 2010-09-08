@@ -2,19 +2,19 @@ using System;
 
 using Henge.Data.Entities;
 
-namespace Henge.Rules.Antagonist.Metabolise
+namespace Henge.Rules.Antagonist.Tick.Metabolise
 {
-	public class MetaboliseAntagonist : HengeRule, IAntagonist
+	public class MetaboliseAntagonist : TickRule, IAntagonist
 	{
 		public override bool Valid (Component subject)
 		{
-			//this is an empty rule
-			return true;
+			//Only Actors can metabolise
+			return (subject is Actor);
 		}
 		
 		protected override double Visibility (HengeInteraction interaction, out Component subject)
 		{
-			//This is an empty rule
+			//This does not affect visibility
 			subject = null;
 			return -1;
 		}
@@ -22,8 +22,59 @@ namespace Henge.Rules.Antagonist.Metabolise
 		#region implemented abstract members of Henge.Rules.HengeRule
 		protected override IInteraction Apply (HengeInteraction interaction)
 		{
-			//Nothing to do
-			this.Validate(interaction);
+			//TODO: Need to check if the Actor is a logged-out Avatar and give them bonuses if so.
+			if (this.Validate(interaction) && !interaction.Finished)
+			{
+				Actor actor			= interaction.Antagonist as Actor;
+				Trait health		= actor.Traits["Health"];
+				Trait energy		= actor.Traits["Energy"];
+				Trait reserve		= actor.Traits["Reserve"];
+				Trait constitution	= actor.Traits["Constitution"];
+				string message		= "You rest and recuperate";
+				int period 			= actor.NextTick.Period;
+				double constDelta	= Constants.Tick.MetabolicRate;
+				double healthDelta	= (health.Value < health.Maximum) ? Constants.Tick.Healthy.Heal : 0;
+				double energyDelta	= (reserve.Value < reserve.Maximum) ? Constants.Tick.Healthy.Revitalise : 0;
+				constDelta+= (healthDelta + energyDelta);
+				if (constitution.Value <= 0)
+				{
+					// Decrease Health, increase Energy by less
+					healthDelta	= Constants.Tick.Ill.Heal;
+					energyDelta	= Constants.Tick.Ill.Revitalise;
+					constDelta	= -constDelta;
+					message		= "You feel weaker";
+					
+					// Increase Constitution
+					if (constitution.Value == 0) constDelta = 0;		
+				}
+				if (health.Value + healthDelta < 0)
+				{
+					using (interaction.Lock(health, reserve, energy, constitution))
+					{
+						health.SetValue(0);
+						energy.SetValue(0);
+						reserve.SetValue(0);
+						constitution.SetValue(constitution.Minimum);
+						health.Flavour = "Dead";
+					}
+					interaction.Failure("You succumb to your ailments. Your story is over... will your line continue?", false);
+				}
+				else
+				{
+					using (interaction.Lock(health, reserve, constitution))
+					{
+						health.SetValue(health.Value + healthDelta);
+						reserve.SetValue(reserve.Value + energyDelta);
+						constitution.SetValue(constitution.Value - constDelta);
+					}
+					interaction.Success(message);
+				}
+				using (interaction.Lock(actor.Ticks))
+				{
+					actor.Ticks.Add(new Henge.Data.Entities.Tick(){Name = "Tick.Metabolise", Scheduled = DateTime.Now.AddMinutes(period)});
+				}
+					
+			}
 			return interaction;
 		}
 		#endregion

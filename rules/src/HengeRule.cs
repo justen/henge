@@ -28,7 +28,7 @@ namespace Henge.Rules
 			return interaction;
 		}
 	
-		protected bool Validate (HengeInteraction interaction)
+		protected virtual bool Validate (HengeInteraction interaction)
 		{	
 			bool result = false;
 			if (!interaction.Finished)

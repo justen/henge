@@ -12,6 +12,7 @@ namespace Henge.Web
 	public class HengeApplication : System.Web.HttpApplication
 	{
 		public static Henge.Data.DataProvider DataProvider { get; private set; }
+		private static Henge.Daemon.Heart Heartbeat { get; set; }
 		
 		public static void RegisterRoutes (RouteCollection routes)
 		{
@@ -47,7 +48,8 @@ namespace Henge.Web
 			
 			Henge.Engine.Interactor.Instance.Initialise(Path.Combine(Server.MapPath("~"), "bin"), DataProvider);
 //			Henge.Engine.Interactor.Instance.Interact(avatar, location, "Spawn.Character", null);
-			
+			Heartbeat = new Henge.Daemon.Heart(500);
+			Heartbeat.Start();
 			RegisterRoutes(RouteTable.Routes);
 		}
 		

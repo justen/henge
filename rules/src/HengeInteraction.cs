@@ -24,8 +24,8 @@ namespace Henge.Rules
 		public HengeInteraction(DataProvider db, Actor protagonist, Component antagonist, Dictionary<string, object> arguments) : base(db, protagonist, antagonist, arguments)
 		{
 			this.Actions = new List<Action>();
-			this.ProtagonistCache	= new PropertyCache(db, protagonist);
-			this.AntagonistCache	= new PropertyCache(db, antagonist);
+			if (protagonist!= null) this.ProtagonistCache	= new PropertyCache(db, protagonist);
+			if (antagonist != null) this.AntagonistCache	= new PropertyCache(db, antagonist);
 			this.Difficulty = 0;
 			this.Impedance = 0;
 		}
@@ -64,7 +64,7 @@ namespace Henge.Rules
 			if (this.Antagonist is Actor) 							this.ApplyBonuses(this.AntagonistCache.SkillBonuses, this.Antagonist as Actor);
 			if (this.SubjectCache != null && this.Subject is Actor)	this.ApplyBonuses(this.SubjectCache.SkillBonuses, this.Subject as Actor);
 			
-			this.ApplyBonuses(this.ProtagonistCache.SkillBonuses, this.Protagonist as Actor);
+			if (ProtagonistCache!= null) this.ApplyBonuses(this.ProtagonistCache.SkillBonuses, this.Protagonist as Actor);
 		
 			return this as IInteraction;
 		}

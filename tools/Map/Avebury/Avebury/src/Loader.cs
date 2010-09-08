@@ -213,6 +213,11 @@ namespace Avebury
 				}
 			}
 			result.BaseTraits = this.GetTraits(node);
+			result.BaseTick = this.GetTicks(node);
+			foreach (XmlNode child in node)
+			{
+				if (child.Name=="skill") this.BaseSkills(child, result);
+			}
 			
 			return result;
 		}
@@ -336,6 +341,23 @@ namespace Avebury
 			return result;
 		}
 		
+		private void BaseSkills(XmlNode definition, ComponentType owner)
+		{
+			Skill skill = new Skill()
+			{
+				Value = (definition.Attributes["value"]==null)? 0.0 : double.Parse(definition.Attributes["value"].Value)
+			};
+			foreach (XmlNode child in definition)
+			{
+				if (child.Name=="skill")
+				{
+					skill.Children.Add(child.Attributes["name"].Value);
+					this.BaseSkills(child, owner);
+				}
+			}
+			owner.BaseSkills.Add(definition.Attributes["name"].Value, skill);
+		}
+					
 		private T AddSkill<T> (T owner, XmlNode definition) where T : Actor
 		{
 			Skill skill = new Skill()
@@ -350,7 +372,14 @@ namespace Avebury
 					owner = this.AddSkill(owner, child);
 				}
 			}
-			owner.Skills.Add(definition.Attributes["name"].Value, skill);
+			if (owner.Skills.ContainsKey(definition.Attributes["name"].Value))
+			{
+				owner.Skills[definition.Attributes["name"].Value] = skill;
+			}
+			else 
+			{
+				owner.Skills.Add(definition.Attributes["name"].Value, skill);
+			}
 			return 	owner;
 		}
 		
@@ -443,7 +472,32 @@ namespace Avebury
 					thing.Owner = component;
 					component.Inventory.Add(thing);
 			}
+			List<Tick> ticks = this.GetTicks(definition);
+			foreach (Tick tick in ticks)
+			{
+				component.Ticks.Add(tick);	
+			}
+			component.UpdateNextTick();
 			return component;
+		}
+		
+		private List<Tick> GetTicks(XmlNode node)
+		{
+			List<Tick> result = new List<Tick>();
+			foreach (XmlNode child in node)
+			{
+				if (child.Name=="tick")
+				{
+					Tick tick = new Tick()
+					{
+						Name = child.Attributes["name"].Value,
+						Scheduled = DateTime.Now +  TimeSpan.Parse(child.Attributes["offset"].Value),
+						Period = int.Parse(child.Attributes["period"].Value)
+					};
+					result.Add(tick);
+				}
+			}
+			return result;
 		}
 		
 		private ComponentType Type (XmlNode node)

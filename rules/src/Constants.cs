@@ -26,7 +26,7 @@ namespace Henge.Rules
 			}
 			public static class Ill
 			{
-				public const double Heal = -1.0;
+				public const double Heal = -3.0;
 				public const double Revitalise = 1.0;
 			}
 		}
@@ -103,6 +103,7 @@ namespace Henge.Rules
 		public const double MaximumTrackValue = 100.0;
 		
 		private static Random rng = new Random();
+		
 		
 		public static double RandomNumber
 		{

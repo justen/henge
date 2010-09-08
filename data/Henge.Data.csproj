@@ -97,6 +97,7 @@
     <Compile Include="src\Object\Entities\Skill.cs" />
     <Compile Include="src\Object\Entities\TraitBase.cs" />
     <Compile Include="src\Entities\IInhabitable.cs" />
+    <Compile Include="src\Object\Entities\Tick.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />
