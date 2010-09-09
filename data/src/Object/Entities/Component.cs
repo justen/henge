@@ -49,7 +49,8 @@ namespace Henge.Data.Entities
 				{
 					foreach (Tick tick in type.BaseTick)
 					{
-						this.Ticks.Add(tick);	
+						//TODO: this should add new copies of the tick, not just a reference
+						this.Ticks.Add(new Tick(){ Name = tick.Name, Period = tick.Period, Scheduled = tick.Scheduled } );	
 					}
 				}
 			}

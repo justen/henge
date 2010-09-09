@@ -14,7 +14,7 @@ namespace Henge.Data.Entities
 			this.Skills	= new Dictionary<string, Skill>();
 			foreach (string skill in type.BaseSkills.Keys)
 			{
-				this.Skills.Add(skill, type.BaseSkills[skill]);	
+				this.Skills.Add(skill, new Skill() { Value = type.BaseSkills[skill].Value, Children = new List<string>(type.BaseSkills[skill].Children) });	
 			}				
 		}  
 		
