@@ -47,6 +47,7 @@
     <Folder Include="src\Communicate\Talk\" />
     <Folder Include="src\Move\Autodetect\" />
     <Folder Include="src\Modifiers\" />
+    <Folder Include="src\Tick\Grow\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\Move\ActorImpede.cs" />
