@@ -17,23 +17,30 @@ namespace Henge.Data.Entities
 		public virtual string Detail 							{ get; set; }
 		
 		public virtual IList<Tick> Ticks						{ get; set; }
-		public virtual Tick NextTick							{ get; set; }		
+		public virtual Tick NextTick							{ get; set; }
+		public virtual DateTime NextTickTime					{ get; set; }
+		
+		
 		
 		public Component()
 		{
 			this.Inventory		= new List<Item>();
+			this.Ticks			= new List<Tick>();
 			this.Traits 		= new Dictionary<string, Trait>();
 		}
 		
 		
 		public Component(ComponentType type)
 		{
-			this.Ticks = new List<Tick>();
 			this.Type			= type;
 			this.Inventory		= new List<Item>();
 			this.Created		= DateTime.Now;
 			this.LastModified	= DateTime.Now;
 			this.Traits			= new Dictionary<string, Trait>();
+			
+			this.Ticks 			= new List<Tick>();
+			this.NextTick		= null;
+			this.NextTickTime	= DateTime.MaxValue;
 			
 			if (type != null)
 			{
@@ -69,26 +76,23 @@ namespace Henge.Data.Entities
 			else return this.Type.Appearance.LastOrDefault(a => a.Valid(inspector.Traits));
 		}
 		
-		public void UpdateNextTick(bool stashCurrent = false)
+		
+		public void UpdateNextTick()
 		{
-			Tick nextTick = null;
-			if (stashCurrent)
+			DateTime nextTime 	= DateTime.MaxValue;
+			Tick nextTick		= null;
+			
+			foreach (Tick t in this.Ticks)
 			{
-				this.Ticks.Add(this.NextTick);	
-			}
-			if (this.Ticks.Count > 0)	
-			{
-				nextTick = this.Ticks[0];
-				foreach(Tick tick in this.Ticks)
+				if (t.Scheduled < nextTime)
 				{
-					if (tick.Scheduled < nextTick.Scheduled)
-					{
-						nextTick = tick;	
-					}
+					nextTime = t.Scheduled;
+					nextTick = t;
 				}
-				this.Ticks.Remove(nextTick);
 			}
-			this.NextTick = nextTick;
+			
+			this.NextTickTime 	= nextTime;
+			this.NextTick		= nextTick;
 		}
 	}
 }

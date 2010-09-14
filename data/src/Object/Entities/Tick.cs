@@ -9,5 +9,11 @@ namespace Henge.Data.Entities
 		public virtual string Name 			{ get; set; }
 		public virtual DateTime Scheduled  	{ get; set; }
 		public virtual int Period			{ get; set; }
+		
+		
+		public void Update()
+		{
+			this.Scheduled = DateTime.Now.AddSeconds(this.Period);
+		}
 	}
 }

@@ -52,55 +52,34 @@ namespace Henge.Engine
 			return interaction;
 		}
 		
-		public void Tick()
-		{
-			/* This is the way we should do it once Coincidental is fixed...
-			IList<Component> staleComponents = this.db.Query<Component>().Where(c=>c.NextTick!=null && c.NextTick.Scheduled < DateTime.Now).ToList();
-			foreach (Component component in staleComponents) this.Tick(component);
-			*/
-			//But for now...
-			foreach (Avatar avatar in this.db.Query<Avatar>().Where(c=>c.NextTick!=null && c.NextTick.Scheduled < DateTime.Now).ToList())
-			{
-				this.Tick(avatar as Component);
-			}
-			foreach (Npc npc in this.db.Query<Npc>().Where(c=>c.NextTick!=null && c.NextTick.Scheduled < DateTime.Now).ToList())
-			{
-				this.Tick(npc as Component);	
-			}
-			foreach (Edifice edifice in this.db.Query<Edifice>().Where(c=>c.NextTick!=null && c.NextTick.Scheduled < DateTime.Now).ToList())
-			{
-				this.Tick(edifice as Component);	
-			}
-			foreach (Item item in this.db.Query<Item>().Where(c=>c.NextTick!=null && c.NextTick.Scheduled < DateTime.Now).ToList())
-			{
-				this.Tick(item as Component);
-			}
-			foreach (Location location in this.db.Query<Location>().Where(c=>c.NextTick!=null && c.NextTick.Scheduled < DateTime.Now).ToList())
-			{
-				this.Tick(location as Component);	
-			}
 		
-		}
-		
-		private void Tick(Component component)
+		public bool Tick()
 		{
-			IInteraction interaction = Interactor.Instance.Interact(null, component, component.NextTick.Name, null);
-			if (interaction.Succeeded)
+			var components = from c in this.db.Query<Component>() where c.NextTickTime < DateTime.Now select c;
+			
+			foreach (Component component in components) 
 			{
-				if (interaction.Chain!=string.Empty)
+				using (db.Lock(component.NextTick)) component.NextTick.Update();
+				
+				IInteraction interaction = Interactor.Instance.Interact(null, component, component.NextTick.Name, null);
+				
+				if (interaction.Succeeded)
 				{
-					if (!Interactor.Instance.Interact(interaction.Protagonist, interaction.Antagonist, interaction.Chain, interaction.Arguments).Succeeded)
+					if (interaction.Chain != string.Empty)
 					{
-						//TODO: log an error	
-					}
+						if (!Interactor.Instance.Interact(interaction.Protagonist, interaction.Antagonist, interaction.Chain, interaction.Arguments).Succeeded)
+						{
+							//TODO: log an error	
+						}
+					}	
 				}
+				
+				using (db.Lock(component)) component.UpdateNextTick();
 			}
-			db.Delete(component.NextTick);
-			using (db.Lock(component, component.NextTick, component.Ticks))
-			{
-				component.UpdateNextTick();
-			}	
+			
+			return components.Any();
 		}
+		
 		
 		public IModifier Modifier(string target)
 		{

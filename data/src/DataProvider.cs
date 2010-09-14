@@ -22,7 +22,7 @@ namespace Henge.Data
 			CoincidentalConfiguration config = Provider.Configure
 				.Connection(objectConnection)
 				.ActivationDepth(ACTIVATION_DEPTH)
-				.Debugging(true)
+				.Debugging
 				.Indexing(i => i.AssemblyOf<Entity>().Where(t => t.IsSubclassOf(typeof(ObjectEntity))));
 					       
 			return 	this.objectProvider.Initialise(config) && 

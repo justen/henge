@@ -2,22 +2,23 @@ using System;
 using System.Threading;
 using System.Collections.Generic;
 
+using Henge.Web;
 using Henge.Engine;
 
 namespace Henge.Daemon
 {
 	public class Heart
-	{
-		
-		private Thread thread = null;
-		private bool running = false;
-		private bool stop = false;
+	{	
+		private Thread thread 	= null;
+		private bool running 	= false;
 		public int Sleepiness { get; set; }
+		
 		
 		public Heart (int sleepiness)
 		{
 			this.Sleepiness = sleepiness;
 		}
+		
 		
 		public void Start()
 		{
@@ -28,26 +29,31 @@ namespace Henge.Daemon
 			}
 		}
 		
+		
 		public void Arrest()
 		{
 			if (this.thread != null)
 			{
-				while (this.running)
-				{
-					this.stop = true;	
-				}
+				this.running = false;
+				while (this.thread.ThreadState != ThreadState.Stopped) Thread.Sleep(10);
+				this.thread  = null;
 			}
 		}
+		
 		
 		private void Heartbeat()
 		{
 			this.running = true;
-			while (this.stop == false)
+			HengeApplication.DataProvider.RegisterContext();
+			
+			while (this.running)
 			{
-				System.Threading.Thread.Sleep(this.Sleepiness);
-				Henge.Engine.Interactor.Instance.Tick();
+				Thread.Sleep(this.Sleepiness);
+				
+				if (Henge.Engine.Interactor.Instance.Tick()) HengeApplication.DataProvider.Flush();
 			}
-			this.running = false;
+			
+			HengeApplication.DataProvider.ReleaseContext();
 		}
 	}
 }

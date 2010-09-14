@@ -183,53 +183,48 @@ var giTile = new Class(
 			var image		= ctx.getImageData(0, 0, TILE_SIZE, TILE_SIZE);
 			var data		= image.data;
 			var index		= 0;
+			var dt			= 1.0 / HALF_TILE;
 			
-			for (y=0; y<HALF_TILE; y++)
+			for (dy=0; dy<1.0; dy+=dt)
 			{
-				dy 	= y / HALF_TILE;
 				iy 	= 1 - dy;
 				v	= dy * g[3] + iy * g[0];
-				for (x=0; x<HALF_TILE; x++)
+				for (dx=0; dx<1.0; dx+=dt)
 				{
-					dx		= x / HALF_TILE;
 					ix		= 1 - dx;	
 					h 		= dx * g[1] + ix * g[0];
-					value 	= Math.floor(Math.pow(iy, Math.abs(h / EDGE_SCALE)) * h + Math.pow(ix, Math.abs(v / EDGE_SCALE)) * v);
+					value 	= Math.floor(Math.pow(iy, Math.abs(h * EDGE_SCALE)) * h + Math.pow(ix, Math.abs(v * EDGE_SCALE)) * v);
 
 					data[index++] += value;	data[index++] += value;	data[index++] += value;	index++;
 				}
 				v = dy * g[5] + iy * g[2];
-				for (x=0; x<HALF_TILE; x++)
+				for (dx=0; dx<1.0; dx+=dt)
 				{
-					dx		= x / HALF_TILE;
 					ix		= 1 - dx;	
 					h 		= ix * g[1] + dx * g[2];		
-					value 	= Math.floor(Math.pow(iy, Math.abs(h / EDGE_SCALE)) * h + Math.pow(dx, Math.abs(v / EDGE_SCALE)) * v);
+					value 	= Math.floor(Math.pow(iy, Math.abs(h * EDGE_SCALE)) * h + Math.pow(dx, Math.abs(v * EDGE_SCALE)) * v);
 
 					data[index++] += value;	data[index++] += value;	data[index++] += value;	index++;
 				}
 			}
-			for (y=0; y<HALF_TILE; y++)
+			for (dy=0; dy<1.0; dy+=dt)
 			{
-				dy	= y / HALF_TILE;
 				iy	= 1 - dy;
 				v	= iy * g[3] + dy * g[6];
-				for (x=0; x<HALF_TILE; x++)
+				for (dx=0; dx<1.0; dx+=dt)
 				{
-					dx		= x / HALF_TILE;
 					ix		= 1 - dx;	
 					h 		= dx * g[7] + ix * g[6];
-					value 	= Math.floor(Math.pow(dy, Math.abs(h / EDGE_SCALE)) * h + Math.pow(ix, Math.abs(v / EDGE_SCALE)) * v);
+					value 	= Math.floor(Math.pow(dy, Math.abs(h * EDGE_SCALE)) * h + Math.pow(ix, Math.abs(v * EDGE_SCALE)) * v);
 
 					data[index++] += value;	data[index++] += value;	data[index++] += value;	index++;
 				}
 				v = iy * g[5] + dy * g[8];
-				for (x=0; x<HALF_TILE; x++)
+				for (dx=0; dx<1.0; dx+=dt)
 				{
-					dx		= x / HALF_TILE;
 					ix		= 1 - dx;	
 					h 		= ix * g[7] + dx * g[8];
-					value 	= Math.floor(Math.pow(dy, Math.abs(h / EDGE_SCALE)) * h + Math.pow(dx, Math.abs(v / EDGE_SCALE)) * v);
+					value 	= Math.floor(Math.pow(dy, Math.abs(h * EDGE_SCALE)) * h + Math.pow(dx, Math.abs(v * EDGE_SCALE)) * v);
 					
 					data[index++] += value;	data[index++] += value;	data[index++] += value;	index++;
 				}

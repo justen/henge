@@ -14,14 +14,11 @@ var giCanvas = new Class(
 		this.mapWidth	= 0;
 		this.mapHeight	= 0;
 		this.canvas		= new Element('div', {
-			id:	'canvas'
-		});
+			id:	'canvas',
+			morph: { duration: 150, onComplete: this.refresh.bind(this) },
+		}).inject(this.map);
 		
-		this.canvas.set('morph', { duration: 150, onComplete: this.refresh.bind(this) });
-		this.avatar = new giAvatar(this.canvas);
-		
-		this.canvas.inject(this.map);
-
+		this.avatar		= new giAvatar(this.canvas);
 		this.tiles		= new Array();
 		this.visible 	= new Array();
 	},

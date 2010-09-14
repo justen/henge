@@ -20,7 +20,7 @@ namespace Henge.Rules.Antagonist.Tick.Metabolise
 		}
 		
 		#region implemented abstract members of Henge.Rules.HengeRule
-		protected override IInteraction Apply (HengeInteraction interaction)
+		protected override IInteraction Apply(HengeInteraction interaction)
 		{
 			//TODO: Need to check if the Actor is a logged-out Avatar and give them bonuses if so.
 			if (this.Validate(interaction) && !interaction.Finished)
@@ -31,11 +31,11 @@ namespace Henge.Rules.Antagonist.Tick.Metabolise
 				Trait reserve		= actor.Traits["Reserve"];
 				Trait constitution	= actor.Traits["Constitution"];
 				string message		= "You rest and recuperate";
-				int period 			= actor.NextTick.Period;
 				double constDelta	= Constants.Tick.MetabolicRate;
 				double healthDelta	= (health.Value < health.Maximum) ? Constants.Tick.Healthy.Heal : 0;
 				double energyDelta	= (reserve.Value < reserve.Maximum) ? Constants.Tick.Healthy.Revitalise : 0;
 				constDelta+= (healthDelta + energyDelta);
+				
 				if (constitution.Value <= 0)
 				{
 					// Decrease Health, increase Energy by less
@@ -47,6 +47,7 @@ namespace Henge.Rules.Antagonist.Tick.Metabolise
 					// Increase Constitution
 					if (constitution.Value == 0) constDelta = 0;		
 				}
+				
 				if (health.Value + healthDelta < 0)
 				{
 					using (interaction.Lock(health, reserve, energy, constitution))
@@ -68,12 +69,7 @@ namespace Henge.Rules.Antagonist.Tick.Metabolise
 						constitution.SetValue(constitution.Value - constDelta);
 					}
 					interaction.Success(message);
-				}
-				using (interaction.Lock(actor.Ticks))
-				{
-					actor.Ticks.Add(new Henge.Data.Entities.Tick(){Name = "Tick.Metabolise", Scheduled = DateTime.Now.AddMinutes(period)});
-				}
-					
+				}	
 			}
 			return interaction;
 		}

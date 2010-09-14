@@ -88,4 +88,4 @@ var ENERGY_GAIN			= 1.0;
 var HALF_PI				= Math.PI / 2;
 var GRADIENT_THRESHOLD	= 5;
 var GRADIENT_LIMIT		= 50;
-var EDGE_SCALE			= 15;
+var EDGE_SCALE			= 0.0666;

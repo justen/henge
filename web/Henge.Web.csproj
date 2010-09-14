@@ -54,6 +54,7 @@
     <Folder Include="Views\CreateCharacter\" />
     <Folder Include="Views\Game\" />
     <Folder Include="Content\interface\library\widget\" />
+    <Folder Include="Daemon\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
@@ -68,6 +69,7 @@
     <Compile Include="Controllers\GameController.cs" />
     <Compile Include="Controllers\MapController.cs" />
     <Compile Include="Controllers\InterfaceController.cs" />
+    <Compile Include="Daemon\Heart.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />
@@ -109,10 +111,6 @@
     <ProjectReference Include="..\tools\Map\Avebury\Avebury\Avebury.csproj">
       <Project>{21E71371-734F-45A0-9850-B19C9251F869}</Project>
       <Name>Avebury</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\daemon\Henge.Daemon\Henge.Daemon.csproj">
-      <Project>{DE6FA792-E101-47DF-BE95-B46BF9331C84}</Project>
-      <Name>Henge.Daemon</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
