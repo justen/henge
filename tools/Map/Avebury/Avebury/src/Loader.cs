@@ -10,6 +10,7 @@ namespace Avebury
 {
 	public class Loader
 	{
+		private Global globals;
 		private Dictionary<string, ComponentType> KeyTypes	= new Dictionary<string, ComponentType>();
 		private Dictionary<string, ComponentType> GeneralTypes	= new Dictionary<string, ComponentType>();
 		private Dictionary<string, ComponentType> AbstractTypes = new Dictionary<string, ComponentType>();
@@ -52,8 +53,9 @@ namespace Avebury
 		}
 		
 		
-		public Loader(string applicationPath)
+		public Loader(string applicationPath, Global globals)
 		{
+			this.globals = globals;
 			string path			= Path.Combine(applicationPath, "maps");
 			DirectoryInfo info	= new DirectoryInfo(path);
 			List<XmlNode> maps	= new List<XmlNode>();
@@ -304,6 +306,7 @@ namespace Avebury
 					result.Ancestors.Add(child.Attributes["details"].Value);
 				}
 			}
+			result.ID = this.globals.NewAvatarID();
 			return result;
 		}
 		

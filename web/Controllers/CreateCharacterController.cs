@@ -30,7 +30,11 @@ namespace Henge.Web.Controllers
 				ComponentType avatarType 	= db.Get<ComponentType>(x => x.Id == "avatar");
 				Avatar avatar				= new Avatar(avatarType) {Name = name , User  = this.user,  Location = location};
 				
-				using (this.db.Lock(this.user.Avatars)) this.user.Avatars.Add(avatar);
+				using (this.db.Lock(this.globals, this.user.Avatars))
+				{
+					avatar.ID = this.globals.NewAvatarID();
+					this.user.Avatars.Add(avatar);
+				}
 
 				IInteraction result = Interactor.Instance.Interact(avatar, location, "Spawn.Character", null);
 

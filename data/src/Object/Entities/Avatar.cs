@@ -10,6 +10,8 @@ namespace Henge.Data.Entities
 	    public virtual IList<LogEntry> Log		{ get; set; }
 	    public virtual User User				{ get; set; }
 		
+		public virtual long ID					{ get; set; } 
+		
 		//not sure if we need this but if we want to track avatars through generations...
 		public virtual IList<string> Ancestors	{ get; set; }
 		

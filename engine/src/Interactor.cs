@@ -71,7 +71,21 @@ namespace Henge.Engine
 						{
 							//TODO: log an error	
 						}
-					}	
+						else
+						{
+							if (interaction.Protagonist is Avatar)
+							{
+								db.Store(new LogEntry(){ AvatarID = (interaction.Protagonist as Avatar).ID, Entry = interaction.Conclusion, Occurred = DateTime.Now });
+							}	
+						}
+					}
+					else
+					{
+						if (component is Avatar)
+						{
+							db.Store(new LogEntry(){ AvatarID = (component as Avatar).ID, Entry = interaction.Conclusion, Occurred = DateTime.Now });
+						}
+					}
 				}
 				
 				using (db.Lock(component)) component.UpdateNextTick();

@@ -20,6 +20,7 @@ namespace Henge.Web.Controllers
 	public class MasterController : Controller
 	{	
 		protected DataProvider db;
+		protected Global globals;
 		protected User user;
 		protected Avatar avatar;
 		
@@ -30,6 +31,7 @@ namespace Henge.Web.Controllers
 		    base.OnActionExecuting(ctx);
 			
 		    this.db = HengeApplication.DataProvider;
+			this.globals = HengeApplication.Globals;
 			
 		    // If the user has logged in then add their name to the view data
 		    if (this.User.Identity.IsAuthenticated)
