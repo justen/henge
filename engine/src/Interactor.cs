@@ -75,7 +75,7 @@ namespace Henge.Engine
 						{
 							if (interaction.Protagonist is Avatar)
 							{
-								db.Store(new LogEntry(){ AvatarID = (interaction.Protagonist as Avatar).ID, Entry = interaction.Conclusion, Occurred = DateTime.Now });
+								db.Store(new LogEntry(){ AvatarId = (interaction.Protagonist as Avatar).Id, Entry = interaction.Conclusion, Occurred = DateTime.Now });
 							}	
 						}
 					}
@@ -83,7 +83,7 @@ namespace Henge.Engine
 					{
 						if (component is Avatar)
 						{
-							db.Store(new LogEntry(){ AvatarID = (component as Avatar).ID, Entry = interaction.Conclusion, Occurred = DateTime.Now });
+							db.Store(new LogEntry(){ AvatarId = (component as Avatar).Id, Entry = interaction.Conclusion, Occurred = DateTime.Now });
 						}
 					}
 				}

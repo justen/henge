@@ -32,7 +32,7 @@ namespace Henge.Web.Controllers
 				
 				using (this.db.Lock(this.globals, this.user.Avatars))
 				{
-					avatar.ID = this.globals.NewAvatarID();
+					avatar.Id = this.globals.NewAvatarId();
 					this.user.Avatars.Add(avatar);
 				}
 

@@ -306,7 +306,7 @@ namespace Avebury
 					result.Ancestors.Add(child.Attributes["details"].Value);
 				}
 			}
-			result.ID = this.globals.NewAvatarID();
+			result.Id = this.globals.NewAvatarId();
 			return result;
 		}
 		

@@ -43,10 +43,9 @@ namespace Henge.Data
 		private Configuration	configuration	= null;
 		
 		
-		public bool Initialise(string storageType, string connectionString, bool web)
+		public bool Initialise(string storageType, string connectionString)
 		{
-			bool result		= false;
-			string context	= web ? "web" : "thread_static";
+			bool result	= false;
 			
 			if (this.sessionFactory == null)
 			{
@@ -63,7 +62,7 @@ namespace Henge.Data
 					.Database(this.GetConfiguration(storageType, connectionString))
 					.Mappings(m => m.AutoMappings.Add(map))
 					.ExposeConfiguration(c => c.Properties.Add("hbm2ddl.keywords", "none"))
-					.ExposeConfiguration(x => x.SetProperty("current_session_context_class", context))
+					.ExposeConfiguration(x => x.SetProperty("current_session_context_class", "Henge.Data.HybridSessionContext,Henge.Data"))
 					.BuildConfiguration();
 					
 				this.sessionFactory = this.configuration.BuildSessionFactory(); 	

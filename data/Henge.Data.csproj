@@ -72,9 +72,6 @@
     <Compile Include="src\Relational\Entities\RelationalEntity.cs" />
     <Compile Include="src\Object\Indexing.cs" />
     <Compile Include="src\Object\ObjectDataProvider.cs" />
-    <Compile Include="src\Object\Context\IContext.cs" />
-    <Compile Include="src\Object\Context\ThreadContext.cs" />
-    <Compile Include="src\Object\Context\WebContext.cs" />
     <Compile Include="src\Object\Entities\Actor.cs" />
     <Compile Include="src\Object\Entities\Appearance.cs" />
     <Compile Include="src\Object\Entities\Avatar.cs" />
@@ -99,6 +96,7 @@
     <Compile Include="src\Entities\IInhabitable.cs" />
     <Compile Include="src\Object\Entities\Tick.cs" />
     <Compile Include="src\Object\Entities\Global.cs" />
+    <Compile Include="src\Relational\HybridSessionContext.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />

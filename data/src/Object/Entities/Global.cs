@@ -4,11 +4,12 @@ namespace Henge.Data.Entities
 {
 	public class Global : ObjectEntity
 	{
-		public virtual long LastAvatarID { get; set; }
+		public virtual long LastAvatarId { get; set; }
 		
-		public long NewAvatarID()
+		
+		public long NewAvatarId()
 		{
-			return ++LastAvatarID;
+			return ++LastAvatarId;
 		}
 	}
 }

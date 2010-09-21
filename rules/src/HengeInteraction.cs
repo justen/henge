@@ -23,8 +23,9 @@ namespace Henge.Rules
 		
 		public void AsynchronousLog(Avatar target, string message)
 		{
-			this.db.Store<LogEntry>(new LogEntry(){ AvatarID = target.ID, Entry = message, Occurred = DateTime.Now } );
+			this.db.Store<LogEntry>(new LogEntry(){ AvatarId = target.Id, Entry = message, Occurred = DateTime.Now } );
 		}
+		
 		
 		public HengeInteraction(DataProvider db, Actor protagonist, Component antagonist, Dictionary<string, object> arguments) : base(db, protagonist, antagonist, arguments)
 		{

@@ -17,7 +17,7 @@ namespace Henge.Data
 		private RelationalDataProvider relationalProvider	= new RelationalDataProvider();
 		
 		
-		public bool Initialise(string objectConnection, string relationalType, string relationalConnection, bool web)
+		public bool Initialise(string objectConnection, string relationalType, string relationalConnection)
 		{
 			CoincidentalConfiguration config = Provider.Configure
 				.Connection(objectConnection)
@@ -26,7 +26,7 @@ namespace Henge.Data
 				.Indexing(i => i.AssemblyOf<Entity>().Where(t => t.IsSubclassOf(typeof(ObjectEntity))));
 					       
 			return 	this.objectProvider.Initialise(config) && 
-					this.relationalProvider.Initialise(relationalType, relationalConnection, web);
+					this.relationalProvider.Initialise(relationalType, relationalConnection);
 		}
 		
 		

@@ -31,7 +31,7 @@ namespace Henge.Web
 			if (File.Exists(yap))			File.Delete(yap);
 			
 			DataProvider = new Henge.Data.DataProvider();
-			DataProvider.Initialise(yap, "mysql", "Server=127.0.0.1;Uid=henge;Pwd=henge;Database=henge", false);
+			DataProvider.Initialise(yap, "mysql", "Server=127.0.0.1;Uid=henge;Pwd=henge;Database=henge");
 			DataProvider.UpdateSchema();
 			Global globals = new Global();
 			Globals = DataProvider.Store<Global>(globals);
