@@ -44,7 +44,6 @@ namespace Henge.Rules
 			
 		}
 		
-		
 		public double Energy
 		{
 			get

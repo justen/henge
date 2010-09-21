@@ -21,6 +21,11 @@ namespace Henge.Rules
 		public IList<Action> Actions			{get; private set;}
 		
 		
+		public void AsynchronousLog(Avatar target, string message)
+		{
+			this.db.Store<LogEntry>(new LogEntry(){ AvatarID = target.ID, Entry = message, Occurred = DateTime.Now } );
+		}
+		
 		public HengeInteraction(DataProvider db, Actor protagonist, Component antagonist, Dictionary<string, object> arguments) : base(db, protagonist, antagonist, arguments)
 		{
 			this.Actions = new List<Action>();

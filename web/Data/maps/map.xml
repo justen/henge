@@ -72,7 +72,7 @@
 		<skill name="Climb" value="0.5" />
 		<skill name="Fitness" value="0.5" />
 		<skill name="Concentration" value="0.5" />
-		<tick name="Tick.Metabolise" offset="00:00:30" randomise="true" period="15"/>
+		<tick name="Tick.Metabolise" offset="00:00:00" randomise="true" period="15"/>
 		<appearance type="avatar" short_description="person" description = "person" />
     </type>
     <type id="item.stick">
