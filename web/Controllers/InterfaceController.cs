@@ -135,7 +135,6 @@ namespace Henge.Web.Controllers
 					}
 				}
 			}
-			result += time.ToString();
 			return result;
 		}
 	}
