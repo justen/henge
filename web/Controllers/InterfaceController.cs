@@ -82,15 +82,63 @@ namespace Henge.Web.Controllers
 		{
 			if (this.avatar != null)
 			{
+				var messages = (from l in this.db.Query<LogEntry>() where l.AvatarId == this.avatar.Id select l).ToList();
+    			List<string> log = messages.Select<LogEntry, string>(l => this.DescribeTime(l.Occurred) + l.Entry).ToList();
+				this.db.Delete(messages);
 				return Json(new { 
 					Health 			= this.avatar.Traits["Health"].Value, 
 					Reserve			= this.avatar.Traits["Reserve"].Percentage(), 
 					Constitution 	= this.avatar.Traits["Constitution"].Percentage(),
-					Energy			= Interactor.Instance.Modifier("Energy").Apply(this.avatar).Value
+					Energy			= Interactor.Instance.Modifier("Energy").Apply(this.avatar).Value,
+					Messages		= log,
 				});
+				
 			}
 
 			return Json(new { Message = "Error: You are not connected to an avatar" });
 		}
+		
+		protected string DescribeTime(DateTime time)
+		{	
+			string result = "A long time ago in a galaxy far, far away... ";
+			TimeSpan span = DateTime.Now - time;
+			if (span.TotalSeconds < 60)
+			{
+			  result = "A moment ago ";
+			}
+			else
+			{
+				if (span.TotalMinutes < 15)	result = "A little earlier ";
+				else
+				{
+					if (span.TotalMinutes <60)	result = "A short time ago ";
+					else
+					{
+						if (span.TotalHours <6)	result = "A little while ago ";
+						else
+						{
+							if (span.TotalHours < 24) result = "Some time ago ";
+							else
+							{
+								if (span.TotalHours < 48) result = "A long time ago ";
+								else
+								{
+									if (span.TotalDays < 28) result = "Many days earlier ";
+									else
+									{
+										if (span.TotalDays < 56) result = "Moons ago ";
+										else if (span.TotalDays < 180) result = "Many moons ago ";
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			result += time.ToString();
+			return result;
+		}
 	}
+	
+
 }

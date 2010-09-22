@@ -63,7 +63,10 @@ var giInterface = new Class(
 			this.health.set(data.Health);
 			this.reserve.set(data.Reserve);
 			this.constitution.set(data.Constitution);
-			
+			if (data.Messages.length)
+			{
+				data.Messages.each(function(item) { log.add(item) });
+			}
 			map.canvas.avatar.setEnergy(data.Energy);
 		}
 		//else show respawn button??

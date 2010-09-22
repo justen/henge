@@ -30,7 +30,7 @@ namespace Henge.Rules.Antagonist.Tick.Metabolise
 				Trait energy		= actor.Traits["Energy"];
 				Trait reserve		= actor.Traits["Reserve"];
 				Trait constitution	= actor.Traits["Constitution"];
-				string message		= "You rest and recuperate";
+				string message		= "you rested and recuperated a little";
 				double constDelta	= Constants.Tick.MetabolicRate;
 				double healthDelta	= (health.Value < health.Maximum) ? Constants.Tick.Healthy.Heal : 0;
 				double energyDelta	= (reserve.Value < reserve.Maximum) ? Constants.Tick.Healthy.Revitalise : 0;
@@ -42,7 +42,7 @@ namespace Henge.Rules.Antagonist.Tick.Metabolise
 					healthDelta	= Constants.Tick.Ill.Heal;
 					energyDelta	= Constants.Tick.Ill.Revitalise;
 					constDelta	= -constDelta;
-					message		= "You feel weaker";
+					message		= "you felt weaker";
 					
 					// Increase Constitution
 					if (constitution.Value == 0) constDelta = 0;		
@@ -58,7 +58,7 @@ namespace Henge.Rules.Antagonist.Tick.Metabolise
 						constitution.SetValue(constitution.Minimum);
 						health.Flavour = "Dead";
 					}
-					interaction.Failure("You succumb to your ailments. Your story is over... will your line continue?", false);
+					interaction.Success("you succumbed to your ailments. Your story is over... will your line continue?");
 				}
 				else
 				{
