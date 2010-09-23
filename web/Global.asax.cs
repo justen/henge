@@ -26,9 +26,13 @@ namespace Henge.Web
 		{
 			string path	= Path.Combine(Server.MapPath("~"), "Data");
 			string yap	= Path.Combine(path, "henge.yap");
-			bool bootstrap = false;
+			bool bootstrap = true;	//false;
 			if (!Directory.Exists(path))	Directory.CreateDirectory(path);
-			if (File.Exists(yap))			bootstrap = true;
+			if (File.Exists(yap))
+			{
+				if (bootstrap == true) File.Delete(yap);
+			}
+			else bootstrap = true;
 			
 			DataProvider = new Henge.Data.DataProvider();
 			DataProvider.Initialise(yap, "mysql", "Server=127.0.0.1;Uid=henge;Pwd=henge;Database=henge");
