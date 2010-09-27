@@ -51,6 +51,7 @@ var giInterface = new Class(
 		if (data.Valid) 
 		{
 			map.canvas.setLocation(data.X, data.Y);
+			map.canvas.setContents(data.Contents, true);
 			map.canvas.avatar.setEnergy(data.Energy);
 		}
 	},
@@ -63,10 +64,9 @@ var giInterface = new Class(
 			this.health.set(data.Health);
 			this.reserve.set(data.Reserve);
 			this.constitution.set(data.Constitution);
-			if (data.Messages.length)
-			{
-				data.Messages.each(function(item) { log.add(item) });
-			}
+			if (data.Messages.length) data.Messages.each(function(item) { log.add(item) });
+			
+			map.canvas.setContents(data.Contents, false);
 			map.canvas.avatar.setEnergy(data.Energy);
 		}
 		//else show respawn button??

@@ -47,11 +47,11 @@
     <Compile Include="src\Interfaces\IInterferer.cs" />
     <Compile Include="src\Rules\Rule.cs" />
     <Compile Include="src\Interfaces\IModifier.cs" />
+    <Compile Include="src\Generator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />
     <Folder Include="src\Rules\" />
-    <Folder Include="src\Rules\Base\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

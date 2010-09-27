@@ -14,6 +14,7 @@ var giTile = new Class(
 		this.type 		= null;
 		this.name		= "";
 		this.parent		= parent;
+		this.contents	= new Array();
 
 		this.tile = new Element('div', {
 			'class':	'tile',
@@ -29,6 +30,10 @@ var giTile = new Class(
 			'class':	'layer',
 			width:		TILE_SIZE,
 			height: 	TILE_SIZE,
+		}).inject(this.tile);
+		
+		this.output = new Element('div', {
+			'class': 'layer'
 		}).inject(this.tile);
 		
 		this.rendered	= false;
@@ -51,6 +56,13 @@ var giTile = new Class(
 
 			this.tile.show();
 			this.visible = true;
+		}
+		
+		if (this.contents.length)
+		{
+			var text = "";
+			this.contents.each(function(item) { text += item.type + '-' + item.id +', ' });
+			this.output.set('text', text);
 		}
 	},
 

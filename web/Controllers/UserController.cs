@@ -172,7 +172,8 @@ namespace Henge.Web.Controllers
 		[Authorize][AcceptVerbs(HttpVerbs.Post)]
 		public ActionResult ConnectAvatar(int index)
 		{
-			Session["Avatar"] = this.user.Avatars.ElementAtOrDefault(index);
+			Session["Avatar"] 	= this.user.Avatars.ElementAtOrDefault(index);
+			Session["Cache"]	= new Dictionary<long, Component>();
 			return RedirectToAction ("", "");	
 		}
 		

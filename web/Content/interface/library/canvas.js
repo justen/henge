@@ -37,6 +37,30 @@ var giCanvas = new Class(
 		this.jump(x, y);
 	},
 	
+	
+	setContents: function(contents, reset)
+	{
+		if (contents.length)
+		{
+			var tile = this.tiles[this.avatar.y][this.avatar.x];
+			
+			if (tile)
+			{
+				if (reset) tile.contents.length = 0;
+				
+				contents.each(function(item) {
+					switch(item[0])
+					{
+						case '+': tile.contents.push({ type: item[1], id: item.substring(2) });	break;
+						case '-':	break;
+					}
+				});
+			}
+			
+			this.refresh();
+		}
+	},
+	
 
 	jump: function(x, y)
 	{
