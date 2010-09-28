@@ -173,7 +173,7 @@ namespace Henge.Web.Controllers
 		public ActionResult ConnectAvatar(int index)
 		{
 			Session["Avatar"] 	= this.user.Avatars.ElementAtOrDefault(index);
-			Session["Cache"]	= new Dictionary<long, Component>();
+			Session["Cache"]	= new Cache();
 			return RedirectToAction ("", "");	
 		}
 		

@@ -23,7 +23,7 @@ namespace Henge.Web.Controllers
 		protected Global globals;
 		protected User user;
 		protected Avatar avatar;
-		protected Dictionary<long, Component> cache;
+		protected Cache cache;
 		
 		
 		// Called before the action in the inherited controller is executed, allowing certain members to be set
@@ -38,8 +38,8 @@ namespace Henge.Web.Controllers
 		    if (this.User.Identity.IsAuthenticated)
 			{
 				this.user					= this.db.Get<User>(x => x.Name == this.User.Identity.Name);
-				this.avatar					= Session["Avatar"] as Avatar; //this.user.CurrentAvatar;
-				this.cache					= Session["Cache"] as Dictionary<long, Component>;
+				this.avatar					= Session["Avatar"] as Avatar;
+				this.cache					= Session["Cache"] as Cache;
 
 				this.ViewData["User"] 		= this.User.Identity.Name;
 				this.ViewData["Character"]	= (this.avatar != null) ? string.Format("{0} of {1}", this.avatar.Name, this.user.Clan) : null;

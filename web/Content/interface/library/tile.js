@@ -61,9 +61,27 @@ var giTile = new Class(
 		if (this.contents.length)
 		{
 			var text = "";
-			this.contents.each(function(item) { text += item.type + '-' + item.id +', ' });
+			this.contents.each(function(item) { text += item.type + '(' + item.id +'), ' });
 			this.output.set('text', text);
 		}
+	},
+	
+	
+	addContent: function(type, id)
+	{
+		if (this.contents.find(function(item) { return item.id == id }) == -1)
+		{
+			this.contents.push({
+				type: CONTENT_TYPES[type],
+				id: id
+			});
+		}	
+	},
+	
+	removeContent: function(id)
+	{
+		var index = this.contents.find(function(item) { return item.id == id });
+		if (index > -1) this.contents.splice(index, 1);
 	},
 
 
