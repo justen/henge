@@ -169,19 +169,25 @@ namespace Henge.Web.Controllers
 			{
 				if (item.Value is Item)
 				{
-					if ((item.Value as Item).Owner != location) removable.Add(item.Key);
+					if ((item.Value as Item).Owner != location) 
+					{
+						removable.Add(item.Key);
+						diffs.Add(string.Format("-i{0}", item.Key));
+					}
 				}
-				else if (item.Value is MapComponent)
+				else
 				{
-					if ((item.Value as MapComponent).Location != location) removable.Add(item.Key);
+					if ((item.Value as MapComponent).Location != location)
+					{
+						removable.Add(item.Key);
+						if (item.Value is Avatar) 		diffs.Add(string.Format("-a{0}", item.Key));
+						else if (item.Value is Npc)		diffs.Add(string.Format("-n{0}", item.Key));
+						else if (item.Value is Edifice)	diffs.Add(string.Format("-s{0}", item.Key));
+					}
 				}
 			}
 			
-			foreach (long id in removable)
-			{
-				cache.Remove(id);
-				diffs.Add(string.Format("-{0}", id));
-			}
+			foreach (long id in removable) cache.Remove(id);
 			
 			return diffs;
 		}

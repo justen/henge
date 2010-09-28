@@ -51,8 +51,8 @@ var giCanvas = new Class(
 				contents.each(function(item) {
 					switch(item[0])
 					{
-						case '+': tile.addContent(item[1], item.substring(2));	break;
-						case '-': tile.removeContent(item.substring(1));		break;
+						case '+': tile.addContent(CONTENT_TYPES[item[1]], item.substring(2));		break;
+						case '-': tile.removeContent(CONTENT_TYPES[item[1]], item.substring(2));	break;
 					}
 				});
 			}

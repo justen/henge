@@ -99,4 +99,4 @@ var HALF_PI				= Math.PI / 2;
 var GRADIENT_THRESHOLD	= 5;
 var GRADIENT_LIMIT		= 50;
 var EDGE_SCALE			= 0.0666;
-var CONTENT_TYPES		= { a: 'People', n: 'Creatures', s: 'Structures', i: 'Items' };
+var CONTENT_TYPES		= { a: 'people', n: 'animals', s: 'structures', i: 'items' };

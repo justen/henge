@@ -14,7 +14,7 @@ var giTile = new Class(
 		this.type 		= null;
 		this.name		= "";
 		this.parent		= parent;
-		this.contents	= new Array();
+		this.contents	= { people: new Array(), animals: new Array(), structures: new Array(), items: new Array() };
 
 		this.tile = new Element('div', {
 			'class':	'tile',
@@ -58,30 +58,24 @@ var giTile = new Class(
 			this.visible = true;
 		}
 		
-		if (this.contents.length)
-		{
-			var text = "";
-			this.contents.each(function(item) { text += item.type + '(' + item.id +'), ' });
-			this.output.set('text', text);
-		}
+		
+			var text = "<small>";
+			for (type in this.contents) if (this.contents[type].length) text += type.capitalize() + ': ' + this.contents[type].length + '<br />';
+			text += "</small>";
+			this.output.set('html', text);
+		
 	},
 	
 	
 	addContent: function(type, id)
 	{
-		if (this.contents.find(function(item) { return item.id == id }) == -1)
-		{
-			this.contents.push({
-				type: CONTENT_TYPES[type],
-				id: id
-			});
-		}	
+		if (!this.contents[type].contains(id)) this.contents[type].push(id);
 	},
 	
-	removeContent: function(id)
+	removeContent: function(type, id)
 	{
-		var index = this.contents.find(function(item) { return item.id == id });
-		if (index > -1) this.contents.splice(index, 1);
+		var index = this.contents[type].indexOf(id);
+		if (index > -1) this.contents[type].splice(index, 1);
 	},
 
 
