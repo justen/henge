@@ -23,6 +23,14 @@ var giInterface = new Class(
 			onRequest: 	this.onPing.bind(this, true),
 			onComplete: this.onPing.bind(this, false)
 		}).startTimer();
+		
+		this.surroundingsPoll	= new Request.JSON({
+			url: root + 'Interface/GetSurroundings',
+			initialDelay: 5000,
+			delay: 10000,
+			limit: 20000,
+			onSuccess:	this.onSurroundings.bind(this)
+		}).startTimer();
 	},
 	
 	
@@ -70,5 +78,11 @@ var giInterface = new Class(
 			map.canvas.avatar.setEnergy(data.Energy);
 		}
 		//else show respawn button??
+	},
+	
+	onSurroundings: function(data)
+	{
+		if (data.Data)	map.canvas.setSurroundings(data.Data);
+		else			log.add(data.Message);
 	}
 });

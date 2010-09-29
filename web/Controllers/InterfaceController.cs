@@ -111,6 +111,43 @@ namespace Henge.Web.Controllers
 		}
 		
 		
+		[AcceptVerbs(HttpVerbs.Post)]
+		public JsonResult GetSurroundings()
+		{
+			if (this.avatar != null)
+			{
+				List<string> results	= new List<string>();
+				Location current 		= this.avatar.Location;
+				int x 					= current.X;
+				int y 					= current.Y;
+				
+				for (int dy=-1; dy<2; dy++)
+				{
+					for (int dx=-1; dx<2; dx++)
+					{
+						if (dx != 0 || dy != 0)
+						{
+							int ax		= x + dx;
+							int ay		= y + dy;
+							ulong index = ((ulong)ax << 32) | (ulong)ay;
+							
+							Location location = this.db.Get<Location>(l => l.Index == index);
+							
+							if (location != null) 	results.Add(string.Format("a{0},n{1},s{2}", location.Inhabitants.Count, location.Fauna.Count, location.Structures.Count));
+							else 					results.Add("");
+						}
+					}
+				}
+				
+				return Json(new {
+					Data = results
+				});
+			}
+			
+			return Json(new { Message = "Error: You are not connected to an avatar" });
+		}
+		
+		
 		private List<string> GetDiffs(bool local)
 		{
 			Dictionary<long, Component> cache 	= local ? this.cache.Local : this.cache.Remote;
