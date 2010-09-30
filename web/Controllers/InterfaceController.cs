@@ -34,7 +34,7 @@ namespace Henge.Web.Controllers
 					
 					if (result.Succeeded)
 					{
-						this.cache.Clear();
+						this.cache.Local.Clear();
 						
 						return Json(new { 
 							Valid		= true, 
@@ -42,7 +42,7 @@ namespace Henge.Web.Controllers
 							Y			= location.Y - origin.Y, 
 							Energy		= this.avatar.Traits["Energy"].Value, 
 							Message		= result.Conclusion,
-							Contents	= this.GetDiffs()
+							Contents	= this.GetDiffs(true)
 						});
 					}
 					else error = result.Conclusion;
@@ -52,6 +52,7 @@ namespace Henge.Web.Controllers
 			
 			return Json(new { Valid = false, Message = error });
 		}
+		
 		
 		[AcceptVerbs(HttpVerbs.Post)]
 		public JsonResult DefendLocation(int dx, int dy, int duration)
@@ -101,7 +102,7 @@ namespace Henge.Web.Controllers
 					Constitution 	= this.avatar.Traits["Constitution"].Percentage(),
 					Energy			= Interactor.Instance.Modifier("Energy").Apply(this.avatar).Value,
 					Messages		= log,
-					Contents		= this.GetDiffs()
+					Contents		= this.GetDiffs(true)
 				});
 				
 			}
@@ -110,19 +111,57 @@ namespace Henge.Web.Controllers
 		}
 		
 		
-		private List<string> GetDiffs()
+		[AcceptVerbs(HttpVerbs.Post)]
+		public JsonResult GetSurroundings()
 		{
-			Location location 	= this.avatar.Location;
-			List<string> diffs	= new List<string>();
+			if (this.avatar != null)
+			{
+				List<string> results	= new List<string>();
+				Location current 		= this.avatar.Location;
+				int x 					= current.X;
+				int y 					= current.Y;
+				
+				for (int dy=-1; dy<2; dy++)
+				{
+					for (int dx=-1; dx<2; dx++)
+					{
+						if (dx != 0 || dy != 0)
+						{
+							int ax		= x + dx;
+							int ay		= y + dy;
+							ulong index = ((ulong)ax << 32) | (ulong)ay;
+							
+							Location location = this.db.Get<Location>(l => l.Index == index);
+							
+							if (location != null) 	results.Add(string.Format("a{0},n{1},s{2}", location.Inhabitants.Count, location.Fauna.Count, location.Structures.Count));
+							else 					results.Add("");
+						}
+					}
+				}
+				
+				return Json(new {
+					Data = results
+				});
+			}
+			
+			return Json(new { Message = "Error: You are not connected to an avatar" });
+		}
+		
+		
+		private List<string> GetDiffs(bool local)
+		{
+			Dictionary<long, Component> cache 	= local ? this.cache.Local : this.cache.Remote;
+			Location location 					= this.avatar.Location;
+			List<string> diffs					= new List<string>();
 			
 			foreach (Avatar avatar in location.Inhabitants) 
 			{
 				if (avatar != this.avatar)
 				{
-					if (!this.cache.ContainsValue(avatar)) 
+					if (!cache.ContainsValue(avatar)) 
 					{
 						long id = Generator.Id;
-						this.cache.Add(id, avatar);
+						cache.Add(id, avatar);
 						diffs.Add(string.Format("+a{0}", id));
 					}
 				}
@@ -130,31 +169,34 @@ namespace Henge.Web.Controllers
 			
 			foreach (Npc npc in location.Fauna)
 			{
-				if (!this.cache.ContainsValue(npc))
+				if (!cache.ContainsValue(npc))
 				{
 					long id = Generator.Id;
-					this.cache.Add(id, npc);
+					cache.Add(id, npc);
 					diffs.Add(string.Format("+n{0}", id));
 				}
 			}
 			
 			foreach (Edifice edifice in location.Structures)
 			{
-				if (!this.cache.ContainsValue(edifice))
+				if (!cache.ContainsValue(edifice))
 				{
 					long id = Generator.Id;
-					this.cache.Add(id, edifice);
+					cache.Add(id, edifice);
 					diffs.Add(string.Format("+s{0}", id));
 				}
 			}
 			
-			foreach (Item item in location.Inventory)
+			if (local)
 			{
-				if (!this.cache.ContainsValue(item))
+				foreach (Item item in location.Inventory)
 				{
-					long id = Generator.Id;
-					this.cache.Add(id, item);
-					diffs.Add(string.Format("+i{0}", id));
+					if (!cache.ContainsValue(item))
+					{
+						long id = Generator.Id;
+						cache.Add(id, item);
+						diffs.Add(string.Format("+i{0}", id));
+					}
 				}
 			}
 			
@@ -164,19 +206,25 @@ namespace Henge.Web.Controllers
 			{
 				if (item.Value is Item)
 				{
-					if ((item.Value as Item).Owner != location) removable.Add(item.Key);
+					if ((item.Value as Item).Owner != location) 
+					{
+						removable.Add(item.Key);
+						diffs.Add(string.Format("-i{0}", item.Key));
+					}
 				}
-				else if (item.Value is MapComponent)
+				else
 				{
-					if ((item.Value as MapComponent).Location != location) removable.Add(item.Key);
+					if ((item.Value as MapComponent).Location != location)
+					{
+						removable.Add(item.Key);
+						if (item.Value is Avatar) 		diffs.Add(string.Format("-a{0}", item.Key));
+						else if (item.Value is Npc)		diffs.Add(string.Format("-n{0}", item.Key));
+						else if (item.Value is Edifice)	diffs.Add(string.Format("-s{0}", item.Key));
+					}
 				}
 			}
 			
-			foreach (long id in removable)
-			{
-				this.cache.Remove(id);
-				diffs.Add(string.Format("-{0}", id));
-			}
+			foreach (long id in removable) cache.Remove(id);
 			
 			return diffs;
 		}

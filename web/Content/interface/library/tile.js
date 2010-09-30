@@ -14,7 +14,8 @@ var giTile = new Class(
 		this.type 		= null;
 		this.name		= "";
 		this.parent		= parent;
-		this.contents	= new Array();
+		this.contents	= { people: new Array(), animals: new Array(), structures: new Array(), items: new Array() };
+		this.counts		= { people: 0, animals: 0, structures: 0, items: 0 };
 
 		this.tile = new Element('div', {
 			'class':	'tile',
@@ -58,12 +59,48 @@ var giTile = new Class(
 			this.visible = true;
 		}
 		
-		if (this.contents.length)
+		
+			var text = "<small>";
+			for (type in this.counts) if (this.counts[type] > 0) text += type.capitalize() + ': ' + this.counts[type] + '<br />';
+			text += "</small>";
+			this.output.set('html', text);
+		
+	},
+	
+	
+	addContent: function(type, id)
+	{
+		if (!this.contents[type].contains(id)) 
 		{
-			var text = "";
-			this.contents.each(function(item) { text += item.type + '-' + item.id +', ' });
-			this.output.set('text', text);
+			this.contents[type].push(id);
+			this.counts[type] = this.contents[type].length;
 		}
+	},
+	
+	removeContent: function(type, id)
+	{
+		var index = this.contents[type].indexOf(id);
+		if (index > -1) 
+		{
+			this.contents[type].splice(index, 1);
+			this.counts[type] = this.contents[type].count;
+		}
+	},
+	
+	resetContents: function()
+	{
+		for (type in this.contents) 
+		{
+			this.contents[type].length	= 0;
+			this.counts[type]			= 0;
+		}
+	},
+	
+	
+	setContentCounts: function(data)
+	{
+		data.split(',').each(function(item) { this.counts[CONTENT_TYPES[item[0]]] = parseInt(item.substring(1)) }, this);
+		this.counts["items"] = 0;
 	},
 
 

@@ -70,6 +70,7 @@
     <Compile Include="Controllers\MapController.cs" />
     <Compile Include="Controllers\InterfaceController.cs" />
     <Compile Include="Daemon\Heart.cs" />
+    <Compile Include="Models\Cache.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />
