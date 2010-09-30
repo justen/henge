@@ -24,7 +24,7 @@ namespace Henge.Rules
 		public string Chain								{ get; set; }
 		//public List<Entity>	PendingDeletions			{ get; private set; }
 		
-		protected DataProvider db;
+		public DataProvider db;
 		
 		
 		public Interaction(DataProvider db, Actor protagonist, Component antagonist, Dictionary<string, object> arguments)
