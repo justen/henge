@@ -28,6 +28,7 @@
 				<ul>
 					<li><a href="<%= Url.Action("", "") %>">Map</a></li>
 					<li><a href="<%= Url.Action("Account", "User") %>">Account</a></li>
+					<li><a href="<%= Url.Action("", "Admin") %>">Admin</a></li>
 					<li><a href="<%= Url.Action("Logout", "User") %>">Logout</a></li>
 				</ul>
 			</div>

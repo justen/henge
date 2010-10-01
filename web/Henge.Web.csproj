@@ -42,7 +42,9 @@
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Web.Mvc, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
+    <Reference Include="System.Web.Mvc, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <Package>system.web.mvc</Package>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\" />
@@ -55,6 +57,7 @@
     <Folder Include="Views\Game\" />
     <Folder Include="Content\interface\library\widget\" />
     <Folder Include="Daemon\" />
+    <Folder Include="Views\Admin\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
@@ -70,6 +73,7 @@
     <Compile Include="Controllers\MapController.cs" />
     <Compile Include="Controllers\InterfaceController.cs" />
     <Compile Include="Daemon\Heart.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />
@@ -89,6 +93,9 @@
     <Content Include="Content\interface\library\request.js" />
     <Content Include="Content\interface\library\tile.js" />
     <Content Include="Content\interface\styles\map.css" />
+    <Content Include="Views\Admin\Index.aspx" />
+    <Content Include="Views\Admin\Users.aspx" />
+    <Content Include="Views\Admin\UserDetail.aspx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v9.0\WebApplications\Microsoft.WebApplication.targets" />
