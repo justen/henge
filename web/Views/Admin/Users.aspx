@@ -22,7 +22,7 @@
 							<input type="submit" name="submit" id="submit" value="Edit"/>
 						</td>
 					</form>
-					<form method="post" action="<%= Url.Action("DeleteAccount") %>" >
+					<form method="post" action="<%= Url.Action("DeleteUser") %>" >
 						<td>
 							<input type="hidden" name="name" id="name" value="<%= account.Name %>"/>
 							<input type="submit" name="submit" id="submit" value="Delete"/>

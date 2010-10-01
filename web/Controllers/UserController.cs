@@ -81,9 +81,15 @@ namespace Henge.Web.Controllers
 			// Make sure that something has at least been entered for the name and password, and that the passwords match
 			if (name.Length > 0 && password.Length > 0 && password == passwordRepeat)
 			{
-				// Save a new user to the database, simply by creating a new transient User object and passing it to nhibernate
-				this.db.Store(new User { Name = name, Clan = name, Password = FormsAuthentication.HashPasswordForStoringInConfigFile(password, "sha1") });
-				this.SetMessage("User added successfully");
+				// Make sure the user doesn't already exist
+				User user = this.db.Get<User>(u => u.Name == name);
+				if(user != null) {
+					this.SetError("There is already a user with the name " + name);
+				} else {
+					// Save a new user to the database, simply by creating a new transient User object and passing it to nhibernate
+					this.db.Store(new User { Name = name, Clan = name, Password = FormsAuthentication.HashPasswordForStoringInConfigFile(password, "sha1") });
+					this.SetMessage("User added successfully");
+				}
 			}
 			else this.SetError("Please fill in all details and ensure the passwords match");
 			

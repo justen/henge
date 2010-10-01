@@ -1,6 +1,7 @@
 ﻿<%@ Page Language="C#" Title="User Administration" MasterPageFile="~/Views/Shared/Layout.master" Inherits="System.Web.Mvc.ViewPage<Henge.Web.Controllers.UserDetailViewModel>" %>
 
 <asp:Content ContentPlaceHolderID="MainContent" runat="server">
+			<div class="title"><a href="<%= Url.Action("Users") %>">Back to User Administration</a></div>
 			<div class="title">User Administration for <%= Model.user.Name %></div>
 			<dl>
 				<dt><label for="current">Clan:</label></dt>
@@ -26,7 +27,7 @@
 						<td>
 							<input type="hidden" name="userName" id="userName" value="%<= Model.user.Name %>" />
 							<input type="hidden" name="index" id="index" value="<%= i %>"/>
-							<input type="submit" name="submit" id="submit" value="Connect"/>
+							<input type="submit" name="submit" id="submit" value="Edit"/>
 						</td>
 					</form>
 					<form method="post" action="<%= Url.Action("DeleteAvatar") %>" >
