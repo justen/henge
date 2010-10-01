@@ -24,13 +24,14 @@ namespace Henge.Web
 		
 		protected void Application_Start()
 		{
-			string path	= Path.Combine(Server.MapPath("~"), "Data");
-			string yap	= Path.Combine(path, "henge.yap");
-			bool bootstrap = true;	//false;
-			if (!Directory.Exists(path))	Directory.CreateDirectory(path);
+			string path		= Path.Combine(Server.MapPath("~"), "Data");
+			string yap		= Path.Combine(path, "henge.yap");
+			bool bootstrap	= false;
+			if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+			
 			if (File.Exists(yap))
 			{
-				if (bootstrap == true) File.Delete(yap);
+				if (bootstrap) File.Delete(yap);
 			}
 			else bootstrap = true;
 			

@@ -37,6 +37,58 @@ var giCanvas = new Class(
 		this.jump(x, y);
 	},
 	
+	
+	setContents: function(contents, reset)
+	{
+		if (contents.length)
+		{
+			var tile = this.tiles[this.avatar.y][this.avatar.x];
+			
+			if (tile)
+			{
+				if (reset) tile.resetContents();
+				
+				contents.each(function(item) {
+					switch(item[0])
+					{
+						case '+': tile.addContent(CONTENT_TYPES[item[1]], parseInt(item.substring(2)));		break;
+						case '-': tile.removeContent(CONTENT_TYPES[item[1]], parseInt(item.substring(2)));	break;
+					}
+				});
+			}
+			
+			this.refresh();
+		}
+	},
+	
+	setSurroundings: function(data)
+	{
+		if (data.length)
+		{
+			var i = 0;
+			for (var dy=-1; dy<2; dy++)
+			{
+				var row = this.tiles[this.avatar.y + dy];
+				
+				if (row)
+				{
+					for (var dx=-1; dx<2; dx++)
+					{
+						if (dx != 0 || dy != 0)
+						{
+							var tile = row[this.avatar.x + dx];
+							if (tile) tile.setContentCounts(data[i]);
+							i++;
+						}
+					}
+				}
+				else break;
+			}
+			
+			this.refresh();
+		}
+	},
+	
 
 	jump: function(x, y)
 	{

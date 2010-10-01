@@ -23,6 +23,14 @@ var giInterface = new Class(
 			onRequest: 	this.onPing.bind(this, true),
 			onComplete: this.onPing.bind(this, false)
 		}).startTimer();
+		
+		this.surroundingsPoll	= new Request.JSON({
+			url: root + 'Interface/GetSurroundings',
+			initialDelay: 5000,
+			delay: 10000,
+			limit: 20000,
+			onSuccess:	this.onSurroundings.bind(this)
+		}).startTimer();
 	},
 	
 	
@@ -51,6 +59,7 @@ var giInterface = new Class(
 		if (data.Valid) 
 		{
 			map.canvas.setLocation(data.X, data.Y);
+			map.canvas.setContents(data.Contents, true);
 			map.canvas.avatar.setEnergy(data.Energy);
 		}
 	},
@@ -63,12 +72,17 @@ var giInterface = new Class(
 			this.health.set(data.Health);
 			this.reserve.set(data.Reserve);
 			this.constitution.set(data.Constitution);
-			if (data.Messages.length)
-			{
-				data.Messages.each(function(item) { log.add(item) });
-			}
+			if (data.Messages.length) data.Messages.each(function(item) { log.add(item) });
+			
+			map.canvas.setContents(data.Contents, false);
 			map.canvas.avatar.setEnergy(data.Energy);
 		}
 		//else show respawn button??
+	},
+	
+	onSurroundings: function(data)
+	{
+		if (data.Data)	map.canvas.setSurroundings(data.Data);
+		else			log.add(data.Message);
 	}
 });

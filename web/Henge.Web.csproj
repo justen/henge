@@ -74,6 +74,7 @@
     <Compile Include="Controllers\InterfaceController.cs" />
     <Compile Include="Daemon\Heart.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Models\Cache.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />

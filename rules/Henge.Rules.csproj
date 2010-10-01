@@ -94,6 +94,7 @@
     <Compile Include="src\Modifiers\EnergyModifier.cs" />
     <Compile Include="src\HengeModifier.cs" />
     <Compile Include="src\Tick\TickRule.cs" />
+    <Compile Include="src\Tick\Grow\GrowAntagonist.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\data\Henge.Data.csproj">

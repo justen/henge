@@ -36,7 +36,7 @@ namespace Henge.Web.Controllers
 					this.user.Avatars.Add(avatar);
 				}
 
-				IInteraction result = Interactor.Instance.Interact(avatar, location, "Spawn.Character", null);
+				Interactor.Instance.Interact(avatar, location, "Spawn.Character", null);
 
 				return RedirectToAction("Account", "User");
 			}
