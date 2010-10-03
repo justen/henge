@@ -91,6 +91,27 @@ namespace Henge.Web.Controllers
 			
 			return RedirectToAction ("Account");	
 		}
+		
+		public ActionResult DeleteDuplicateUsers()
+		{
+			
+			ICollection<string> names = new HashSet<string>();
+			ICollection<string> deleted = new HashSet<string>();
+			foreach(User user in this.db.Query<User>()) {
+				if(names.Contains(user.Name)) {
+					deleted.Add(user.Name);
+					this.db.Delete(user);
+				} else {
+					names.Add(user.Name);
+				}
+			}
+			if(deleted.Count > 0) {
+				this.SetMessage("Deleted users: " + String.Join(", ", deleted.ToArray()));
+			} else {
+				this.SetMessage("No errors found.");
+			}
+			return RedirectToAction("");
+		}
 	}
 }
 
