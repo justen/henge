@@ -166,9 +166,10 @@ namespace Henge.Web.Controllers
 				using (this.db.Lock(avatar.Location.Inhabitants, this.user.Avatars))
 				{
 					avatar.Location.Inhabitants.Remove(avatar);
-					this.user.Avatars.Remove(avatar);
-					this.db.Delete(avatar);
+					this.user.Avatars.Remove(avatar);	
 				}
+				
+				this.db.Delete(avatar);
 			}
 			
 			return RedirectToAction ("Account");	

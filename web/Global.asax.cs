@@ -38,16 +38,19 @@ namespace Henge.Web
 			DataProvider = new Henge.Data.DataProvider();
 			DataProvider.Initialise(yap, "mysql", "Server=127.0.0.1;Uid=henge;Pwd=henge;Database=henge");
 			DataProvider.UpdateSchema();
-			Global globals = new Global();
-			Globals = DataProvider.Store<Global>(globals);
+			
 			if (bootstrap)
 			{
+				Globals = DataProvider.Store<Global>(new Global());
+				
 				using (DataProvider.Lock(Globals))
 				{
 					Avebury.Loader avebury = new Avebury.Loader(path, Globals);
 					DataProvider.Bootstrap(avebury.Data);
 				}
 			}
+			else Globals = DataProvider.Get<Global>(g => true);
+			
 			Henge.Engine.Interactor.Instance.Initialise(Path.Combine(Server.MapPath("~"), "bin"), DataProvider);
 			
 			Heartbeat = new Henge.Daemon.Heart(500);
