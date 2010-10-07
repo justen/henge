@@ -50,8 +50,10 @@ namespace Henge.Rules.Antagonist.Tick.Metabolise
 				
 				if (health.Value + healthDelta < 0)
 				{
-					using (interaction.Lock(health, reserve, energy, constitution))
+					using (interaction.Lock(health, reserve, energy, constitution, actor.Ticks))
 					{
+						//When the actor dies, all ticks should be cancelled
+						actor.Ticks.Clear();
 						health.SetValue(0);
 						energy.SetValue(0);
 						reserve.SetValue(0);

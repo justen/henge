@@ -7,12 +7,12 @@ using Henge.Data.Entities;
 
 namespace Henge.Rules.Antagonist.Tick.Grow
 {
-	public class GrowAntagonist : GrowBase, IAntagonist
+	public class GrowItem : GrowBase, IAntagonist
 	{
 		public override bool Valid (Component subject)
 		{
-			//This is the spawn rule for MapComponents
-			return (subject is MapComponent);
+			//This is the spawn rule for Items
+			return (subject is Item);
 		}
 		
 		protected override double Visibility (HengeInteraction interaction, out Component subject)
@@ -25,7 +25,23 @@ namespace Henge.Rules.Antagonist.Tick.Grow
 		
 		protected override IInteraction Apply(HengeInteraction interaction)
 		{
-			Location location = (interaction.Antagonist as MapComponent).Location;
+			Item item = interaction.Antagonist as Item;
+			Location location = null;
+			Component currentLevel = item;
+			while ((location == null) && (currentLevel != null))
+			{
+				if (currentLevel is Item)
+				{
+					if (item.Owner is Location)
+					{
+						location = item.Owner as Location;
+					}
+				}
+				else
+				{
+					
+				}
+			}
 			if (this.Validate(interaction) && location!=null)
 			{
 				this.Grow(location, interaction);

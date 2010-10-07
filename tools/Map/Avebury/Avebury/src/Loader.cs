@@ -24,6 +24,7 @@ namespace Avebury
 		private Dictionary<string, User> users = new Dictionary<string, User>();
 		private Dictionary<string, Component> traitRefs = new Dictionary<string, Component>();
 		private Dictionary<Trait, string> traits = new Dictionary<Trait, string>();
+		private List<Spawner> spawns = new List<Spawner>();
 		
 		public List<Entity> Data 
 		{

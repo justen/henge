@@ -20,12 +20,15 @@ namespace Henge.Data.Entities
 		public virtual Tick NextTick							{ get; set; }
 		public virtual DateTime NextTickTime					{ get; set; }
 		
+		//Things that can be spawned by this component
+		public virtual IList<Spawner> Spawns					{ get; set; }
 		
 		
 		public Component()
 		{
 			this.Inventory		= new List<Item>();
 			this.Ticks			= new List<Tick>();
+			this.Spawns 		= new List<Spawner>();
 			this.Traits 		= new Dictionary<string, Trait>();
 		}
 		
@@ -34,6 +37,7 @@ namespace Henge.Data.Entities
 		{
 			this.Type			= type;
 			this.Inventory		= new List<Item>();
+			this.Spawns 		= new List<Spawner>();
 			this.Created		= DateTime.Now;
 			this.LastModified	= DateTime.Now;
 			this.Traits			= new Dictionary<string, Trait>();

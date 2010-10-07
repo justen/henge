@@ -23,6 +23,7 @@ namespace Henge.Data.Entities
 		public virtual IList<Trait> TracesIn		{ get; set; }
 		public virtual IList<Trait> TracesOut		{ get; set; }
 		
+		
 		public Location(int x, int y, int z, ComponentType type) : base(type)
 		{
 			this.X					= x;

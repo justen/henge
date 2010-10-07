@@ -41,6 +41,7 @@
     <type id="tr5">
       <trait name="Impede" minimum="0" value="1.2" />
       <trait name="Tracks" minimum="0" value="1.2" />
+      <tick name="Tick.Grow" offset="00:00:00" randomse="true" period="15" />
       <appearance type="woodland" description="light, airy woodland" short_description="light woodland" priority="6">
 		<parameter name="colour" value="#6ca870" />
 	  </appearance>

@@ -97,7 +97,7 @@
     <Compile Include="src\Object\Entities\Tick.cs" />
     <Compile Include="src\Object\Entities\Global.cs" />
     <Compile Include="src\Relational\HybridSessionContext.cs" />
-    <Compile Include="src\Relational\Entities\Spawns.cs" />
+    <Compile Include="src\Object\Entities\Spawner.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />

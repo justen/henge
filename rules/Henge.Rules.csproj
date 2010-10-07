@@ -95,6 +95,10 @@
     <Compile Include="src\HengeModifier.cs" />
     <Compile Include="src\Tick\TickRule.cs" />
     <Compile Include="src\Tick\Grow\GrowAntagonist.cs" />
+    <Compile Include="src\Tick\Grow\GrowProtagonist.cs" />
+    <Compile Include="src\Tick\Grow\GrowLocation.cs" />
+    <Compile Include="src\Tick\Grow\GrowBase.cs" />
+    <Compile Include="src\Tick\Grow\GrowItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\data\Henge.Data.csproj">
