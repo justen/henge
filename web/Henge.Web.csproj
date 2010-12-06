@@ -43,7 +43,6 @@
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web.Mvc, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
-      <Package>system.web.mvc</Package>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -75,6 +74,7 @@
     <Compile Include="Daemon\Heart.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Models\Cache.cs" />
+    <Compile Include="Models\UserService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />
@@ -97,6 +97,7 @@
     <Content Include="Views\Admin\Index.aspx" />
     <Content Include="Views\Admin\Users.aspx" />
     <Content Include="Views\Admin\UserDetail.aspx" />
+    <Content Include="Views\Admin\Avatar.aspx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v9.0\WebApplications\Microsoft.WebApplication.targets" />
