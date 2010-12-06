@@ -2,8 +2,8 @@
 <!DOCTYPE avebury>
 <world>
   <spawners>
-    <spawn id="stickSpawner" type="item.stick" class="Item" min="0" max="255" rate="0.010"/>
-    <spawn id="mooseSpawner" type="npc.moose" class="Npc" min="4" max="155" rate="0.0025">
+    <spawn id="stickSpawner" type="item.stick" class="Item" min="0" max="255" rate="0.10"/>
+    <spawn id="mooseSpawner" type="npc.moose" class="Npc" min="4" max="155" rate="0.025">
       <condition trait="health" minimum="0.5"/>
     </spawn>
   </spawners>
@@ -11,8 +11,6 @@
    <type id="tr0">
 	  <trait name="Movement" flavour="Swim" value="100"/>
 	  <trait name="Impede" minimum="0" value="5" />
-	  <tick name="Tick.Grow" offset="00:00:00" randomise="true" period="15" />
-      <spawn id="stickSpawner"/>
       <appearance type="ocean" description="deep ocean" short_description="patch of ocean" priority="4">
 		<parameter name="colour" value="#6a6aff" />
 	  </appearance>
@@ -49,7 +47,7 @@
     <type id="tr5">
       <trait name="Impede" minimum="0" value="1.2" />
       <trait name="Tracks" minimum="0" value="1.2" />
-      <tick name="Tick.Grow" offset="00:00:00" randomise="true" period="15" />
+      <tick name="Tick.Grow" offset="00:00:00" randomise="true" period="150" />
       <spawn id="stickSpawner"/>
       <spawn id="mooseSpawner"/>
       <appearance type="woodland" description="light, airy woodland" short_description="light woodland" priority="6">
