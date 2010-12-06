@@ -52,6 +52,7 @@ namespace Henge.Web
 			else Globals = DataProvider.Get<Global>(g => true);
 			
 			Henge.Engine.Interactor.Instance.Initialise(Path.Combine(Server.MapPath("~"), "bin"), DataProvider);
+			UserService.Instance.Initialise(DataProvider);
 			
 			Heartbeat = new Henge.Daemon.Heart(500);
 			Heartbeat.Start();

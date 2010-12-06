@@ -68,7 +68,6 @@ namespace Henge.Web.Controllers
 			// Use forms authentication sessions to logout the user
 			FormsAuthentication.SignOut();
 			this.Session.Remove("user");
-			
 			// Redirect to the index action of this controller
 			return RedirectToAction("Index");
 		}

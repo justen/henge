@@ -34,6 +34,7 @@ namespace Henge.Web.Controllers
 	public class AdminController : MasterController
 	{
 		protected User currentUser {get; set;}
+		protected Avatar currentAvatar {get; set;}
 		
 		public ActionResult Index ()
 		{
@@ -57,12 +58,30 @@ namespace Henge.Web.Controllers
 		}
 		
 		[AcceptVerbs(HttpVerbs.Post)]
+		public ActionResult EditAvatar(string userName, int avatarId)
+		{
+			if(this.currentUser == null || this.currentUser.Name != userName) {
+				this.currentUser = this.db.Get<User>(u => u.Name == userName);
+			}
+			
+			this.currentAvatar = this.currentUser.Avatars.ElementAt(avatarId);
+			
+			return View(new UserDetailViewModel(currentUser));
+		}
+		
+		[AcceptVerbs(HttpVerbs.Post)]
 		public ActionResult DeleteUser(string name)
 		{
 			if(this.user.Name == name) {
 				this.SetError("You cannot delete yourself with the Admin interface.");
 			} else {
-				bool res = Membership.DeleteUser(name);
+				User user	=	HengeApplication.DataProvider.Get<User>(x => x.Name == name);
+				bool res = false;
+				// Check that the user exists
+				if (user != null)
+				{
+					res = UserService.Instance.DeleteUser(user);
+				}
 				if(res) {
 					this.SetMessage("User Deleted");
 				} else {

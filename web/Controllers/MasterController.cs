@@ -39,6 +39,9 @@ namespace Henge.Web.Controllers
 			{
 				this.user					= this.db.Get<User>(x => x.Name == this.User.Identity.Name);
 				this.avatar					= Session["Avatar"] as Avatar;
+				if(this.avatar != null && this.avatar.User != this.user) {
+					this.avatar = null;
+				}
 				this.cache					= Session["Cache"] as Cache;
 
 				this.ViewData["User"] 		= this.User.Identity.Name;
