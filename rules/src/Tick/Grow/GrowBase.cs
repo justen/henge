@@ -29,10 +29,11 @@ namespace Henge.Rules.Antagonist.Tick.Grow
 			{
 				if ((spawn.MinZ < z) && (spawn.MaxZ > z))
 				{
-					if (spawn.SpawnRate < Constants.RandomNumber)
+					if (spawn.SpawnRate > Constants.RandomNumber)
 					{
 						//spawn a new thing
-						newThing = (Component) Activator.CreateInstance(spawn.Class, spawn.ComponentType);
+						System.Type type = Type.GetType(string.Format("Henge.Data.Entities.{0},Henge.Data", spawn.Class));
+						newThing = (Component) Activator.CreateInstance( type, spawn.ComponentType);
 						if (newThing!=null)
 						{
 							newThing.Traits.Add("Visibility", new Trait(1.0, 0.0,
@@ -46,7 +47,7 @@ namespace Henge.Rules.Antagonist.Tick.Grow
 					}
 				}			
 			}	
-			if (newNpcs.Count>0)
+			if ((newNpcs.Count>0)/*this next condition is a hack until a better limit is coded up*/ &&(location.Fauna.Count<5))
 			{
 				using (interaction.Lock(location.Fauna))
 				{
@@ -57,7 +58,7 @@ namespace Henge.Rules.Antagonist.Tick.Grow
 					}
 				}
 			}
-			if (newItems.Count>0)
+			if ((newItems.Count>0)/*this next condition is a hack until a better limit is coded up*/ &&(location.Inventory.Count<20))
 			{
 				using (interaction.Lock(location.Inventory))
 				{

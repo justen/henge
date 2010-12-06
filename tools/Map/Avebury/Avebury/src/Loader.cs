@@ -24,13 +24,12 @@ namespace Avebury
 		private Dictionary<string, User> users = new Dictionary<string, User>();
 		private Dictionary<string, Component> traitRefs = new Dictionary<string, Component>();
 		private Dictionary<Trait, string> traits = new Dictionary<Trait, string>();
-		private List<Spawner> spawns = new List<Spawner>();
+		private Dictionary<string, KeyValuePair<Spawner, string>> spawns = new Dictionary<string, KeyValuePair<Spawner, string>>();
 		
 		public List<Entity> Data 
 		{
 			get
 			{	
-				
 	
 				if (this.pendingPortals.Count>0)
 				{
@@ -49,6 +48,19 @@ namespace Avebury
 				{
 					result.AddRange(locationList.Values.Cast<Entity>());
 				}
+				
+
+					foreach (Dictionary<string, Location> locationList in this.Locations.Values)
+					{
+						foreach (Location location in locationList.Values)
+						{
+							foreach (Spawner sp in location.Spawns)
+							{
+								ComponentType sptype = sp.ComponentType;
+								if (sptype==null) throw new Exception("Avebury loader error: Spawner of unknown type present");
+							}
+						}
+					}
 				return result;
 			}
 		}
@@ -69,6 +81,14 @@ namespace Avebury
 				
 				if (map.DocumentType.Name=="avebury" && map.DocumentElement.Name=="world")
 				{
+					//parse spawners first, since everything else might need them
+					foreach (XmlNode child in map.DocumentElement)
+					{
+						switch (child.Name)
+						{
+							case "spawners": this.ParseSpawners(child); break;
+						}
+					}
 					foreach (XmlNode child in map.DocumentElement)
 					{
 						switch (child.Name)
@@ -78,6 +98,32 @@ namespace Avebury
 							case "users": this.ParseUsers(child);		break;
 							case "map":		maps.Add(child);			break;
 						}
+					}
+					foreach (KeyValuePair<Spawner, string> spawn in this.spawns.Values)
+					{
+						ComponentType type = null;
+						if (this.KeyTypes.ContainsKey(spawn.Value))
+						{
+							type = this.KeyTypes[spawn.Value];
+						}
+						else 
+						{
+							if (this.GeneralTypes.ContainsKey(spawn.Value))
+							{
+								type = this.GeneralTypes[spawn.Value];
+							}
+							else
+							{
+								if (this.AbstractTypes.ContainsKey(spawn.Value))
+								{
+									type = this.AbstractTypes[spawn.Value];
+								}
+							}
+						}
+						if (type==null) throw new Exception("Avebury loader error: Spawner of unknown type present");
+						spawn.Key.ComponentType = type;
+						//spawn.Key.ComponentType = this.KeyTypes.ContainsKey(spawn.Value) ? this.KeyTypes[spawn.Value] : this.GeneralTypes.ContainsKey(spawn.Value) ? this.GeneralTypes[spawn.Value] : this.AbstractTypes.ContainsKey(spawn.Value) ? this.AbstractTypes[spawn.Value] : null;
+				
 					}
 					foreach (XmlNode node in maps) this.ParseMap(node);	
 				}
@@ -114,7 +160,25 @@ namespace Avebury
 			}
 		}
 		
-
+		private void ParseSpawners(XmlNode spawners)
+		{
+			foreach (XmlNode node in spawners)
+			{
+				if (node.Name=="spawn")
+				{
+					this.spawns.Add(node.Attributes["id"].Value, new KeyValuePair<Spawner, string>(
+					    new Spawner()
+					    {
+							MinZ = (node.Attributes["min"]!=null) ? int.Parse(node.Attributes["min"].Value) : int.MinValue,
+							MaxZ = (node.Attributes["max"]!=null) ? int.Parse(node.Attributes["max"].Value) : int.MaxValue,
+							SpawnRate = (node.Attributes["rate"]!=null) ? double.Parse(node.Attributes["rate"].Value) : 1.0,
+							Conditions = this.ParseContributiveConditions(node),
+							Class = node.Attributes["class"].Value
+						}, 
+					node.Attributes["type"].Value));
+				}
+			}
+		}
 		
 		private void ParseUsers(XmlNode users)
 		{
@@ -200,18 +264,7 @@ namespace Avebury
 						Parameters			= parameters 
 					};
 					
-					foreach (XmlNode condition in subnode)
-					{
-						if (subnode.Name=="condition")
-						{
-							appearance.Conditions.Add(new Condition(){ 	
-								Invert 	= condition.Attributes["invert"] != null,
-							   	Maximum = double.Parse(condition.Attributes["maximum"].Value),
-								Minimum = double.Parse(condition.Attributes["minimum"].Value),
-								Trait	= condition.Attributes["trait"].Value
-							});																													
-						}
-					}
+					appearance.Conditions = this.ParseConditions(subnode);
 					result.Appearance.Add(appearance);
 				}
 			}
@@ -221,17 +274,66 @@ namespace Avebury
 			{
 				if (child.Name=="skill") this.BaseSkills(child, result);
 			}
-			
+			result.BaseSpawns = this.GetSpawners(node);
 			return result;
 		}
 		
+		private List<Spawner> GetSpawners(XmlNode definition)
+		{
+			List<Spawner> result = new List<Spawner>();
+			foreach (XmlNode child in definition)
+			{
+				if (child.Name=="spawn")
+				{
+					if (this.spawns.ContainsKey(child.Attributes["id"].Value))
+					{
+						result.Add(this.spawns[child.Attributes["id"].Value].Key);
+					}
+				}
+			}
+			return result;
+		}
 		
+		private List<Condition> ParseConditions (XmlNode subnode)
+		{
+			List<Condition> result = new List<Condition>();
+			foreach (XmlNode condition in subnode)
+			{
+				if (condition.Name=="condition")
+				{
+					result.Add(new Condition(){ 	
+						Invert 	= condition.Attributes["invert"] != null,
+					   	Maximum = (condition.Attributes["maximum"] == null)? double.MaxValue : double.Parse(condition.Attributes["maximum"].Value),
+						Minimum = (condition.Attributes["maximum"] == null)? double.MinValue : double.Parse(condition.Attributes["minimum"].Value),
+						Trait	= condition.Attributes["trait"].Value
+					});																													
+				}
+			}
+			return result;
+		}
+		
+		private Dictionary<Condition, double> ParseContributiveConditions (XmlNode subnode)
+		{
+			Dictionary<Condition, double> result = new Dictionary<Condition, double>();
+			foreach (XmlNode condition in subnode)
+			{
+				if (condition.Name=="condition")
+				{
+					result.Add(new Condition(){ 	
+						Invert 	= condition.Attributes["invert"] != null,
+					   	Maximum = (condition.Attributes["maximum"] == null)? double.MaxValue : double.Parse(condition.Attributes["maximum"].Value),
+						Minimum = (condition.Attributes["maximum"] == null)? double.MinValue : double.Parse(condition.Attributes["minimum"].Value),
+						Trait	= condition.Attributes["trait"].Value
+					}, condition.Attributes["contribution"]!=null ? double.Parse(condition.Attributes["condition"].Value) : 0 );																													
+				}
+			}
+			return result;
+		}
 		
 		private void ParseMap(XmlNode root)
 		{
-			Map map 			= new Map() { Name = root.Attributes["name"].Value };
+			Map map 			= this.TraitfulParameters<Map>(new Map(), root);
 			map.LocationTypes 	= (from t in this.KeyTypes select t.Value).ToList();
-			
 			foreach (XmlNode child in root)
 			{
 				if (child.Name=="location")
@@ -440,6 +542,29 @@ namespace Avebury
 			return location;
 		}
 		
+		private T TraitfulParameters<T> (T component, XmlNode definition) where T : TraitfulEntity
+		{
+			if (definition.Attributes["name"]!=null)
+			{
+				component.Name = definition.Attributes["name"].Value;
+			}
+			
+			Dictionary<string, Trait> traits = this.GetTraits(definition);
+			foreach(KeyValuePair<string, Trait> trait in traits)
+			{
+				if (component.Traits.ContainsKey(trait.Key)) 	component.Traits[trait.Key] = trait.Value;
+				else 											component.Traits.Add(trait);
+			}
+			
+			List<Tick> ticks = this.GetTicks(definition);
+			foreach (Tick tick in ticks)
+			{
+				component.Ticks.Add(tick);	
+			}
+			component.UpdateNextTick();
+			return component;
+		}
+		
 		private T CommonParameters<T> (T component, XmlNode definition) where T : Component
 		{
 			if (definition.Attributes["reference"]!=null)
@@ -456,33 +581,26 @@ namespace Avebury
 			{
 			 	component.LastModified = DateTime.Parse(definition.Attributes["modified"].Value);
 			}
-			if (definition.Attributes["name"]!=null)
-			{
-				component.Name = definition.Attributes["name"].Value;
-			}
+
 			if (definition.Attributes["detail"]!=null)
 			{
 				component.Detail = definition.Attributes["detail"].Value;	
 			}
-			Dictionary<string, Trait> traits = this.GetTraits(definition);
-			foreach(KeyValuePair<string, Trait> trait in traits)
-			{
-				if (component.Traits.ContainsKey(trait.Key)) 	component.Traits[trait.Key] = trait.Value;
-				else 											component.Traits.Add(trait);
-			}
+
 			List<Item> contents = this.GetInventory(definition);
 			foreach (Item thing in contents)
 			{
 					thing.Owner = component;
 					component.Inventory.Add(thing);
 			}
-			List<Tick> ticks = this.GetTicks(definition);
-			foreach (Tick tick in ticks)
+
+			List<Spawner> spawners = this.GetSpawners(definition);
+			foreach (Spawner spawn in spawners)
 			{
-				component.Ticks.Add(tick);	
+				component.Spawns.Add(spawn);	
 			}
-			component.UpdateNextTick();
-			return component;
+			
+			return this.TraitfulParameters<T> (component, definition);
 		}
 		
 		private List<Tick> GetTicks(XmlNode node)
@@ -558,6 +676,7 @@ namespace Avebury
 								Description = description,
 								Name = name	
 							};
+							region = this.TraitfulParameters<Region>(region, child);
 							if (this.mapRegions.ContainsKey(parent))
 							{
 								region.Parent = mapRegions[parent];	

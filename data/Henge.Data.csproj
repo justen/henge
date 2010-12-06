@@ -98,6 +98,7 @@
     <Compile Include="src\Object\Entities\Global.cs" />
     <Compile Include="src\Relational\HybridSessionContext.cs" />
     <Compile Include="src\Object\Entities\Spawner.cs" />
+    <Compile Include="src\Object\Entities\TraitfulEntity.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />

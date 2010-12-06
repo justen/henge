@@ -11,6 +11,7 @@ namespace Henge.Data.Entities
 		public virtual IDictionary<string, Trait> BaseTraits	{ get; set; }
 		public virtual IDictionary<string, Skill> BaseSkills	{ get; set; }
 		public virtual IList <Tick>  BaseTick					{ get; set; }
+		public virtual IList <Spawner> BaseSpawns				{ get; set; }
 		public virtual IList<Appearance> Appearance				{ get; set; }
 		
 		
@@ -20,6 +21,7 @@ namespace Henge.Data.Entities
 			this.BaseTraits = new Dictionary< string, Trait>();
 			this.BaseSkills = new Dictionary<string, Skill>();
 			this.BaseTick = new List<Tick>();
+			this.BaseSpawns = new List<Spawner>();
 		}
 		
 		
@@ -29,6 +31,7 @@ namespace Henge.Data.Entities
 			this.BaseTraits = new Dictionary< string, Trait>();
 			this.BaseSkills = new Dictionary<string, Skill>();
 			this.BaseTick = new List<Tick>();
+			this.BaseSpawns = new List<Spawner>();
 			this.Appearance.Add(baseAppearance);
 		}
 	}

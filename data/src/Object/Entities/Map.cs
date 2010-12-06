@@ -35,10 +35,9 @@ namespace Henge.Data.Entities
 	}*/
 	
 	
-	public class Map : ObjectEntity
+	public class Map : TraitfulEntity
 	{
 		//public virtual IDictionary<Coordinates, Location> Locations	{ get; set; }
-	    public virtual string Name									{ get; set; }
 		public virtual IList<ComponentType> LocationTypes { get; set; }
 		
 		

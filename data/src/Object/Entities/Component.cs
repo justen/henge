@@ -5,20 +5,14 @@ using System.Collections.Generic;
 
 namespace Henge.Data.Entities
 {
-	public abstract class Component : ObjectEntity
+	public abstract class Component : TraitfulEntity
 	{
-		public virtual String Name 								{ get; set; }
 		public virtual ComponentType Type						{ get; set; }
-	    public virtual IDictionary<string, Trait> Traits 		{ get; set; }
 		public virtual DateTime LastModified					{ get; set; }
 		public virtual DateTime Created							{ get; set; }
 		public virtual IList<Item> Inventory			  		{ get; set; }
 		// String containing the detail of this instances appearance
 		public virtual string Detail 							{ get; set; }
-		
-		public virtual IList<Tick> Ticks						{ get; set; }
-		public virtual Tick NextTick							{ get; set; }
-		public virtual DateTime NextTickTime					{ get; set; }
 		
 		//Things that can be spawned by this component
 		public virtual IList<Spawner> Spawns					{ get; set; }
@@ -27,9 +21,7 @@ namespace Henge.Data.Entities
 		public Component()
 		{
 			this.Inventory		= new List<Item>();
-			this.Ticks			= new List<Tick>();
 			this.Spawns 		= new List<Spawner>();
-			this.Traits 		= new Dictionary<string, Trait>();
 		}
 		
 		
@@ -40,8 +32,8 @@ namespace Henge.Data.Entities
 			this.Spawns 		= new List<Spawner>();
 			this.Created		= DateTime.Now;
 			this.LastModified	= DateTime.Now;
-			this.Traits			= new Dictionary<string, Trait>();
 			
+			this.Traits			= new Dictionary<string, Trait>();
 			this.Ticks 			= new List<Tick>();
 			this.NextTick		= null;
 			this.NextTickTime	= DateTime.MaxValue;
@@ -64,6 +56,14 @@ namespace Henge.Data.Entities
 						this.Ticks.Add(new Tick(){ Name = tick.Name, Period = tick.Period, Scheduled = tick.Scheduled } );	
 					}
 				}
+				
+				if (type.BaseSpawns != null)
+				{
+					foreach (Spawner spawn in type.BaseSpawns)
+					{
+						this.Spawns.Add(new Spawner(spawn));
+					}
+				}
 			}
 			this.UpdateNextTick();
 		}
@@ -81,23 +81,5 @@ namespace Henge.Data.Entities
 			else return this.Type.Appearance.LastOrDefault(a => a.Valid(inspector.Traits));
 		}
 		
-		
-		public void UpdateNextTick()
-		{
-			DateTime nextTime 	= DateTime.MaxValue;
-			Tick nextTick		= null;
-			
-			foreach (Tick t in this.Ticks)
-			{
-				if (t.Scheduled < nextTime)
-				{
-					nextTime = t.Scheduled;
-					nextTick = t;
-				}
-			}
-			
-			this.NextTickTime 	= nextTime;
-			this.NextTick		= nextTick;
-		}
 	}
 }

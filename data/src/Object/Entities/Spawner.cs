@@ -8,7 +8,7 @@ namespace Henge.Data.Entities
 		//ComponentType to spawn the object with
 		public virtual ComponentType ComponentType 	{ get; set; }
 		//Type of the object to be spawned
-		public virtual Type		Class			{ get; set; }
+		public virtual string		Class			{ get; set; }
 		//Conditions to be met in order for the object to be spawned using this Spawner
 		public virtual Dictionary<Condition, double> Conditions	{ get; set; }
 		
@@ -18,6 +18,21 @@ namespace Henge.Data.Entities
 		
 		//Rate at which this spawn works (range of 0 to 1, where 0 is "never spawns" and 1 is "spawns every tick")
 		public virtual double SpawnRate		{ get; set; }
+		
+		public Spawner(Spawner original)
+		{
+			this.ComponentType = original.ComponentType;
+			this.Class = original.Class;
+			this.Conditions = new Dictionary<Condition, double>(original.Conditions);
+			this.MinZ = original.MinZ;
+			this.MaxZ = original.MaxZ;
+			this.SpawnRate = original.SpawnRate;
+		}
+		
+		public Spawner()
+		{
+			this.Conditions = new Dictionary<Condition, double>();	
+		}
 	}
 }
 
