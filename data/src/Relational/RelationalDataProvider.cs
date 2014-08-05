@@ -36,7 +36,7 @@ namespace Henge.Data
 		// library is included in the Henge.Web build. These can be removed once xbuild starts behaving correctly
 		// (hopefully in a later revision).
 		MySql.Data.MySqlClient.MySqlHelper helper;
-		NHibernate.ByteCode.Castle.LazyInitializer lazy;
+		//NHibernate.ByteCode.Castle.LazyInitializer lazy;
 		// --------------------
 		
 		private ISessionFactory sessionFactory	= null;
